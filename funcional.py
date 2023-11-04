@@ -94,7 +94,7 @@ class VentanaRegistro: # crea la ventana registro
                     Sesion.guardar_datos_usuarios()
                     print("USUARIO CREADO") #FALTA un label diciendo que el usuario fue creado.
                 else:
-                    print("La contraseña no tiene 5 digitos o le falta almenos un numero") #FALTA un label diciendo los requisitos de la contraseña, minimo un numero y 5 digitos.
+                    print("La contraseña no tiene 5 digitos o le falta al menos un numero") #FALTA un label diciendo los requisitos de la contraseña, minimo un numero y 5 digitos.
             else:
                 print() #FALTA un label que diga que el user ya existe.
         else:
@@ -167,7 +167,7 @@ def opciones_universales(self, nombre_ventana):
 class Sesion: #IGNORAR, debe modificarse la mayoria.
     def __init__(self,nombre,contrasena): #Todo lo ingresado debera ser cambiado para que funcione con la interfaz. FALTA
         self.nombre = nombre
-        self.contrasena = contrasena #FALTA MODIFICAR ESTO, almenos que creemos un objeto no es necesario el nombre y contrasena.
+        self.contrasena = contrasena #FALTA MODIFICAR ESTO, al menos que creemos un objeto no es necesario el nombre y contrasena.
 
     # def registro():
     #     global usuarios
