@@ -146,11 +146,36 @@ class VentanaInvitado:
         self.root = ctk.CTk()
         opciones_universales(self,"Ingresar como invitado")
 
-        frame = ctk.CTkFrame(master=self.root)
+        frame = ctk.CTkScrollableFrame(master=self.root, fg_color="transparent")
         frame.pack(pady=0, padx=120, fill="both", expand=True)
         
+        titulo = ctk.CTkLabel(master=frame, text="Iniciar sesión", font=(TITULOS_FUENTE))
+        titulo.pack(pady=10, padx=0)
         
+        noticiaFrame = ctk.CTkFrame(master=frame, width=200, height=200)
+        noticiaFrame.pack(pady=0, padx=100, fill="x")
         
+        noticiaTitulo = ctk.CTkLabel(master=noticiaFrame, text="Titulo")
+        noticiaTitulo.pack(pady=10, padx=0)
+        
+        noticiaTexto = ctk.CTkLabel(master=noticiaFrame, text="Titulo")
+        noticiaTexto.pack(pady=10, padx=0)
+        
+        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
+        login.pack(pady=120, padx=120, fill="both", expand=True)
+        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
+        login.pack(pady=120, padx=120, fill="both", expand=True)
+        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
+        login.pack(pady=120, padx=120, fill="both", expand=True)
+        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
+        login.pack(pady=120, padx=120, fill="both", expand=True)
+        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
+        login.pack(pady=120, padx=120, fill="both", expand=True)
+        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
+        login.pack(pady=120, padx=120, fill="both", expand=True)
+        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
+        login.pack(pady=120, padx=120, fill="both", expand=True)
+
         self.root.mainloop()
 
 
