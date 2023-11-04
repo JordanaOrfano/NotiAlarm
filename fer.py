@@ -9,7 +9,7 @@ ctk.set_appearance_mode("dark") # tema oscuro
 usuarios = {}
 
 TAMANO_VENTANA = "1100x650"
-BTN_ALTURA = 35
+BTN_ALTURA = 36
 BTN_ANCHO = 290
 TITULOS_FUENTE = "Roboto", 34
 
@@ -70,7 +70,6 @@ class VentanaRegistro: # crea la ventana registro
 
         self.nombre = ctk.CTkEntry(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, placeholder_text="Usuario")
         self.nombre.place(relx = 0.5, rely = 0.47, anchor = tk.CENTER)
-
 
         self.contrasena = ctk.CTkEntry(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, show="*", placeholder_text="Contraseña")
         self.contrasena.place(relx=0.5, rely=0.54, anchor=tk.CENTER)
@@ -137,8 +136,19 @@ class VentanaInvitado:
         self.root = ctk.CTk()
         opciones_universales(self,"Ingresar como invitado")
 
+        frame = ctk.CTkFrame(master=self.root)
+        frame.pack(pady=0, padx=120, fill="both", expand=True)
+        
         self.root.mainloop()
 
+
+class VentanaNoticias:
+    def __init__(self):
+        self.root = ctk.CTk() # inicializa
+        opciones_universales(self,"NotiAlarm")
+     
+        frame = ctk.CTkFrame(master=self.root)
+        frame.pack(pady=0, padx=300, fill="both", expand=True)
 
 
 def opciones_universales(self, nombre_ventana):
