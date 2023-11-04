@@ -16,7 +16,7 @@ def button_function():
     print("button pressed")
 
 # def registrarse():
-    
+
 
 # -------------------------- label --------------------------
 label = ctk.CTkLabel(master=root, text="Primera pantalla", font=("Roboto",40))
