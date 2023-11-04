@@ -86,31 +86,40 @@ class VentanaRegistro: # crea la ventana registro
         self.root.destroy()
         ventana_opciones = VentanaOpciones()
 
-    def registro_evento(self): #Al darle click a registrar se iniciara este metodo.
-        if len(self.correo.get().strip()) != 0 and len(self.nombre.get().strip()) != 0 and len(self.contrasena.get().strip()) != 0: #chequea que ningun campo este vacio. #falta comprobar gmail
-            if self.nombre.get() not in usuarios: #Comprueba que el nombre no exista previamente, si no existe ejecuta.
-                if len(self.contrasena.get()) >= 8 and len(self.contrasena.get()) <20: #Comprueba que la contraseña tenga mas de 7 digitos y tenga al menos de 20 digitos.
-                    if any(char.isdigit() for char in self.contrasena.get()): #Comprueba que la contraseña tenga al menos un numero.
-                        if any(char in "!@#$%∧&*(._-)" for char in self.contrasena.get()): #Comprueba si la contraseña tiene digitos especiales
-                            usuarios[self.nombre.get()] = {"contrasena": self.contrasena.get(), "rol": "usuario", "correo": self.correo.get()} #De forma predeterminada cualquier usuario nuevo tendrá el rol "usuario", donde no tiene grandes permisos.
-                            Sesion.guardar_datos_usuarios()
-                            ctk.CTkLabel(master = self.root, text = "Usuario creado con éxito, espere unos instantes...").place(relx = 0.33, rely = 0.72) #FALTA que se borre cuando se crea otro label.
-                            #FALTA aca deberia volver al login y iniciar sesion.
-                        else:
-                            ctk.CTkLabel(master = self.root, text = "La contraseña debe tener al menos un caracter especial: '!@#$%∧&*(._-)'").place(relx = 0.31, rely = 0.72) #FALTA que se borre cuando se crea otro label.
-                    else:
-                        ctk.CTkLabel(master = self.root, text = "La contraseña debe tener al menos un número.").place(relx = 0.385, rely = 0.72) #FALTA que se borre cuando se crea otro label.
-                else:
-                    ctk.CTkLabel(master = self.root, text = "La contraseña debe tener entre 8 y 20 caracteres.").place(relx = 0.385, rely = 0.72) #FALTA que se borre cuando se crea otro label.
-            else:
-                ctk.CTkLabel(master = self.root, text = "El nombre de usuario ya existe.").place(relx = 0.413, rely = 0.72) #FALTA que se borre cuando se crea otro label.
-
-        else:
-            ctk.CTkLabel(master = self.root, text = "Ningún campo debería estar vacío.").place(relx = 0.413, rely = 0.72) #FALTA que se borre cuando se crea otro label.
-
+    def comprobar_correo(correo):
+        for usuario in usuarios:
+            if str(correo.lower()) == str(usuarios[usuario]["correo"].lower()):
+                return False
+        return True
     
- 
-
+    def registro_evento(self): #Al darle click a registrar se iniciara este metodo.
+        if self.nombre.get() not in usuarios: #Comprueba que el nombre no exista previamente, si no existe ejecuta.
+            if len(self.correo.get().strip()) != 0 and len(self.nombre.get().strip()) != 0 and len(self.contrasena.get().strip()) != 0: #chequea que ningun campo este vacio. #falta comprobar gmail
+                if "@" in self.correo.get():
+                    if VentanaRegistro.comprobar_correo(self.correo.get()):
+                        if len(self.contrasena.get()) >= 8 and len(self.contrasena.get()) <20: #Comprueba que la contraseña tenga mas de 7 digitos y tenga almenos de 20 digitos.
+                            if any(char.isdigit() for char in self.contrasena.get()): #Comprueba que la contraseña tenga almenos un numero.
+                                if any(char in "!@#$%∧&*(._-)" for char in self.contrasena.get()): #Comprueba si la contraseña tiene digitos especiales
+                                    usuarios[self.nombre.get()] = {"contrasena": self.contrasena.get(), "rol": "usuario", "correo": self.correo.get()} #De forma predeterminada cualquier usuario nuevo tendrá el rol "usuario", donde no tiene grandes permisos.
+                                    Sesion.guardar_datos_usuarios()
+                                    ctk.CTkLabel(master = self.root, text = "Usuario creado con exito, espere unos instantes...").place(relx = 0.33, rely = 0.72) #FALTA que se borre cuando se crea otro label.
+                                    #FALTA aca deberia volver al login y iniciar sesion.
+                                else:
+                                    ctk.CTkLabel(master = self.root, text = "La contraseña debe tener almenos un caracter especial '!@#$%∧&*(._-)'. ").place(relx = 0.33, rely = 0.72) #FALTA que se borre cuando se crea otro label.
+                            else:
+                                ctk.CTkLabel(master = self.root, text = "La contraseña debe tener almenos un numero. ").place(relx = 0.385, rely = 0.72) #FALTA que se borre cuando se crea otro label.
+                        else:
+                            ctk.CTkLabel(master = self.root, text = "La contraseña debe tener entre 8 y 20 digitos. ").place(relx = 0.385, rely = 0.72) #FALTA que se borre cuando se crea otro label.
+                    else:
+                        ctk.CTkLabel(master = self.root, text = "El correo electronico ya esta asociado a una cuenta.").place(relx = 0.37, rely = 0.72) #FALTA que se borre cuando se crea otro label.
+                else:
+                    ctk.CTkLabel(master = self.root, text = "Debes ingresar un correo electronico valido.").place(relx = 0.39, rely = 0.72) #FALTA que se borre cuando se crea otro label.
+            else:
+                ctk.CTkLabel(master = self.root, text = "Ningun campo deberia estar vacio.").place(relx = 0.413, rely = 0.72) #FALTA que se borre cuando se crea otro label.
+        else:
+            ctk.CTkLabel(master = self.root, text = "El nombre de usuario ya existe... ").place(relx = 0.413, rely = 0.72) #FALTA que se borre cuando se crea otro label.
+        
+    
 class VentanaLogin: # crea la ventana login
     def __init__(self):
         self.root = ctk.CTk()
@@ -271,7 +280,9 @@ class Sesion: #IGNORAR, debe modificarse la mayoria.
                 usuarios.update(json.load(archivo)) #Actualiza el diccionario usuarios con los valores de usuario.json, para eso sirve el .update y load
         except:
             print("Archivo no encontrado, se creara con un usuario admin.")
-            usuarios["admin"] = {"contrasena": "12345", "rol": "admin"} #Creara el usuario "admin" con el rol admin y la contraseña 12345.
+            usuarios["admin"] = {"contrasena": "12345", 
+                                 "rol": "admin", 
+                                 "correo": "Unknown"} #Creara el usuario "admin" con el rol admin y la contraseña 12345.
             Sesion.guardar_datos_usuarios() #Llama el metodo para guardar los datos nuevos.
 
     def guardar_datos_usuarios(): #Guarda los nuevos registros de usuarios.
@@ -280,7 +291,9 @@ class Sesion: #IGNORAR, debe modificarse la mayoria.
                 json.dump(usuarios, archivo) #Dump sirve para "tirar" o guardar los datos en el archivo ya leído "usuarios.json"
         except FileNotFoundError: #En caso de no encontrar el json, avisa y crea el archivo.
             print("Archivo no encontrado, se creara uno nuevo para los usuarios.")
-            usuarios["admin"] = {"contrasena": "12345", "rol": "admin"} #Creara el usuario "admin" con el rol admin y la contraseña 12345.
+            usuarios["admin"] = {"contrasena": "12345",
+                                "rol": "admin", 
+                                "correo": "Unknown"} #Creara el usuario "admin" con el rol admin y la contraseña 12345.
 
 
 Sesion.cargar_datos_usuarios()
