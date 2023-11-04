@@ -139,6 +139,8 @@ class VentanaInvitado:
         frame = ctk.CTkFrame(master=self.root)
         frame.pack(pady=0, padx=120, fill="both", expand=True)
         
+        
+        
         self.root.mainloop()
 
 
