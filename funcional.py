@@ -92,9 +92,7 @@ class VentanaRegistro: # crea la ventana registro
                 return False
         return True
     
-    def registro_evento(self): #Al darle click a registrar se iniciara este metodo.
-        alerta = ctk.CTkLabel(master = self.root, text = "")
-        alerta.place(relx = 0.45, rely = 0.70)
+    def registro_evento(self): #Al darle click a registrar se iniciara este metodo, se crea la variable alerta para luego eliminar labels.
         
         if self.nombre.get() not in usuarios: #Comprueba que el nombre no exista previamente, si no existe ejecuta.
             if len(self.correo.get().strip()) != 0 and len(self.nombre.get().strip()) != 0 and len(self.contrasena.get().strip()) != 0: #chequea que ningun campo este vacio. #falta comprobar gmail
@@ -105,26 +103,38 @@ class VentanaRegistro: # crea la ventana registro
                                 if any(char in "!@#$%∧&*(._-)" for char in self.contrasena.get()): #Comprueba si la contraseña tiene digitos especiales
                                     usuarios[self.nombre.get()] = {"contrasena": self.contrasena.get(), "rol": "usuario", "correo": self.correo.get()} #De forma predeterminada cualquier usuario nuevo tendrá el rol "usuario", donde no tiene grandes permisos.
                                     Sesion.guardar_datos_usuarios()
-                                    
-                                    alerta.configure(text="Usuario creado con éxito, espere unos instantes...")
-                                    #FALTA aca deberia volver al login y iniciar sesion.
+                                    VentanaRegistro.borrar_label(self.root)
+                                    ctk.CTkLabel(master = self.root, text = "Usuario creado con éxito, espere unos instantes...").place(relx = 0.37, rely = 0.72) 
+                                    #FALTA, aca deberia volver al login y iniciar sesion.
                                 else:
-                                    alerta.configure(text="La contraseña debe tener al menos un caracter especial: '!@#$%∧&*(._-)'")
+                                    VentanaRegistro.borrar_label(self.root)
+                                    ctk.CTkLabel(master = self.root, text = "La contraseña debe tener al menos un caracter especial '!@#$%∧&*(._-)'. ").place(relx = 0.31, rely = 0.72) 
                             else:
-                                alerta.configure(text="La contraseña debe tener al menos un número.")
+                                VentanaRegistro.borrar_label(self.root) 
+                                ctk.CTkLabel(master = self.root, text = "La contraseña debe tener al menos un numero. ").place(relx = 0.385, rely = 0.72) 
                         else:
-                            alerta.configure(text="La contraseña debe tener entre 8 y 20 caracteres.")
+                            VentanaRegistro.borrar_label(self.root)
+                            ctk.CTkLabel(master = self.root, text = "La contraseña debe tener entre 8 y 20 caracteres.. ").place(relx = 0.385, rely = 0.72) 
                     else:
-                        alerta.configure(text="El correo electrónico ya está asociado a una cuenta.")
+                        VentanaRegistro.borrar_label(self.root)
+                        ctk.CTkLabel(master = self.root, text = "El correo electronico ya esta asociado a una cuenta.").place(relx = 0.37, rely = 0.72) 
                 else:
-                    alerta.configure(text="Ingrese un correo electrónico válido.")
+                    VentanaRegistro.borrar_label(self.root)
+                    ctk.CTkLabel(master = self.root, text = "Debes ingresar un correo electronico valido.").place(relx = 0.39, rely = 0.72) 
             else:
-                alerta.configure(text="Ningún campo debe estar vacío.")
+                VentanaRegistro.borrar_label(self.root) 
+                ctk.CTkLabel(master = self.root, text = "Ningun campo deberia estar vacío.").place(relx = 0.413, rely = 0.72)
         else:
-            alerta.configure(text="El nombre de usuario ya existe.")
-        
+            VentanaRegistro.borrar_label(self.root)
+            ctk.CTkLabel(master = self.root, text = "El nombre de usuario ya existe. ").place(relx = 0.413, rely = 0.72) 
+
+    def borrar_label(root): #Funcion para tapar un anterior label ya creado.
+        borrar = ctk.CTkLabel(master = root, text = "           ", width= 412)
+        borrar.place(relx = 0.31, rely = 0.72) 
+
     
 class VentanaLogin: # crea la ventana login
+    global usuarios
     def __init__(self):
         self.root = ctk.CTk()
         opciones_universales(self,"Iniciar sesión")
@@ -135,13 +145,13 @@ class VentanaLogin: # crea la ventana login
         titulo = ctk.CTkLabel(master=frame, text="Iniciar sesión", font=(TITULOS_FUENTE))
         titulo.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
         
-        correo = ctk.CTkEntry(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, placeholder_text="Correo electrónico")
-        correo.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
+        self.correo = ctk.CTkEntry(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, placeholder_text="Correo electrónico")
+        self.correo.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
 
-        contrasena = ctk.CTkEntry(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, placeholder_text="Contraseña")
-        contrasena.place(relx = 0.5, rely = 0.47, anchor = tk.CENTER)
+        self.contrasena = ctk.CTkEntry(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, placeholder_text="Contraseña", show="*")
+        self.contrasena.place(relx = 0.5, rely = 0.47, anchor = tk.CENTER)
         
-        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
+        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión", command = self.login_evento)
         login.place(relx=0.5, rely=0.54, anchor=tk.CENTER)
         
         volver = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Volver", fg_color="transparent", hover=False, command=self.volver)
@@ -152,6 +162,27 @@ class VentanaLogin: # crea la ventana login
     def volver(self):
         self.root.destroy()
         ventana_opciones = VentanaOpciones()
+
+    def login_evento(self): #Al tocar el boton login.
+        verificar = False #Por ahora, la contraseña no coincide; Valor predeterminado.
+
+        for usuario in usuarios: #Verifica si algun correo en el diccionario usuarios coincide con el ingresado.
+            if str(self.correo.get().lower()).strip() == str(usuarios[usuario]['correo'].lower()).strip():
+                if str(self.contrasena.get()) == str(usuarios[usuario]['contrasena']): #Si encuentra un correo que coincide con el ingresado, comprueba que tambien coincida la contraseña.
+                    verificar = True #El correo y la contraseña coinciden.
+                
+        if verificar:
+            VentanaLogin.borrar_label(self.root)
+            ctk.CTkLabel(master = self.root, text = "Iniciando Sesión...").place(relx = 0.45, rely = 0.65) #FALTA poner pantallas de admin y de usuario.
+
+        else:
+            VentanaLogin.borrar_label(self.root)
+            ctk.CTkLabel(master = self.root, text = "Correo o contraseña invalidos.").place(relx = 0.42, rely = 0.65) 
+
+    def borrar_label(root): #Funcion para tapar un anterior label ya creado.
+        borrar = ctk.CTkLabel(master = root, text = "           ", width = 265)
+        borrar.place(relx = 0.38, rely = 0.65) 
+
 
 
 class VentanaInvitado:
@@ -218,69 +249,8 @@ def opciones_universales(self, nombre_ventana):
 
 
 
-class Sesion: #IGNORAR, debe modificarse la mayoria.
-    def __init__(self,nombre,contrasena): #Todo lo ingresado debera ser cambiado para que funcione con la interfaz. FALTA
-        self.nombre = nombre
-        self.contrasena = contrasena #FALTA MODIFICAR ESTO, al menos que creemos un objeto no es necesario el nombre y contrasena.
-
-    # def registro():
-    #     global usuarios
-    #     intentos = 3
-
-    #     while intentos != 0:
-    #         nombre = input("Ingresa tu nombre: ") #FALTA INTERFAZ
-    #         if not nombre.strip() or nombre in usuarios:
-    #             intentos -= 1 #Resta un intento.
-    #             print(f"Error, introduce un nombre valido.\nIntentos Restantes: {intentos}") #El usuario no puede introducir nombres vacíos. FALTA INTERFAZ
-
-    #         elif intentos == 0: #Si se queda sin intentos vuelve al menu de iniciar sesión.
-    #             print("Demasiados intentos erróneos, volviendo al menu...") #adaptar a interfaz FALTA
-    #             return
-
-    #         else:
-    #             while intentos != 0: #Si no presenta ninguno de los errores anteriores, el programa continuara.
-    #                 contrasena = input("Ingresa tu contraseña: ")
-    #                 if len(contrasena) >=5 and intentos != 0: #La contraseña debe tener mas de 4 caracteres.
-    #                     usuarios[nombre] = {"contrasena": contrasena, "rol": "usuario"} #De forma predeterminada cualquier usuario nuevo tendrá el rol "usuario", donde no tiene grandes permisos.
-    #                     print("Usuario registrado correctamente, inicia sesión.")
-    #                     Sesion.guardar_datos_usuarios()
-    #                     return
-
-    #                 else:
-    #                     print(f"La contraseña debe tener 5 o mas caracteres.") #Da un mensaje de error.
-    #                     intentos -= 1
-    #                     print(f"Intentos restantes: {intentos}")
-
-    # def login():
-    #     global usuarios #Se usara para saber los usuarios existentes con sus respectivos roles y contraseñas.
-    #     intentos = 3
-    #     while intentos != 0:
-    #         ingresa_usuario = input("\nIngresa tu nombre de usuario: ")
-    #         if ingresa_usuario in usuarios: #Si el nombre ingresado por el usuario se encuentra en usuarios continuara con el código.
-    #             ingresa_contrasena = input("Ingresa tu contraseña: ")
-    #             if usuarios[ingresa_usuario]["contrasena"] == ingresa_contrasena: #¿La contraseña coincide con el nombre de usuario? si es asi el usuario accede.
-    #                 rol = usuarios[ingresa_usuario]["rol"]
-    #                 return rol #Devolvemos el rol para hacer otra verificación en el programa principal, para evitar que si iniciaste y luego cerras sesión otro usuario pueda ingresar como administrador.
-
-    #             elif intentos == 0:
-    #                 print("Demasiados intentos fallidos, volverás al menu.")
-    #                 print("Si el problema persiste contacta a un operador.")
-    #                 break
-
-    #             else: #La contraseña es invalida.
-    #                 print()
-    #                 print("Contraseña invalida, vuelve a introducirla.")
-    #                 intentos -= 1
-    #                 print(f"Intentos restantes: {intentos}")
-
-    #         else: #Si no se encuentra el usuario pedirá otro.
-    #             print("Usuario no encontrado, introduce uno valido.")
-    #             intentos -= 1
-    #             print(f"Intentos restantes: {intentos}")
-
-    def invitado(self): #FALTA
-        self.permisos = ["ver"] #SE QUITAN ESTOS PERMISOS
-
+class Sesion: #Maneja los datos se Sesión.
+    
     def cargar_datos_usuarios(): #Carga el archivo anterior con los usuarios existentes.
         global usuarios
         try:
@@ -290,7 +260,7 @@ class Sesion: #IGNORAR, debe modificarse la mayoria.
             print("Archivo no encontrado, se creara con un usuario admin.")
             usuarios["admin"] = {"contrasena": "12345", 
                                  "rol": "admin", 
-                                 "correo": "Unknown"} #Creara el usuario "admin" con el rol admin y la contraseña 12345.
+                                 "correo": "admin"} #Creara el usuario "admin" con el rol admin y la contraseña 12345.
             Sesion.guardar_datos_usuarios() #Llama el metodo para guardar los datos nuevos.
 
     def guardar_datos_usuarios(): #Guarda los nuevos registros de usuarios.
@@ -301,11 +271,14 @@ class Sesion: #IGNORAR, debe modificarse la mayoria.
             print("Archivo no encontrado, se creara uno nuevo para los usuarios.")
             usuarios["admin"] = {"contrasena": "12345",
                                 "rol": "admin", 
-                                "correo": "Unknown"} #Creara el usuario "admin" con el rol admin y la contraseña 12345.
+                                "correo": "admin"} #Creara el usuario "admin" con el rol admin y la contraseña 12345.
 
-
-Sesion.cargar_datos_usuarios()
+#Cargar datos previos.
+Sesion.cargar_datos_usuarios() 
 
 ventana_opciones = VentanaOpciones() # abre la ventana principal
+
+#Guardar datos.
+Sesion.guardar_datos_usuarios()
 
 print("Comprobar usuarios del json", usuarios)
