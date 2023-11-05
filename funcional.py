@@ -105,18 +105,25 @@ class VentanaRegistro: # crea la ventana registro
                                     ctk.CTkLabel(master = self.root, text = "Usuario creado con éxito, espere unos instantes...").place(relx = 0.33, rely = 0.72) #FALTA que se borre cuando se crea otro label.
                                     #FALTA aca deberia volver al login y iniciar sesion.
                                 else:
+                                    ctk.CTkLabel(master = self.root, text = "                      ").place(relx = 0.413, rely = 0.72)
                                     ctk.CTkLabel(master = self.root, text = "La contraseña debe tener al menos un caracter especial '!@#$%∧&*(._-)'. ").place(relx = 0.33, rely = 0.72) #FALTA que se borre cuando se crea otro label.
                             else:
+                                ctk.CTkLabel(master = self.root, text = "                         ").place(relx = 0.385, rely = 0.72)
                                 ctk.CTkLabel(master = self.root, text = "La contraseña debe tener al menos un numero. ").place(relx = 0.385, rely = 0.72) #FALTA que se borre cuando se crea otro label.
                         else:
+                            ctk.CTkLabel(master = self.root, text = "                        ").place(relx = 0.385, rely = 0.72)
                             ctk.CTkLabel(master = self.root, text = "La contraseña debe tener entre 8 y 20 caracteres.. ").place(relx = 0.385, rely = 0.72) #FALTA que se borre cuando se crea otro label.
                     else:
+                        ctk.CTkLabel(master = self.root, text = "                         ").place(relx = 0.37, rely = 0.72)
                         ctk.CTkLabel(master = self.root, text = "El correo electronico ya esta asociado a una cuenta.").place(relx = 0.37, rely = 0.72) #FALTA que se borre cuando se crea otro label.
                 else:
+                    ctk.CTkLabel(master = self.root, text = "                   ").place(relx = 0.39, rely = 0.72)
                     ctk.CTkLabel(master = self.root, text = "Debes ingresar un correo electronico valido.").place(relx = 0.39, rely = 0.72) #FALTA que se borre cuando se crea otro label.
             else:
+                ctk.CTkLabel(master = self.root, text = "                    ").place(relx = 0.413, rely = 0.72)
                 ctk.CTkLabel(master = self.root, text = "Ningun campo deberia estar vacío.").place(relx = 0.413, rely = 0.72) #FALTA que se borre cuando se crea otro label.
         else:
+            ctk.CTkLabel(master = self.root, text = "                         ").place(relx = 0.413, rely = 0.72)
             ctk.CTkLabel(master = self.root, text = "El nombre de usuario ya existe. ").place(relx = 0.413, rely = 0.72) #FALTA que se borre cuando se crea otro label.
         
     
