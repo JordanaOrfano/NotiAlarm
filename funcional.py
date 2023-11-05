@@ -165,26 +165,30 @@ class VentanaInvitado:
         frame = ctk.CTkScrollableFrame(master=self.root, fg_color="transparent")
         frame.pack(pady=0, padx=120, fill="both", expand=True)
         
-        titulo = ctk.CTkLabel(master=frame, text="Iniciar sesión", font=(TITULOS_FUENTE))
+        titulo = ctk.CTkLabel(master=frame, text="acá iría sección para publicar como en fb", font=(TITULOS_FUENTE))
         titulo.pack(pady=10, padx=0)
         
-        noticiaFrame = ctk.CTkFrame(master=frame, width=200, height=200)
+        noticiaFrame = ctk.CTkFrame(master=frame)
         noticiaFrame.pack(pady=0, padx=100, fill="x")
         
         noticiaTitulo = ctk.CTkLabel(master=noticiaFrame, text="Titulo")
-        noticiaTitulo.pack(pady=10, padx=0)
+        noticiaTitulo.pack(pady=0, padx=0)
         
-        noticiaTexto = ctk.CTkLabel(master=noticiaFrame, text="Titulo")
-        noticiaTexto.pack(pady=10, padx=0)
+        # el texto no se muestra completo
+        noticiaTexto = ctk.CTkLabel(master=noticiaFrame, justify="left", anchor="w", text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ultrices est et nisi ultricies, ac congue justo commodo. Sed magna neque, posuere nec sem non, venenatis accumsan purus. Duis dictum tincidunt ipsum, nec sollicitudin eros condimentum ornare. In condimentum, nunc nec convallis varius, sapien nisi condimentum tortor, ac porta ligula felis vitae velit. Aenean placerat augue lorem, sed aliquam mi vulputate ullamcorper. Fusce a ligula quis leo volutpat varius. Nunc mattis maximus eros, ut tristique ante euismod vitae. Suspendisse dapibus laoreet velit, vitae volutpat enim ultrices vel. Donec in faucibus tellus, sit amet finibus orci. Cras dapibus arcu vel orci mattis, vitae ullamcorper magna hendrerit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;")
+        noticiaTexto.pack(pady=10, padx=10, fill="both")
+
+        # modificar
+        noticiaEditar = ctk.CTkButton(master=noticiaFrame, width=BTN_ANCHO, height=BTN_ALTURA, text="Editar")
+        noticiaEditar.pack(padx=0, side="left", fill="both", expand=True)
+        noticiaBorrar = ctk.CTkButton(master=noticiaFrame, width=BTN_ANCHO, height=BTN_ALTURA, text="Borrar")
+        noticiaBorrar.pack(padx=0, side="right", fill="both", expand=True)
         
-        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
-        login.pack(pady=120, padx=120, fill="both", expand=True)
-        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
-        login.pack(pady=120, padx=120, fill="both", expand=True)
-        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
-        login.pack(pady=120, padx=120, fill="both", expand=True)
-        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
-        login.pack(pady=120, padx=120, fill="both", expand=True)
+        # noticiaEditar = ctk.CTkButton(master=noticiaFrame, width=50, height=BTN_ALTURA, text="Editar")
+        # noticiaEditar.pack(padx=0, side="right", fill="both")
+        # noticiaBorrar = ctk.CTkButton(master=noticiaFrame, width=50, height=BTN_ALTURA, text="Borrar")
+        # noticiaBorrar.pack(padx=0, side="right", fill="both")
+        
         login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
         login.pack(pady=120, padx=120, fill="both", expand=True)
         login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
