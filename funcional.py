@@ -186,45 +186,135 @@ class VentanaLogin: # crea la ventana login
 
 
 class VentanaInvitado:
-     def __init__(self):
+    def __init__(self):
         self.root = ctk.CTk()
-        opciones_universales(self,"Ingresar como invitado")
-
-        frame = ctk.CTkScrollableFrame(master=self.root, fg_color="transparent")
-        frame.pack(pady=0, padx=120, fill="both", expand=True)
+        opciones_universales(self)
         
-        titulo = ctk.CTkLabel(master=frame, text="acá iría sección para publicar como en fb", font=(TITULOS_FUENTE))
-        titulo.pack(pady=10, padx=0)
+        frame = ctk.CTkScrollableFrame(master=self.root)
+        frame.pack(pady=0, padx=260, fill="both", expand=True)
         
-        noticiaFrame = ctk.CTkFrame(master=frame)
-        noticiaFrame.pack(pady=0, padx=100, fill="x")
+        # frames de los costados
+        # frame2 = ctk.CTkFrame(master=self.root, width=230)
+        # frame2.place(relx=0.79, rely=0, relheight=1)
         
-        noticiaTitulo = ctk.CTkLabel(master=noticiaFrame, text="Titulo")
-        noticiaTitulo.pack(pady=0, padx=0)
+        # -------------------- publicar -------------------
+        titulo = ctk.CTkLabel(master=frame, text="(icono) NotiAlarm", justify="left", anchor="w", font=(TITULOS_FUENTE))
+        titulo.pack(pady=20, padx=20, fill="x")
         
-        # el texto no se muestra completo
-        noticiaTexto = ctk.CTkLabel(master=noticiaFrame, justify="left", anchor="w", text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ultrices est et nisi ultricies, ac congue justo commodo. Sed magna neque, posuere nec sem non, venenatis accumsan purus. Duis dictum tincidunt ipsum, nec sollicitudin eros condimentum ornare. In condimentum, nunc nec convallis varius, sapien nisi condimentum tortor, ac porta ligula felis vitae velit. Aenean placerat augue lorem, sed aliquam mi vulputate ullamcorper. Fusce a ligula quis leo volutpat varius. Nunc mattis maximus eros, ut tristique ante euismod vitae. Suspendisse dapibus laoreet velit, vitae volutpat enim ultrices vel. Donec in faucibus tellus, sit amet finibus orci. Cras dapibus arcu vel orci mattis, vitae ullamcorper magna hendrerit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;")
-        noticiaTexto.pack(pady=10, padx=10, fill="both")
-
-        # modificar
-        noticiaEditar = ctk.CTkButton(master=noticiaFrame, width=BTN_ANCHO, height=BTN_ALTURA, text="Editar")
-        noticiaEditar.pack(padx=0, side="left", fill="both", expand=True)
-        noticiaBorrar = ctk.CTkButton(master=noticiaFrame, width=BTN_ANCHO, height=BTN_ALTURA, text="Borrar")
-        noticiaBorrar.pack(padx=0, side="right", fill="both", expand=True)
+        crearFrame = ctk.CTkFrame(master=frame)
+        crearFrame.pack(pady=(0,10), padx=20, fill="x")
         
-        # noticiaEditar = ctk.CTkButton(master=noticiaFrame, width=50, height=BTN_ALTURA, text="Editar")
-        # noticiaEditar.pack(padx=0, side="right", fill="both")
-        # noticiaBorrar = ctk.CTkButton(master=noticiaFrame, width=50, height=BTN_ALTURA, text="Borrar")
-        # noticiaBorrar.pack(padx=0, side="right", fill="both")
+        crearLabel = ctk.CTkLabel(master=crearFrame, wraplength=520, height=40, font=("",14,"bold"), fg_color="#1e1e1e", corner_radius=6, text="Crear publicación")
+        crearLabel.pack(pady=0, padx=0, fill="x")
         
-        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
-        login.pack(pady=120, padx=120, fill="both", expand=True)
-        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
-        login.pack(pady=120, padx=120, fill="both", expand=True)
-        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión")
-        login.pack(pady=120, padx=120, fill="both", expand=True)
-
+        crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar alarma", command=self.publicarAlarma)
+        crearAlarmaBtn.pack(pady=0, padx=0, fill="x", side="left")
+        
+        noticiaEventoBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar evento", command=self.publicarEvento)
+        noticiaEventoBtn.pack(pady=0, padx=0, fill="x", side="right")
+       
+        # -------------------- publicacion --------------------
+        titulo = "Titulo de la noticia"
+        ubicacion = "txtubicacion"
+        categoria = "txtcategoria"
+        texto = "Tkinter Label is a widget that is used to implement display boxes where you can place text or images. The text displayed by this widget can be changed by the developer at any time you want. It is also used to perform tasks such as to underline the part of the text and span the text across multiple lines. It is important to note that a label can use only one font at a time to display text. To use a label, you just have to specify what to display in it (this can be text, a bitmap, or an image). Python offers multiple options for developing a GUI (Graphical User Interface). Out of all the GUI methods, Tkinter is the most commonly used method. It is a standard Python interface to the Tk GUI toolkit shipped with Python. Python with Tkinter is the fastest and easiest way to create GUI applications. Creating a GUI using Tkinter is an easy task using widgets. Widgets are standard graphical user interfaces (GUI) elements, like buttons and menus."
+        usuario = "Fulanito123"
+        fecha = "10/10/2023 22:10"
+        
+        self.publicacion(frame, titulo, ubicacion, categoria, texto, usuario, fecha) # pruebas
+        self.publicacion(frame, titulo, ubicacion, categoria, texto, usuario, fecha)
+        
         self.root.mainloop()
+
+
+    def publicarAlarma(self):
+        publicarVentana = ctk.CTkToplevel(master=self.root)
+        publicarVentana.title("NotiAlarm")
+        publicarVentana.geometry("650x440")
+        publicarVentana.resizable(False, False)
+        
+        currentPath = os.path.dirname(os.path.realpath(__file__))
+        imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
+        imagenLabel = ctk.CTkLabel(publicarVentana, image=imagenFondo, text="")
+        imagenLabel.place(relx=0, rely=0)
+        
+        publicarFrame = ctk.CTkFrame(master=publicarVentana)
+        publicarFrame.pack(pady=0, padx=90, fill="both", expand=True)
+        
+        publicarLabel = ctk.CTkLabel(master=publicarFrame, height=40,font=('Roboto', 24), text="Crear publicación | Alarma")
+        publicarLabel.pack(pady=(20,15), padx=20, fill="x")
+        
+        publicarTitulo = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Título")
+        publicarTitulo.pack(pady=5, padx=20, fill="x")
+        
+        publicarUbicacion = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Ubicación")
+        publicarUbicacion.pack(pady=5, padx=20, fill="x")
+        
+        publicarTextbox = ctk.CTkTextbox(master=publicarFrame, height=140)
+        publicarTextbox.pack(pady=5, padx=20, fill="x")
+
+        categoria = ctk.CTkOptionMenu(master=publicarFrame, values=["Categoría", "option 1", "option 2"])
+        categoria.pack(pady=5, padx=20, fill="x")
+        
+        publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar")
+        publicarBoton.pack(pady=5, padx=20, fill="x")
+        
+    
+    def publicarEvento(self):
+        publicarVentana = ctk.CTkToplevel(master=self.root)
+        publicarVentana.title("NotiAlarm")
+        publicarVentana.geometry("650x440")
+        publicarVentana.resizable(False, False)        
+        
+        currentPath = os.path.dirname(os.path.realpath(__file__))
+        imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
+        imagenLabel = ctk.CTkLabel(publicarVentana, image=imagenFondo, text="")
+        imagenLabel.place(relx=0, rely=0)
+        
+        publicarFrame = ctk.CTkFrame(master=publicarVentana)
+        publicarFrame.pack(pady=0, padx=90, fill="both", expand=True)
+        
+        publicarLabel = ctk.CTkLabel(master=publicarFrame, height=40,font=('Roboto', 24), text="Crear Publicación | Evento")
+        publicarLabel.pack(pady=(20,15), padx=20, fill="x")
+        
+        publicarTitulo = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Título")
+        publicarTitulo.pack(pady=5, padx=20, fill="x")
+        
+        publicarUbicacion = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Ubicación")
+        publicarUbicacion.pack(pady=5, padx=20, fill="x")
+        
+        publicarTextbox = ctk.CTkTextbox(master=publicarFrame, height=140)
+        publicarTextbox.pack(pady=5, padx=20, fill="x")
+
+        categoria = ctk.CTkOptionMenu(master=publicarFrame, values=["Categoría", "option 1", "option 2"])
+        categoria.pack(pady=5, padx=20, fill="x")
+        
+        publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar")
+        publicarBoton.pack(pady=5, padx=20, fill="x")
+    
+    
+    def publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creacion de publicacion
+        color = "#1e1e1e"
+        noticiaFrame = ctk.CTkFrame(master=frame, fg_color="#262626")
+        noticiaFrame.pack(pady=10, padx=20, fill="x")
+        
+        noticiaTitulo = ctk.CTkLabel(master=noticiaFrame, wraplength=520, height=40, corner_radius=6, font=("",14,"bold"), fg_color=color, text=titulo)
+        noticiaTitulo.pack(pady=0, padx=0, fill="x")
+        
+        noticiaTexto = ctk.CTkLabel(master=noticiaFrame, justify="left", anchor="w", wraplength=485, text=f"Ubicación: {ubicacion}\n\nCategoría: {categoria}\n\n{texto}")
+        noticiaTexto.pack(pady=14, padx=20, fill="x", expand=True)
+        
+        noticiaInfoFrame = ctk.CTkFrame(master=noticiaFrame, fg_color=color, corner_radius=6)
+        noticiaInfoFrame.pack(pady=0, padx=0, fill="x")
+
+        noticiaInfo = ctk.CTkLabel(master=noticiaInfoFrame, justify="left", anchor="w", corner_radius=6, wraplength=520, text=f"{usuario}\n{fecha}")
+        noticiaInfo.pack(pady=0, padx=20, side="left")
+        
+        noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Borrar")
+        noticiaBorrar.pack(pady=0, padx=0, side="right")
+
+        noticiaEditar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Editar")
+        noticiaEditar.pack(pady=0, padx=1, side="right")
 
 
 class VentanaNoticias:
