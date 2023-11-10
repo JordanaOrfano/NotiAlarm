@@ -8,15 +8,15 @@ ctk.set_appearance_mode("dark") # tema oscuro
 
 usuarios = {}
 
-TAMANO_VENTANA = "1100x650"
+TAMANO_VENTANA = "1100x680"
 BTN_ALTURA = 36
 BTN_ANCHO = 290
-TITULOS_FUENTE = "Roboto", 34
+TITULOS_FUENTE = "Roboto", 32
 
 class VentanaOpciones:
     def __init__(self):
         self.root = ctk.CTk() # inicializa
-        opciones_universales(self,"NotiAlarm")
+        opciones_universales(self)
      
         frame = ctk.CTkFrame(master=self.root)
         frame.pack(pady=0, padx=300, fill="both", expand=True)
@@ -57,7 +57,7 @@ class VentanaRegistro: # crea la ventana registro
     global usuarios
     def __init__(self):
         self.root = ctk.CTk()
-        opciones_universales(self,"Registrarse")
+        opciones_universales(self)
 
         frame = ctk.CTkFrame(master=self.root)
         frame.pack(pady=0, padx=300, fill="both", expand=True)
@@ -137,7 +137,7 @@ class VentanaLogin: # crea la ventana login
     global usuarios
     def __init__(self):
         self.root = ctk.CTk()
-        opciones_universales(self,"Iniciar sesión")
+        opciones_universales(self)
 
         frame = ctk.CTkFrame(master=self.root)
         frame.pack(pady=0, padx=300, fill="both", expand=True)
@@ -182,7 +182,6 @@ class VentanaLogin: # crea la ventana login
     def borrar_label(root): #Funcion para tapar un anterior label ya creado.
         borrar = ctk.CTkLabel(master = root, text = "           ", width = 265)
         borrar.place(relx = 0.38, rely = 0.65) 
-
 
 
 class VentanaInvitado:
@@ -320,27 +319,24 @@ class VentanaInvitado:
 class VentanaNoticias:
     def __init__(self):
         self.root = ctk.CTk() # inicializa
-        opciones_universales(self,"NotiAlarm")
+        opciones_universales(self)
      
         frame = ctk.CTkFrame(master=self.root)
         frame.pack(pady=0, padx=300, fill="both", expand=True)
 
 
-def opciones_universales(self, nombre_ventana):
+def opciones_universales(self):
     self.root.geometry(TAMANO_VENTANA)
-    self.root.title(nombre_ventana)
+    self.root.title("NotiAlarm")
     self.root.resizable(False, False)
     
     currentPath = os.path.dirname(os.path.realpath(__file__))
-    imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 650))
+    imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
     imagenLabel = ctk.CTkLabel(self.root, image=imagenFondo, text="")
     imagenLabel.place(relx=0, rely=0)
 
 
-
-
 class Sesion: #Maneja los datos se Sesión.
-    
     def cargar_datos_usuarios(): #Carga el archivo anterior con los usuarios existentes.
         global usuarios
         try:
@@ -352,6 +348,7 @@ class Sesion: #Maneja los datos se Sesión.
                                  "rol": "admin", 
                                  "correo": "admin"} #Creara el usuario "admin" con el rol admin y la contraseña 12345.
             Sesion.guardar_datos_usuarios() #Llama el metodo para guardar los datos nuevos.
+
 
     def guardar_datos_usuarios(): #Guarda los nuevos registros de usuarios.
         try: #Primero intenta escribir sobre el json de usuarios.
