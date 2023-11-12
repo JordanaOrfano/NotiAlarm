@@ -7,6 +7,7 @@ import os
 ctk.set_appearance_mode("dark") # tema oscuro
 
 usuarios = {}
+noticias = {}
 
 TAMANO_VENTANA = "1100x680"
 BTN_ALTURA = 36
@@ -203,8 +204,11 @@ class VentanaInvitado:
         crearFrame = ctk.CTkFrame(master=frame)
         crearFrame.pack(pady=(0,10), padx=20, fill="x")
         
-        crearLabel = ctk.CTkLabel(master=crearFrame, wraplength=520, height=40, font=("",14,"bold"), fg_color="#1e1e1e", corner_radius=6, text="Crear publicación")
-        crearLabel.pack(pady=0, padx=0, fill="x")
+        #crearLabel = ctk.CTkLabel(master=crearFrame, wraplength=520, height=40, font=("",14,"bold"), fg_color="#1e1e1e", corner_radius=6, text="Crear publicación")
+        #crearLabel.pack(pady=0, padx=0, fill="x")
+        crearPublicar = ctk.CTkButton(master=crearFrame, height= BTN_ALTURA, width=300, text = "Crear Publicacion", command=self.publicarNoticia) #Boton para publicar noticia.
+        crearPublicar.pack(pady=0, padx=0, fill="x")
+
         
         crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar alarma", command=self.publicarAlarma)
         crearAlarmaBtn.pack(pady=0, padx=0, fill="x", side="left")
@@ -212,19 +216,122 @@ class VentanaInvitado:
         noticiaEventoBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar evento", command=self.publicarEvento)
         noticiaEventoBtn.pack(pady=0, padx=0, fill="x", side="right")
        
-        # -------------------- publicacion --------------------
-        titulo = "Titulo de la noticia"
-        ubicacion = "txtubicacion"
-        categoria = "txtcategoria"
-        texto = "Tkinter Label is a widget that is used to implement display boxes where you can place text or images. The text displayed by this widget can be changed by the developer at any time you want. It is also used to perform tasks such as to underline the part of the text and span the text across multiple lines. It is important to note that a label can use only one font at a time to display text. To use a label, you just have to specify what to display in it (this can be text, a bitmap, or an image). Python offers multiple options for developing a GUI (Graphical User Interface). Out of all the GUI methods, Tkinter is the most commonly used method. It is a standard Python interface to the Tk GUI toolkit shipped with Python. Python with Tkinter is the fastest and easiest way to create GUI applications. Creating a GUI using Tkinter is an easy task using widgets. Widgets are standard graphical user interfaces (GUI) elements, like buttons and menus."
-        usuario = "Fulanito123"
-        fecha = "10/10/2023 22:10"
+        #Mostrar todas las noticias en el menú.
+        try:
+            if len(noticias) != 0:
+                for categoria, noticias_titulos in noticias.items():
+                    for noticia, det in noticias_titulos.items(): 
+                        ubicacion = det["ubicacion"]
+                        texto = det["contenido"]
+                        usuario = "Desconocido, falta ESPECIFICAR."
+                        fecha = "Falta especificar." 
+                        self.mostrar_publicacion(frame, noticia, ubicacion, categoria, texto, usuario, fecha)
+            else:
+                ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack() 
+
+        except:
+            ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack() 
+                
+        # titulo = "Titulo de la noticia"
+        # ubicacion = "txtubicacion"
+        # categoria = "txtcategoria"
+        # texto = "Tkinter Label is a widget that is used to implement display boxes where you can place text or images. The text displayed by this widget can be changed by the developer at any time you want. It is also used to perform tasks such as to underline the part of the text and span the text across multiple lines. It is important to note that a label can use only one font at a time to display text. To use a label, you just have to specify what to display in it (this can be text, a bitmap, or an image). Python offers multiple options for developing a GUI (Graphical User Interface). Out of all the GUI methods, Tkinter is the most commonly used method. It is a standard Python interface to the Tk GUI toolkit shipped with Python. Python with Tkinter is the fastest and easiest way to create GUI applications. Creating a GUI using Tkinter is an easy task using widgets. Widgets are standard graphical user interfaces (GUI) elements, like buttons and menus."
+        # usuario = "Fulanito123"
+        # fecha = "10/10/2023 22:10"
         
-        self.publicacion(frame, titulo, ubicacion, categoria, texto, usuario, fecha) # pruebas
-        self.publicacion(frame, titulo, ubicacion, categoria, texto, usuario, fecha)
+        # self.publicacion(frame, titulo, ubicacion, categoria, texto, usuario, fecha) # pruebas
+        # self.publicacion(frame, titulo, ubicacion, categoria, texto, usuario, fecha)
         
         self.root.mainloop()
 
+    def publicarNoticia(self): #FALTA hacer que se obtenga el nombre del que publica
+        publicarVentana = ctk.CTkToplevel(master=self.root)
+        publicarVentana.title("NotiAlarm")
+        publicarVentana.geometry("650x470")
+        publicarVentana.resizable(False, False)
+        
+        currentPath = os.path.dirname(os.path.realpath(__file__))
+        imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
+        imagenLabel = ctk.CTkLabel(publicarVentana, image=imagenFondo, text="")
+        imagenLabel.place(relx=0, rely=0)
+        
+        publicarFrame = ctk.CTkFrame(master=publicarVentana)
+        publicarFrame.pack(pady=0, padx=90, fill="both", expand=True)
+        
+        publicarLabel = ctk.CTkLabel(master=publicarFrame, height=40,font=('Roboto', 24), text="Crear publicación | Noticia")
+        publicarLabel.pack(pady=(20,15), padx=20, fill="x")
+        
+        self.publicarTitulo = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Título")
+        self.publicarTitulo.pack(pady=5, padx=20, fill="x")
+        
+        self.publicarUbicacion = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Ubicación")
+        self.publicarUbicacion.pack(pady=5, padx=20, fill="x")
+        
+        self.publicarTextbox = ctk.CTkTextbox(master=publicarFrame, height=140)
+        self.publicarTextbox.pack(pady=5, padx=20, fill="x")
+
+        self.categoria = ctk.CTkOptionMenu(master=publicarFrame, values=["Categoria", "Robo", "Accidentes", "Asesinatos", "Eventos Locales", "Trafico", "Incendios y Rescates", "Eventos de emergencia", "Obras Publicas", "Otras"])
+        self.categoria.pack(pady=5, padx=20, fill="x")
+        
+        publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar", command=lambda: self.publicar_evento(publicarFrame))
+        publicarBoton.pack(pady=5, padx=20, fill="x")
+
+        #Elegir entre Alarma o Noticia
+        self.switch_var = ctk.StringVar(value="off")
+        self.switch = ctk.CTkSwitch(master=publicarFrame, text="Alerta", variable=self.switch_var, onvalue="on", offvalue="off")
+        self.switch.pack(pady=2, padx= 20, fill="x")
+
+    #Al tocar el boton de publicar debera guardar la noticia en el json.
+    def publicar_evento(self, publicarFrame):
+        global noticias
+        
+        if len(self.publicarTitulo.get().strip()) != 0 and len(self.publicarUbicacion.get().strip()) != 0 and len(self.publicarTextbox.get("1.0", "end").strip()) != 0:
+            
+            if self.categoria.get().lower() != "categoria":
+
+                if self.switch_var.get() == "on":
+                    print("es una alerta") #FALTA aca va el codigo de leo como si fuera una alerta.
+                else:
+                    if self.categoria.get() in noticias: #Si ya existe la categoria que ingreso el usuario guardara la noticia y los datos en la misma.
+                        if hasattr(self, "info_evento"):
+                            self.info_evento.destroy()
+                            
+                        self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Noticia creada correctamente.")
+                        self.info_evento.pack()
+                        noticias[self.categoria.get()][self.publicarTitulo.get()] = {"contenido": self.publicarTextbox.get("1.0", "end"),
+                                                    "autor": "desconocido FALTA especificar",
+                                                    "ubicacion": self.publicarUbicacion.get()} #Atributos de las noticias FALTA añadir nombres
+                        Sesion.guardar_datos_noticias()
+
+                    else: #Si no existe esa categoria en el json, creara la categoria y guardara la noticia en este con los respectivos datos.
+                        if hasattr(self, "info_evento"):
+                            self.info_evento.destroy()
+                            
+                        self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Noticia creada correctamente.")
+                        self.info_evento.pack()
+                        noticias[self.categoria.get()] = {
+                                self.publicarTitulo.get(): {"contenido": self.publicarTextbox.get("1.0", "end"),
+                                        "autor": "desconocido",
+                                        "ubicacion": self.publicarUbicacion.get()}}           #Atributos de las noticias.
+                        Sesion.guardar_datos_noticias()
+                
+            else:
+                if hasattr(self, "info_evento"):
+                    self.info_evento.destroy()
+                
+                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Debes seleccionar una categoria.")
+                self.info_evento.pack() 
+
+        else:
+            if hasattr(self, "info_evento"):
+                        self.info_evento.destroy()
+
+            self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ningun espacio puede estar vacio.")
+            self.info_evento.pack() 
+
+            
+            
+        
 
     def publicarAlarma(self):
         publicarVentana = ctk.CTkToplevel(master=self.root)
@@ -252,7 +359,7 @@ class VentanaInvitado:
         publicarTextbox = ctk.CTkTextbox(master=publicarFrame, height=140)
         publicarTextbox.pack(pady=5, padx=20, fill="x")
 
-        categoria = ctk.CTkOptionMenu(master=publicarFrame, values=["Categoría", "option 1", "option 2"])
+        categoria = ctk.CTkOptionMenu(master=publicarFrame, values=["Categoría", "robo", "option 2"])
         categoria.pack(pady=5, padx=20, fill="x")
         
         publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar")
@@ -292,7 +399,7 @@ class VentanaInvitado:
         publicarBoton.pack(pady=5, padx=20, fill="x")
     
     
-    def publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creacion de publicacion
+    def mostrar_publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creacion de publicacion
         color = "#1e1e1e"
         noticiaFrame = ctk.CTkFrame(master=frame, fg_color="#262626")
         noticiaFrame.pack(pady=10, padx=20, fill="x")
@@ -359,13 +466,31 @@ class Sesion: #Maneja los datos se Sesión.
             usuarios["admin"] = {"contrasena": "12345",
                                 "rol": "admin", 
                                 "correo": "admin"} #Creara el usuario "admin" con el rol admin y la contraseña 12345.
+            
+    def cargar_datos_noticias(): #Carga el archivo anterior con las noticias existentes.
+        global noticias
+        try:
+            with open("noticias.json", "r") as archivo:
+                noticias.update(json.load(archivo)) #Actualiza el diccionario noticias con los valores de usuario.json, para eso sirve el .update y load
+        except:
+            print("Archivo de noticias no encontrado, se creara uno nuevo.")
+
+    def guardar_datos_noticias(): #Guarda los nuevos registros de las noticias
+        try: #Primero intenta escribir sobre el json de noticias
+            with open("noticias.json", "w") as archivo:
+                json.dump(noticias, archivo) #Dump sirve para "tirar" o guardar los datos en el archivo ya leído "noticias.json"
+        except FileNotFoundError: 
+            print("Archivo no encontrado, se creara uno nuevo.")
 
 #Cargar datos previos.
 Sesion.cargar_datos_usuarios() 
+Sesion.cargar_datos_noticias()
 
 ventana_opciones = VentanaOpciones() # abre la ventana principal
 
 #Guardar datos.
 Sesion.guardar_datos_usuarios()
+Sesion.guardar_datos_noticias()
+
 
 print("Comprobar usuarios del json", usuarios)
