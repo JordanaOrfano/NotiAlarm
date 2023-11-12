@@ -200,13 +200,22 @@ class VentanaInvitado:
         sideFrame1.place(relx=0, rely=0, relheight=1)
         sideFrame1.pack_propagate(False)
 
-        volver = ctk.CTkButton(master=sideFrame1, height=BTN_ALTURA, text="Volver", command=self.volver)
-        volver.pack(pady=30, padx=20, fill="x")
+        cambiarAparienciaLabel = ctk.CTkLabel(master=sideFrame1, text="Cerrar sesión", font=("",16,"bold"))
+        cambiarAparienciaLabel.pack(pady=(30,0), padx=20, fill="x")
+        
+        volver = ctk.CTkButton(master=sideFrame1, text="<  Volver", command=self.volver)
+        volver.pack(pady=10, padx=20, fill="x")
+        
+        sideFrame1Titulo = ctk.CTkLabel(master=sideFrame1, text="Información", justify="left", anchor="w", font=("",16,"bold"))
+        sideFrame1Titulo.pack(pady=(170,10), padx=66, fill="x")
+        
+        numEmergencia = ctk.CTkLabel(master=sideFrame1, text="911 | Policía\n100 | Bomberos\n107 | Ambulancia", justify="left", anchor="w", wraplength=205, font=("",13,"bold"))
+        numEmergencia.pack(pady=0, padx=66, fill="x")
         
         cambiarAparienciaBtn = ctk.CTkOptionMenu(master=sideFrame1, values=["Dark", "Light"], command=self.cambiarApariencia)
         cambiarAparienciaBtn.pack(pady=(10,30), padx=20, fill="x", side="bottom")
         
-        cambiarAparienciaLabel = ctk.CTkLabel(master=sideFrame1, text="Cambiar apariencia", font=("",14,"bold"))
+        cambiarAparienciaLabel = ctk.CTkLabel(master=sideFrame1, text="Cambiar apariencia", font=("",16,"bold"))
         cambiarAparienciaLabel.pack(pady=0, padx=20, fill="x", side="bottom")
         
         # side frame der
@@ -214,8 +223,26 @@ class VentanaInvitado:
         sideFrame2.place(relx=0.782, rely=0, relheight=1)
         sideFrame2.pack_propagate(False)
         
-        sideFrame2Titulo = ctk.CTkLabel(master=sideFrame2, text="Eventos locales", font=("",14,"bold"))
-        sideFrame2Titulo.pack(pady=30, padx=20, fill="x")
+        sideFrame2Titulo = ctk.CTkLabel(master=sideFrame2, text="Eventos locales", font=("",16,"bold"))
+        sideFrame2Titulo.pack(pady=(30,20), padx=20, fill="x")
+        
+        sideFrame2Eventos = ctk.CTkScrollableFrame(master=sideFrame2, fg_color="transparent", scrollbar_button_color=("#dbdbdb","#2b2b2b"))
+        sideFrame2Eventos.pack(pady=(0,20), fill="both", expand=True)
+        
+        titulo1 = "Titulo corto"
+        titulo2 = "Titulo largo lorem ipsum dolor"
+        ubicacion = "Ubicacion"
+        fecha = "10/10/10 10:10"
+        
+        self.mostrar_evento(sideFrame2Eventos, titulo1, ubicacion, fecha)
+        self.mostrar_evento(sideFrame2Eventos, titulo2, ubicacion, fecha)
+        self.mostrar_evento(sideFrame2Eventos, titulo1, ubicacion, fecha)
+        self.mostrar_evento(sideFrame2Eventos, titulo1, ubicacion, fecha)
+        self.mostrar_evento(sideFrame2Eventos, titulo2, ubicacion, fecha)
+        self.mostrar_evento(sideFrame2Eventos, titulo2, ubicacion, fecha)
+        self.mostrar_evento(sideFrame2Eventos, titulo1, ubicacion, fecha)
+        self.mostrar_evento(sideFrame2Eventos, titulo1, ubicacion, fecha)
+        self.mostrar_evento(sideFrame2Eventos, titulo2, ubicacion, fecha)
         
         # -------------------- publicar -------------------
         titulo = ctk.CTkLabel(master=frame, text="(icono) NotiAlarm", justify="left", anchor="w", font=(TITULOS_FUENTE))
@@ -405,6 +432,11 @@ class VentanaInvitado:
 
         noticiaEditar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Editar")
         noticiaEditar.pack(pady=0, padx=1, side="right")
+    
+    
+    def mostrar_evento(self, frame, titulo, ubicacion, fecha):
+        eventoTitulo = ctk.CTkLabel(master=frame, text=f"{titulo} | {ubicacion}\n{fecha}", justify="left", anchor="w", wraplength=180, font=("",13,"bold"))
+        eventoTitulo.pack(pady=10, padx=20, fill="x")
     
     
     def volver(self):
