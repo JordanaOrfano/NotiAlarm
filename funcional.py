@@ -13,6 +13,7 @@ TAMANO_VENTANA = "1100x680"
 BTN_ALTURA = 36
 BTN_ANCHO = 290
 TITULOS_FUENTE = "Roboto", 32
+ACCENT_COLOR = ("#a6a6a6","#1e1e1e")
 
 class VentanaOpciones:
     def __init__(self):
@@ -78,7 +79,7 @@ class VentanaRegistro: # crea la ventana registro
         registrar = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Registrarse", command = self.registro_evento)
         registrar.place(relx=0.5, rely=0.61, anchor=tk.CENTER)
 
-        volver = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Volver", fg_color="transparent", hover=False, command=self.abrir_ventana_opciones)
+        volver = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Volver", fg_color="transparent", text_color=("#1a1a1a","#ffffff"), hover=False, command=self.abrir_ventana_opciones)
         volver.place(relx=0.5, rely=0.68, anchor=tk.CENTER)
 
         self.root.mainloop()
@@ -155,7 +156,7 @@ class VentanaLogin: # crea la ventana login
         login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión", command = self.login_evento)
         login.place(relx=0.5, rely=0.54, anchor=tk.CENTER)
         
-        volver = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Volver", fg_color="transparent", hover=False, command=self.volver)
+        volver = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Volver", fg_color="transparent", text_color=("#1a1a1a","#ffffff"), hover=False, command=self.volver)
         volver.place(relx=0.5, rely=0.61, anchor=tk.CENTER)
         
         self.root.mainloop()
@@ -195,18 +196,26 @@ class VentanaInvitado:
         
         # ------------------- side frames -------------------
         # side frame izq
-        sideFrame1 = ctk.CTkFrame(master=self.root, width=230)
+        sideFrame1 = ctk.CTkFrame(master=self.root, width=240)
         sideFrame1.place(relx=0, rely=0, relheight=1)
+        sideFrame1.pack_propagate(False)
+
+        volver = ctk.CTkButton(master=sideFrame1, height=BTN_ALTURA, text="Volver", command=self.volver)
+        volver.pack(pady=30, padx=20, fill="x")
         
-        volver = ctk.CTkButton(master=sideFrame1, height=BTN_ALTURA, width=210, text="Volver", command=self.volver)
-        volver.pack(pady=20, padx=10)
+        cambiarAparienciaBtn = ctk.CTkOptionMenu(master=sideFrame1, values=["Dark", "Light"], command=self.cambiarApariencia)
+        cambiarAparienciaBtn.pack(pady=(10,30), padx=20, fill="x", side="bottom")
+        
+        cambiarAparienciaLabel = ctk.CTkLabel(master=sideFrame1, text="Cambiar apariencia", font=("",14,"bold"))
+        cambiarAparienciaLabel.pack(pady=0, padx=20, fill="x", side="bottom")
         
         # side frame der
-        sideFrame2 = ctk.CTkFrame(master=self.root, width=230)
-        sideFrame2.place(relx=0.791, rely=0, relheight=1)
+        sideFrame2 = ctk.CTkFrame(master=self.root, width=240)
+        sideFrame2.place(relx=0.782, rely=0, relheight=1)
+        sideFrame2.pack_propagate(False)
         
-        titulo = ctk.CTkLabel(master=sideFrame2, text="Textito", justify="left", anchor="w", font=("",14,"bold"))
-        titulo.pack(pady=20, padx=10, fill="x")
+        sideFrame2Titulo = ctk.CTkLabel(master=sideFrame2, text="Eventos locales", font=("",14,"bold"))
+        sideFrame2Titulo.pack(pady=30, padx=20, fill="x")
         
         # -------------------- publicar -------------------
         titulo = ctk.CTkLabel(master=frame, text="(icono) NotiAlarm", justify="left", anchor="w", font=(TITULOS_FUENTE))
@@ -215,7 +224,7 @@ class VentanaInvitado:
         crearFrame = ctk.CTkFrame(master=frame)
         crearFrame.pack(pady=(0,10), padx=20, fill="x")
         
-        crearLabel = ctk.CTkLabel(master=crearFrame, wraplength=520, height=40, font=("",14,"bold"), fg_color="#1e1e1e", corner_radius=6, text="Crear publicación")
+        crearLabel = ctk.CTkLabel(master=crearFrame, wraplength=520, height=40, font=("",14,"bold"), fg_color=ACCENT_COLOR, corner_radius=6, text="Crear publicación")
         crearLabel.pack(pady=0, padx=0, fill="x")
         
         crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicarNoticia)
@@ -250,6 +259,10 @@ class VentanaInvitado:
         
         self.root.mainloop()
 
+    
+    def cambiarApariencia(self, new_appearance_mode: str):
+        ctk.set_appearance_mode(new_appearance_mode)
+        
 
     def publicarNoticia(self): #FALTA hacer que se obtenga el nombre del que publica
         publicarVentana = ctk.CTkToplevel(master=self.root)
@@ -372,17 +385,16 @@ class VentanaInvitado:
     
     
     def mostrar_publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creacion de publicacion
-        color = "#1e1e1e"
-        noticiaFrame = ctk.CTkFrame(master=frame, fg_color="#262626")
+        noticiaFrame = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#262626"))
         noticiaFrame.pack(pady=10, padx=20, fill="x")
         
-        noticiaTitulo = ctk.CTkLabel(master=noticiaFrame, wraplength=520, height=40, corner_radius=6, font=("",14,"bold"), fg_color=color, text=titulo)
+        noticiaTitulo = ctk.CTkLabel(master=noticiaFrame, fg_color=ACCENT_COLOR, wraplength=520, height=40, corner_radius=6, font=("",14,"bold"), text=titulo)
         noticiaTitulo.pack(pady=0, padx=0, fill="x")
         
-        noticiaTexto = ctk.CTkLabel(master=noticiaFrame, justify="left", anchor="w", wraplength=485, text=f"Ubicación: {ubicacion}\n\nCategoría: {categoria}\n\n{texto}")
+        noticiaTexto = ctk.CTkLabel(master=noticiaFrame, justify="left", anchor="w", wraplength=482, text=f"Ubicación: {ubicacion}\n\nCategoría: {categoria}\n\n{texto}")
         noticiaTexto.pack(pady=14, padx=20, fill="x", expand=True)
         
-        noticiaInfoFrame = ctk.CTkFrame(master=noticiaFrame, fg_color=color, corner_radius=6)
+        noticiaInfoFrame = ctk.CTkFrame(master=noticiaFrame, fg_color=ACCENT_COLOR, corner_radius=6)
         noticiaInfoFrame.pack(pady=0, padx=0, fill="x")
 
         noticiaInfo = ctk.CTkLabel(master=noticiaInfoFrame, justify="left", anchor="w", corner_radius=6, wraplength=520, text=f"{usuario}\n{fecha}")
