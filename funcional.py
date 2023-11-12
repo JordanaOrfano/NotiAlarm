@@ -193,9 +193,20 @@ class VentanaInvitado:
         frame = ctk.CTkScrollableFrame(master=self.root)
         frame.pack(pady=0, padx=260, fill="both", expand=True)
         
-        # frames de los costados
-        # frame2 = ctk.CTkFrame(master=self.root, width=230)
-        # frame2.place(relx=0.79, rely=0, relheight=1)
+        # ------------------- side frames -------------------
+        # side frame izq
+        sideFrame1 = ctk.CTkFrame(master=self.root, width=230)
+        sideFrame1.place(relx=0, rely=0, relheight=1)
+        
+        volver = ctk.CTkButton(master=sideFrame1, height=BTN_ALTURA, width=210, text="Volver", command=self.volver)
+        volver.pack(pady=20, padx=10)
+        
+        # side frame der
+        sideFrame2 = ctk.CTkFrame(master=self.root, width=230)
+        sideFrame2.place(relx=0.791, rely=0, relheight=1)
+        
+        titulo = ctk.CTkLabel(master=sideFrame2, text="Textito", justify="left", anchor="w", font=("",14,"bold"))
+        titulo.pack(pady=20, padx=10, fill="x")
         
         # -------------------- publicar -------------------
         titulo = ctk.CTkLabel(master=frame, text="(icono) NotiAlarm", justify="left", anchor="w", font=(TITULOS_FUENTE))
@@ -382,6 +393,11 @@ class VentanaInvitado:
 
         noticiaEditar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Editar")
         noticiaEditar.pack(pady=0, padx=1, side="right")
+    
+    
+    def volver(self):
+        self.root.destroy()
+        ventana_opciones = VentanaOpciones()
 
 
 class VentanaNoticias:
