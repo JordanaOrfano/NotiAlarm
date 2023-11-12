@@ -204,13 +204,10 @@ class VentanaInvitado:
         crearFrame = ctk.CTkFrame(master=frame)
         crearFrame.pack(pady=(0,10), padx=20, fill="x")
         
-        #crearLabel = ctk.CTkLabel(master=crearFrame, wraplength=520, height=40, font=("",14,"bold"), fg_color="#1e1e1e", corner_radius=6, text="Crear publicación")
-        #crearLabel.pack(pady=0, padx=0, fill="x")
-        crearPublicar = ctk.CTkButton(master=crearFrame, height= BTN_ALTURA, width=300, text = "Crear Publicacion", command=self.publicarNoticia) #Boton para publicar noticia.
-        crearPublicar.pack(pady=0, padx=0, fill="x")
-
+        crearLabel = ctk.CTkLabel(master=crearFrame, wraplength=520, height=40, font=("",14,"bold"), fg_color="#1e1e1e", corner_radius=6, text="Crear publicación")
+        crearLabel.pack(pady=0, padx=0, fill="x")
         
-        crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar alarma", command=self.publicarAlarma)
+        crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicarNoticia)
         crearAlarmaBtn.pack(pady=0, padx=0, fill="x", side="left")
         
         noticiaEventoBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar evento", command=self.publicarEvento)
@@ -239,10 +236,9 @@ class VentanaInvitado:
         # usuario = "Fulanito123"
         # fecha = "10/10/2023 22:10"
         
-        # self.publicacion(frame, titulo, ubicacion, categoria, texto, usuario, fecha) # pruebas
-        # self.publicacion(frame, titulo, ubicacion, categoria, texto, usuario, fecha)
         
         self.root.mainloop()
+
 
     def publicarNoticia(self): #FALTA hacer que se obtenga el nombre del que publica
         publicarVentana = ctk.CTkToplevel(master=self.root)
@@ -280,6 +276,7 @@ class VentanaInvitado:
         self.switch_var = ctk.StringVar(value="off")
         self.switch = ctk.CTkSwitch(master=publicarFrame, text="Alerta", variable=self.switch_var, onvalue="on", offvalue="off")
         self.switch.pack(pady=2, padx= 20, fill="x")
+
 
     #Al tocar el boton de publicar debera guardar la noticia en el json.
     def publicar_evento(self, publicarFrame):
@@ -329,42 +326,6 @@ class VentanaInvitado:
             self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ningun espacio puede estar vacio.")
             self.info_evento.pack() 
 
-            
-            
-        
-
-    def publicarAlarma(self):
-        publicarVentana = ctk.CTkToplevel(master=self.root)
-        publicarVentana.title("NotiAlarm")
-        publicarVentana.geometry("650x440")
-        publicarVentana.resizable(False, False)
-        
-        currentPath = os.path.dirname(os.path.realpath(__file__))
-        imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
-        imagenLabel = ctk.CTkLabel(publicarVentana, image=imagenFondo, text="")
-        imagenLabel.place(relx=0, rely=0)
-        
-        publicarFrame = ctk.CTkFrame(master=publicarVentana)
-        publicarFrame.pack(pady=0, padx=90, fill="both", expand=True)
-        
-        publicarLabel = ctk.CTkLabel(master=publicarFrame, height=40,font=('Roboto', 24), text="Crear publicación | Alarma")
-        publicarLabel.pack(pady=(20,15), padx=20, fill="x")
-        
-        publicarTitulo = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Título")
-        publicarTitulo.pack(pady=5, padx=20, fill="x")
-        
-        publicarUbicacion = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Ubicación")
-        publicarUbicacion.pack(pady=5, padx=20, fill="x")
-        
-        publicarTextbox = ctk.CTkTextbox(master=publicarFrame, height=140)
-        publicarTextbox.pack(pady=5, padx=20, fill="x")
-
-        categoria = ctk.CTkOptionMenu(master=publicarFrame, values=["Categoría", "robo", "option 2"])
-        categoria.pack(pady=5, padx=20, fill="x")
-        
-        publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar")
-        publicarBoton.pack(pady=5, padx=20, fill="x")
-        
     
     def publicarEvento(self):
         publicarVentana = ctk.CTkToplevel(master=self.root)
