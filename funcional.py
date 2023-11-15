@@ -76,7 +76,7 @@ class VentanaRegistro: # crea la ventana registro
         self.contrasena = ctk.CTkEntry(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, show="*", placeholder_text="Contraseña")
         self.contrasena.place(relx=0.5, rely=0.54, anchor=tk.CENTER)
 
-        registrar = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Registrarse", command = self.registro_evento)
+        registrar = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Registrarse", command = lambda: self.registro_evento(frame))
         registrar.place(relx=0.5, rely=0.61, anchor=tk.CENTER)
 
         volver = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Volver", fg_color="transparent", text_color=("#1a1a1a","#ffffff"), hover=False, command=self.abrir_ventana_opciones)
@@ -94,7 +94,7 @@ class VentanaRegistro: # crea la ventana registro
                 return False
         return True
     
-    def registro_evento(self): #Al darle click a registrar se iniciara este metodo, se crea la variable alerta para luego eliminar labels.
+    def registro_evento(self, frame): #Al darle click a registrar se iniciara este metodo, se crea la variable alerta para luego eliminar labels.
         
         if self.nombre.get() not in usuarios: #Comprueba que el nombre no exista previamente, si no existe ejecuta.
             if len(self.correo.get().strip()) != 0 and len(self.nombre.get().strip()) != 0 and len(self.contrasena.get().strip()) != 0: #chequea que ningun campo este vacio. #falta comprobar gmail
@@ -105,36 +105,62 @@ class VentanaRegistro: # crea la ventana registro
                                 if any(char in "!@#$%∧&*(._-)" for char in self.contrasena.get()): #Comprueba si la contraseña tiene digitos especiales
                                     usuarios[self.nombre.get()] = {"contrasena": self.contrasena.get(), "rol": "usuario", "correo": self.correo.get()} #De forma predeterminada cualquier usuario nuevo tendrá el rol "usuario", donde no tiene grandes permisos.
                                     Sesion.guardar_datos_usuarios()
-                                    VentanaRegistro.borrar_label(self.root)
-                                    ctk.CTkLabel(master = self.root, text = "Usuario creado con éxito, espere unos instantes...").place(relx = 0.37, rely = 0.72) 
+                                    if hasattr(self, "mensaje"):
+                                        self.mensaje.destroy()
+
+                                    self.mensaje = ctk.CTkLabel(master = frame, text = "Usuario creado con éxito, espere unos instantes...")
+                                    self.mensaje.place(relx = 0.2, rely = 0.72) 
                                     #FALTA, aca deberia volver al login y iniciar sesion.
                                 else:
-                                    VentanaRegistro.borrar_label(self.root)
-                                    ctk.CTkLabel(master = self.root, text = "La contraseña debe tener al menos un caracter especial '!@#$%∧&*(._-)'. ").place(relx = 0.31, rely = 0.72) 
+                                    
+                                    if hasattr(self, "mensaje"):
+                                        self.mensaje.destroy()
+                            
+                                    self.mensaje = ctk.CTkLabel(master = frame, text = "La contraseña debe tener al menos un caracter especial '!@#$%∧&*(._-)'. ")
+                                    self.mensaje.place(relx = 0.11, rely = 0.72) 
                             else:
-                                VentanaRegistro.borrar_label(self.root) 
-                                ctk.CTkLabel(master = self.root, text = "La contraseña debe tener al menos un numero. ").place(relx = 0.385, rely = 0.72) 
+                                
+                                if hasattr(self, "mensaje"):
+                                    self.mensaje.destroy()
+
+                                self.mensaje = ctk.CTkLabel(master = frame, text = "La contraseña debe tener al menos un numero. ")
+                                self.mensaje.place(relx = 0.23, rely = 0.72) 
                         else:
-                            VentanaRegistro.borrar_label(self.root)
-                            ctk.CTkLabel(master = self.root, text = "La contraseña debe tener entre 8 y 20 caracteres.. ").place(relx = 0.385, rely = 0.72) 
+                            
+                            if hasattr(self, "mensaje"):
+                                self.mensaje.destroy()
+
+                            self.mensaje = ctk.CTkLabel(master = frame, text = "La contraseña debe tener entre 8 y 20 caracteres. ")
+                            self.mensaje.place(relx = 0.22, rely = 0.72) 
                     else:
-                        VentanaRegistro.borrar_label(self.root)
-                        ctk.CTkLabel(master = self.root, text = "El correo electronico ya esta asociado a una cuenta.").place(relx = 0.37, rely = 0.72) 
+                        
+                        if hasattr(self, "mensaje"):
+                            self.mensaje.destroy()
+
+                        self.mensaje = ctk.CTkLabel(master = frame, text = "El correo electronico ya esta asociado a una cuenta.")
+                        self.mensaje.place(relx = 0.22, rely = 0.72) 
                 else:
-                    VentanaRegistro.borrar_label(self.root)
-                    ctk.CTkLabel(master = self.root, text = "Debes ingresar un correo electronico valido.").place(relx = 0.39, rely = 0.72) 
+                    
+                    if hasattr(self, "mensaje"):
+                        self.mensaje.destroy()
+
+                    self.mensaje = ctk.CTkLabel(master = frame, text = "Debes ingresar un correo electronico valido.")
+                    self.mensaje.place(relx = 0.25, rely = 0.72) 
             else:
-                VentanaRegistro.borrar_label(self.root) 
-                ctk.CTkLabel(master = self.root, text = "Ningun campo deberia estar vacío.").place(relx = 0.413, rely = 0.72)
+                
+                if hasattr(self, "mensaje"):
+                    self.mensaje.destroy()
+
+                self.mensaje = ctk.CTkLabel(master = frame, text = "Ningun campo deberia estar vacío.")
+                self.mensaje.place(relx = 0.30, rely = 0.72)
         else:
-            VentanaRegistro.borrar_label(self.root)
-            ctk.CTkLabel(master = self.root, text = "El nombre de usuario ya existe. ").place(relx = 0.413, rely = 0.72) 
+            
+            if hasattr(self, "mensaje"):
+                self.mensaje.destroy()
 
-    def borrar_label(root): #Funcion para tapar un anterior label ya creado.
-        borrar = ctk.CTkLabel(master = root, text = "           ", width= 412)
-        borrar.place(relx = 0.31, rely = 0.72) 
+            self.mensaje = ctk.CTkLabel(master = frame, text = "El nombre de usuario ya existe. ")
+            self.mensaje.place(relx = 0.32, rely = 0.72) 
 
-    
 class VentanaLogin: # crea la ventana login
     global usuarios
     def __init__(self):
@@ -153,7 +179,7 @@ class VentanaLogin: # crea la ventana login
         self.contrasena = ctk.CTkEntry(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, placeholder_text="Contraseña", show="*")
         self.contrasena.place(relx = 0.5, rely = 0.47, anchor = tk.CENTER)
         
-        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión", command = self.login_evento)
+        login = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Iniciar sesión", command = lambda: self.login_evento(frame))
         login.place(relx=0.5, rely=0.54, anchor=tk.CENTER)
         
         volver = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Volver", fg_color="transparent", text_color=("#1a1a1a","#ffffff"), hover=False, command=self.volver)
@@ -165,7 +191,7 @@ class VentanaLogin: # crea la ventana login
         self.root.destroy()
         ventana_opciones = VentanaOpciones()
 
-    def login_evento(self): #Al tocar el boton login.
+    def login_evento(self, frame): #Al tocar el boton login.
         verificar = False #Por ahora, la contraseña no coincide; Valor predeterminado.
 
         for usuario in usuarios: #Verifica si algun correo en el diccionario usuarios coincide con el ingresado.
@@ -174,16 +200,16 @@ class VentanaLogin: # crea la ventana login
                     verificar = True #El correo y la contraseña coinciden.
                 
         if verificar:
-            VentanaLogin.borrar_label(self.root)
-            ctk.CTkLabel(master = self.root, text = "Iniciando Sesión...").place(relx = 0.45, rely = 0.65) #FALTA poner pantallas de admin y de usuario.
+            if hasattr(self, "mensaje"):
+                self.mensaje.destroy()
+            self.mensaje = ctk.CTkLabel(master = frame, text = "Iniciando Sesión...")
+            self.mensaje.place(relx = 0.39, rely = 0.65) #FALTA poner pantallas de admin y de usuario.
 
         else:
-            VentanaLogin.borrar_label(self.root)
-            ctk.CTkLabel(master = self.root, text = "Correo o contraseña invalidos.").place(relx = 0.42, rely = 0.65) 
-
-    def borrar_label(root): #Funcion para tapar un anterior label ya creado.
-        borrar = ctk.CTkLabel(master = root, text = "           ", width = 265)
-        borrar.place(relx = 0.38, rely = 0.65) 
+            if hasattr(self, "mensaje"):
+                self.mensaje.destroy()
+            self.mensaje = ctk.CTkLabel(master = frame, text = "Correo o contraseña invalidos.")
+            self.mensaje.place(relx = 0.32, rely = 0.65) 
 
 
 class VentanaInvitado:
