@@ -200,18 +200,27 @@ class VentanaInvitado:
         sideFrame1.place(relx=0, rely=0, relheight=1)
         sideFrame1.pack_propagate(False)
 
-        cambiarAparienciaLabel = ctk.CTkLabel(master=sideFrame1, text="Cerrar sesión", font=("",16,"bold"))
-        cambiarAparienciaLabel.pack(pady=(30,0), padx=20, fill="x")
+        cerrarSesionLabel = ctk.CTkLabel(master=sideFrame1, text="Cerrar sesión", font=("",16,"bold"))
+        cerrarSesionLabel.pack(pady=(30,0), padx=20, fill="x")
         
         volver = ctk.CTkButton(master=sideFrame1, text="<  Volver", command=self.volver)
         volver.pack(pady=10, padx=20, fill="x")
-        
+
         sideFrame1Titulo = ctk.CTkLabel(master=sideFrame1, text="Información", justify="left", anchor="w", font=("",16,"bold"))
-        sideFrame1Titulo.pack(pady=(170,10), padx=66, fill="x")
+        sideFrame1Titulo.pack(pady=(30,10), padx=66, fill="x")
         
         numEmergencia = ctk.CTkLabel(master=sideFrame1, text="911 | Policía\n100 | Bomberos\n107 | Ambulancia", justify="left", anchor="w", wraplength=205, font=("",13,"bold"))
         numEmergencia.pack(pady=0, padx=66, fill="x")
         
+        alarmaLabel = ctk.CTkLabel(master=sideFrame1, text="Iniciar Alarma", font=("",16,"bold"))
+        alarmaLabel.pack(pady=(30,0), padx=20, fill="x")
+
+        seleccionAlarma = ctk.CTkOptionMenu(master=sideFrame1, values=["Elija una opción", "Robo", "Emergencia Medica", "Incendio"])
+        seleccionAlarma.pack(pady=(10,30), padx=20, fill="x")
+
+        activarAlarmaBtn = ctk.CTkButton(master=sideFrame1, text="Enviar Alarma", command=lambda: self.comprobarAlarma(seleccionAlarma.get(), sideFrame1))
+        activarAlarmaBtn.pack(pady=10, padx=20, fill="x")
+
         cambiarAparienciaBtn = ctk.CTkOptionMenu(master=sideFrame1, values=["Dark", "Light"], command=self.cambiarApariencia)
         cambiarAparienciaBtn.pack(pady=(10,30), padx=20, fill="x", side="bottom")
         
@@ -285,6 +294,52 @@ class VentanaInvitado:
         
         
         self.root.mainloop()
+
+    def comprobarAlarma(self, opcion, sideFrame1):
+        print(opcion)
+        if opcion=="Elija una opción":
+            if hasattr(self, "errorOpcion"):
+                self.errorOpcion.destroy()
+            usuarios["alerta"] = {"valor": True}
+            self.errorOpcion = ctk.CTkLabel(master = sideFrame1, text = "Debe elejir una opcion")
+            self.errorOpcion.pack(fill="x",pady=0)
+            #.place(relx=0.2, rely=0.1, fill="x") 
+            #errorOpcion = ctk.CTkLabel(master=sideFrame1, text="Debe elejir una opción", font=("",16,"bold")).pack()
+
+    def activar_alarma(self):
+
+        # Iterar sobre cada usuario y enviar un mensaje
+        for usuario in usuarios:
+            if usuario == "alarma":
+                if usuario["valor"]:
+                    #Muestra mensaje
+
+                    #Cambia el valor
+                    usuario["valor"] = False
+                    pass
+                    #si es true lanza mensaje
+                else:
+                    pass
+                    #no lanza mensaje
+        
+            mensaje = f"¡ALERTA! La alarma ha sido activada. Por favor, toma las precauciones necesarias."
+
+            print(f"Mensaje enviado a {usuarios[usuario]}: {mensaje}")
+
+            #Mostrar el mensaje en la interfaz de usuario del remitente
+        self.mostrar_mensaje(usuarios[usuario], mensaje)
+    
+        #self.root=VentanaAlerta()
+
+
+    def mostrar_mensaje(self, usuario, mensaje):
+        # Crear una nueva ventana para mostrar el mensaje
+        ventana_mensaje = ctk.CTkToplevel()
+        ventana_mensaje.title(f"Mensaje para {usuario}")
+
+        # Etiqueta con el mensaje
+        etiqueta_mensaje = ctk.CTkLabel(master=ventana_mensaje, text=mensaje, padx=20, pady=20)
+        etiqueta_mensaje.pack()
 
     
     def cambiarApariencia(self, new_appearance_mode: str):
