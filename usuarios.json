@@ -1,1 +1,1 @@
-{"admin": {"contrasena": "12345", "rol": "admin", "correo": "admin"}, "usuario": {"contrasena": "12345678@", "rol": "usuario", "correo": "usuario@"}, "alerta": {"valor": true}}
+{"admin": {"contrasena": "12345", "rol": "admin", "correo": "admin"}, "usuario": {"contrasena": "12345678@", "rol": "usuario", "correo": "usuario@"}, "alerta": {"valor": true, "correo": "x"}}

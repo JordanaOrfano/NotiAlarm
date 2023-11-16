@@ -2,13 +2,15 @@ import json #Para trabajar con archivos .json y guardar datos de forma permanent
 import customtkinter as ctk
 import tkinter as tk
 from PIL import Image
-from collections import OrderedDict
+from collections import OrderedDict #Trabajar con diccionarios ordenados.
 import os
+import datetime
 
 ctk.set_appearance_mode("dark") # tema oscuro
 
 usuarios = {}
 noticias = OrderedDict()
+eventos = OrderedDict()
 
 TAMANO_VENTANA = "1100x680"
 BTN_ALTURA = 36
@@ -196,7 +198,7 @@ class VentanaLogin: # crea la ventana login
         verificar = False #Por ahora, la contraseña no coincide; Valor predeterminado.
 
         for usuario in usuarios: #Verifica si algun correo en el diccionario usuarios coincide con el ingresado.
-            if str(self.correo.get().lower()).strip() == str(usuarios[usuario]['correo'].lower()).strip():
+            if self.correo.get().lower().strip() == usuarios[usuario]['correo'].lower().strip():
                 if str(self.contrasena.get()) == str(usuarios[usuario]['contrasena']): #Si encuentra un correo que coincide con el ingresado, comprueba que tambien coincida la contraseña.
                     verificar = True #El correo y la contraseña coinciden.
                     break
@@ -298,7 +300,7 @@ class VentanaInvitado:
         crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicarNoticia)
         crearAlarmaBtn.pack(pady=0, padx=0, fill="x", side="left")
         
-        noticiaEventoBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar evento", command=self.publicarEvento)
+        noticiaEventoBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar evento", command=self.Evento)
         noticiaEventoBtn.pack(pady=0, padx=0, fill="x", side="right")
        
         #Mostrar todas las noticias en el menú.
@@ -339,7 +341,7 @@ class VentanaInvitado:
         if opcion=="Elija una opción":
             if hasattr(self, "errorOpcion"):
                 self.errorOpcion.destroy()
-            usuarios["alerta"] = {"valor": True}
+            usuarios["alerta"] = {"valor": True, "correo": "x"}
             self.errorOpcion = ctk.CTkLabel(master = sideFrame1, text = "Debe elejir una opcion")
             self.errorOpcion.pack(fill="x",pady=0)
             #.place(relx=0.2, rely=0.1, fill="x") 
@@ -476,7 +478,7 @@ class VentanaInvitado:
             self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ya existe una noticia con el mismo titulo.")
             self.info_evento.pack()       
     
-    def publicarEvento(self):
+    def Evento(self):
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm")
         publicarVentana.geometry("650x440")
@@ -493,21 +495,29 @@ class VentanaInvitado:
         publicarLabel = ctk.CTkLabel(master=publicarFrame, height=40,font=('Roboto', 24), text="Crear Publicación | Evento")
         publicarLabel.pack(pady=(20,15), padx=20, fill="x")
         
-        publicarTitulo = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Título")
-        publicarTitulo.pack(pady=5, padx=20, fill="x")
+        self.publicarTitulo = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Título")
+        self.publicarTitulo.pack(pady=5, padx=20, fill="x")
         
-        publicarUbicacion = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Ubicación")
-        publicarUbicacion.pack(pady=5, padx=20, fill="x")
-        
-        publicarTextbox = ctk.CTkTextbox(master=publicarFrame, height=140)
-        publicarTextbox.pack(pady=5, padx=20, fill="x")
+        self.publicarUbicacion = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Ubicación")
+        self.publicarUbicacion.pack(pady=5, padx=20, fill="x")
 
-        categoria = ctk.CTkOptionMenu(master=publicarFrame, values=["Categoría", "option 1", "option 2"])
-        categoria.pack(pady=5, padx=20, fill="x")
+        self.publicarHora = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Hora")
+        self.publicarHora.pack(pady=5, padx=20, fill="x")
+
+        self.publicarFecha = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Fecha | Formato Dia/Mes/Año")
+        self.publicarFecha.pack(pady=5, padx=20, fill="x")
         
-        publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar")
+        self.publicarTextbox = ctk.CTkTextbox(master=publicarFrame, height=100)
+        self.publicarTextbox.pack(pady=5, padx=20, fill="x")
+        
+        publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar", command= lambda: self.evento_pulsar(publicarFrame))
         publicarBoton.pack(pady=5, padx=20, fill="x")
     
+    def evento_pulsar(self, publicarFrame):
+        #publicarLabel = ctk.CTkLabel(master=publicarFrame, height=40,font=('Roboto', 24), text="Hola, judio")
+        #publicarLabel.pack(pady=(20,15), padx=20, fill="x")
+        print("funciona")
+
     
     def mostrar_publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creacion de publicacion
         noticiaFrame = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#262626"))
