@@ -2,12 +2,13 @@ import json #Para trabajar con archivos .json y guardar datos de forma permanent
 import customtkinter as ctk
 import tkinter as tk
 from PIL import Image
+from collections import OrderedDict
 import os
 
 ctk.set_appearance_mode("dark") # tema oscuro
 
 usuarios = {}
-noticias = {}
+noticias = OrderedDict()
 
 TAMANO_VENTANA = "1100x680"
 BTN_ALTURA = 36
@@ -304,15 +305,15 @@ class VentanaInvitado:
         mostradas = 0 
         try:
             if len(noticias) != 0:
-                for categoria, noticias_titulos in noticias.items():
-                    for noticia, det in noticias_titulos.items():
-                        if noticias[categoria][noticia]["mostrar"]: 
-                            ubicacion = det["ubicacion"]
-                            texto = det["contenido"]
-                            usuario = "Desconocido, falta ESPECIFICAR."
-                            fecha = "Falta especificar." 
-                            self.mostrar_publicacion(frame, noticia, ubicacion, categoria, texto, usuario, fecha)
-                            mostradas += 1
+                for titulo, det in reversed(noticias.items()):
+                    if noticias[titulo]["mostrar"]: 
+                        ubicacion = det["ubicacion"]
+                        texto = det["contenido"]
+                        usuario = "Desconocido, falta ESPECIFICAR."
+                        fecha = "Falta especificar."
+                        categoria = noticias[titulo]["categoria"] 
+                        self.mostrar_publicacion(frame, titulo, ubicacion, categoria, texto, usuario, fecha)
+                        mostradas += 1
 
             else:
                 ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack()
@@ -419,50 +420,61 @@ class VentanaInvitado:
     #Al tocar el boton de publicar debera guardar la noticia en el json.
     def publicar_evento(self, publicarFrame):
         global noticias
-        
-        if len(self.publicarTitulo.get().strip()) != 0 and len(self.publicarUbicacion.get().strip()) != 0 and len(self.publicarTextbox.get("1.0", "end").strip()) != 0:
-            
-            if self.categoria.get().lower() != "categoria":
+        if self.publicarTitulo.get() not in noticias:
+            if len(self.publicarTitulo.get().strip()) != 0 and len(self.publicarUbicacion.get().strip()) != 0 and len(self.publicarTextbox.get("1.0", "end").strip()) != 0:
+                if len(self.publicarTitulo.get()) < 68:
+                    if len(self.publicarUbicacion.get()) <= 30:
+                        if len(self.publicarTextbox.get("1.0", "end"))  <= 600:
+                            if self.categoria.get().lower() != "categoria":
 
-                if self.categoria.get() in noticias: #Si ya existe la categoria que ingreso el usuario guardara la noticia y los datos en la misma.
-                    if hasattr(self, "info_evento"):
-                        self.info_evento.destroy()
-                        
-                    self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Noticia creada correctamente.")
-                    self.info_evento.pack()
-                    noticias[self.categoria.get()][self.publicarTitulo.get()] = {"contenido": self.publicarTextbox.get("1.0", "end"),
-                                                "autor": "desconocido FALTA especificar",
-                                                "ubicacion": self.publicarUbicacion.get(),
-                                                "mostrar": False} #Atributos de las noticias FALTA añadir nombres
-                    Sesion.guardar_datos_noticias()
+                                if hasattr(self, "info_evento"):
+                                    self.info_evento.destroy()
+                                    
+                                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Noticia creada correctamente.")
+                                self.info_evento.pack()
+                                noticias[self.publicarTitulo.get()] = {"contenido": self.publicarTextbox.get("1.0", "end"),
+                                                            "autor": "desconocido FALTA especificar",
+                                                            "ubicacion": self.publicarUbicacion.get(),
+                                                            "mostrar": False,
+                                                            "categoria": self.categoria.get()} #Atributos de las noticias FALTA añadir nombres
+                                Sesion.guardar_datos_noticias()
 
-                else: #Si no existe esa categoria en el json, creara la categoria y guardara la noticia en este con los respectivos datos.
-                    if hasattr(self, "info_evento"):
-                        self.info_evento.destroy()
+                            else:
+                                if hasattr(self, "info_evento"):
+                                    self.info_evento.destroy()
+                                
+                                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Debes seleccionar una categoria.")
+                                self.info_evento.pack()
+                        else:
+                            if hasattr(self, "info_evento"):
+                                self.info_evento.destroy()
                         
-                    self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Noticia creada correctamente.")
-                    self.info_evento.pack()
-                    noticias[self.categoria.get()] = {
-                            self.publicarTitulo.get(): {"contenido": self.publicarTextbox.get("1.0", "end"),
-                                    "autor": "desconocido",
-                                    "ubicacion": self.publicarUbicacion.get(),
-                                    "mostrar": False}}           #Atributos de las noticias.
-                    Sesion.guardar_datos_noticias()
-            
+                            self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La descripcion de la noticia debe tener menos de 500 caracteres.")
+                            self.info_evento.pack() 
+                    else:
+                        if hasattr(self, "info_evento"):
+                            self.info_evento.destroy()
+                        
+                        self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La ubicacion debe tener menos de 30 caracteres.")
+                        self.info_evento.pack() 
+                else:
+                    if hasattr(self, "info_evento"):
+                            self.info_evento.destroy()
+                        
+                    self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "El titulo debe de tener menos de 70 caracteres.")
+                    self.info_evento.pack() 
             else:
                 if hasattr(self, "info_evento"):
-                    self.info_evento.destroy()
-                
-                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Debes seleccionar una categoria.")
-                self.info_evento.pack() 
+                            self.info_evento.destroy()
 
+                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ningun espacio puede estar vacio.")
+                self.info_evento.pack()
         else:
             if hasattr(self, "info_evento"):
-                        self.info_evento.destroy()
+                self.info_evento.destroy()
 
-            self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ningun espacio puede estar vacio.")
-            self.info_evento.pack() 
-
+            self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ya existe una noticia con el mismo titulo.")
+            self.info_evento.pack()       
     
     def publicarEvento(self):
         publicarVentana = ctk.CTkToplevel(master=self.root)
