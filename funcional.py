@@ -126,42 +126,42 @@ class VentanaRegistro: # crea la ventana registro
                                 if hasattr(self, "mensaje"):
                                     self.mensaje.destroy()
 
-                                self.mensaje = ctk.CTkLabel(master = frame, text = "La contraseña debe tener al menos un numero. ")
+                                self.mensaje = ctk.CTkLabel(master = frame, text = "La contraseña debe tener al menos un número.")
                                 self.mensaje.place(relx = 0.23, rely = 0.72) 
                         else:
                             
                             if hasattr(self, "mensaje"):
                                 self.mensaje.destroy()
 
-                            self.mensaje = ctk.CTkLabel(master = frame, text = "La contraseña debe tener entre 8 y 20 caracteres. ")
+                            self.mensaje = ctk.CTkLabel(master = frame, text = "La contraseña debe tener entre 8 y 20 caracteres.")
                             self.mensaje.place(relx = 0.22, rely = 0.72) 
                     else:
                         
                         if hasattr(self, "mensaje"):
                             self.mensaje.destroy()
 
-                        self.mensaje = ctk.CTkLabel(master = frame, text = "El correo electronico ya esta asociado a una cuenta.")
+                        self.mensaje = ctk.CTkLabel(master = frame, text = "El correo electrónico ya está asociado a una cuenta.")
                         self.mensaje.place(relx = 0.22, rely = 0.72) 
                 else:
                     
                     if hasattr(self, "mensaje"):
                         self.mensaje.destroy()
 
-                    self.mensaje = ctk.CTkLabel(master = frame, text = "Debes ingresar un correo electronico valido.")
+                    self.mensaje = ctk.CTkLabel(master = frame, text = "Ingrese un correo electrónico válido.")
                     self.mensaje.place(relx = 0.25, rely = 0.72) 
             else:
                 
                 if hasattr(self, "mensaje"):
                     self.mensaje.destroy()
 
-                self.mensaje = ctk.CTkLabel(master = frame, text = "Ningun campo deberia estar vacío.")
+                self.mensaje = ctk.CTkLabel(master = frame, text = "Ningún campo debería estar vacío.")
                 self.mensaje.place(relx = 0.30, rely = 0.72)
         else:
             
             if hasattr(self, "mensaje"):
                 self.mensaje.destroy()
 
-            self.mensaje = ctk.CTkLabel(master = frame, text = "El nombre de usuario ya existe. ")
+            self.mensaje = ctk.CTkLabel(master = frame, text = "El nombre de usuario ya existe.")
             self.mensaje.place(relx = 0.32, rely = 0.72) 
 
 
@@ -220,7 +220,7 @@ class VentanaLogin: # crea la ventana login
         else:
             if hasattr(self, "mensaje"):
                 self.mensaje.destroy()
-            self.mensaje = ctk.CTkLabel(master = frame, text = "Correo o contraseña invalidos.")
+            self.mensaje = ctk.CTkLabel(master = frame, text = "Correo o contraseña inválidos.")
             self.mensaje.place(relx = 0.32, rely = 0.65) 
 
 
@@ -256,10 +256,10 @@ class VentanaNoticias:
         seleccionAlarma = ctk.CTkOptionMenu(master=sideFrame1, values=["Elija una opción", "Robo", "Emergencia Medica", "Incendio"])
         seleccionAlarma.pack(pady=(10,30), padx=20, fill="x")
 
-        activarAlarmaBtn = ctk.CTkButton(master=sideFrame1, text="Enviar Alarma", command=lambda: self.comprobarAlarma(seleccionAlarma.get(), sideFrame1))
+        activarAlarmaBtn = ctk.CTkButton(master=sideFrame1, text="Enviar Alarma", command=lambda: self.comprobar_alarma(seleccionAlarma.get(), sideFrame1))
         activarAlarmaBtn.pack(pady=10, padx=20, fill="x")
 
-        cambiarAparienciaBtn = ctk.CTkOptionMenu(master=sideFrame1, values=["Dark", "Light"], command=self.cambiarApariencia)
+        cambiarAparienciaBtn = ctk.CTkOptionMenu(master=sideFrame1, values=["Dark", "Light"], command=self.cambiar_apariencia)
         cambiarAparienciaBtn.pack(pady=(10,30), padx=20, fill="x", side="bottom")
         
         cambiarAparienciaLabel = ctk.CTkLabel(master=sideFrame1, text="Cambiar apariencia", font=("",16,"bold"))
@@ -301,7 +301,7 @@ class VentanaNoticias:
         crearLabel = ctk.CTkLabel(master=crearFrame, wraplength=520, height=40, font=("",14,"bold"), fg_color=ACCENT_COLOR, corner_radius=6, text="Crear publicación")
         crearLabel.pack(pady=0, padx=0, fill="x")
         
-        crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicarNoticia)
+        crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicar_noticia)
         crearAlarmaBtn.pack(pady=0, padx=0, fill="x", side="left")
         
         noticiaEventoBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar evento", command=self.publicarEvento)
@@ -332,19 +332,20 @@ class VentanaNoticias:
         
         self.root.mainloop()
 
-    def comprobarAlarma(self, opcion, sideFrame1):
+
+    def comprobar_alarma(self, opcion, sideFrame1):
         print(opcion)
         if opcion=="Elija una opción":
             if hasattr(self, "errorOpcion"):
                 self.errorOpcion.destroy()
             usuarios["alerta"] = {"valor": True}
-            self.errorOpcion = ctk.CTkLabel(master = sideFrame1, text = "Debe elejir una opcion")
+            self.errorOpcion = ctk.CTkLabel(master = sideFrame1, text = "Debe elegir una opción")
             self.errorOpcion.pack(fill="x",pady=0)
             #.place(relx=0.2, rely=0.1, fill="x") 
-            #errorOpcion = ctk.CTkLabel(master=sideFrame1, text="Debe elejir una opción", font=("",16,"bold")).pack()
+            #errorOpcion = ctk.CTkLabel(master=sideFrame1, text="Debe elegir una opción", font=("",16,"bold")).pack()
+
 
     def activar_alarma(self):
-
         # Iterar sobre cada usuario y enviar un mensaje
         for usuario in usuarios:
             if usuario == "alarma":
@@ -379,11 +380,11 @@ class VentanaNoticias:
         etiqueta_mensaje.pack()
 
     
-    def cambiarApariencia(self, new_appearance_mode: str):
+    def cambiar_apariencia(self, new_appearance_mode: str):
         ctk.set_appearance_mode(new_appearance_mode)
         
 
-    def publicarNoticia(self): #FALTA hacer que se obtenga el nombre del que publica
+    def publicar_noticia(self): #FALTA hacer que se obtenga el nombre del que publica
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm")
         publicarVentana.geometry("650x470")
@@ -415,6 +416,7 @@ class VentanaNoticias:
         publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar", command=lambda: self.publicar_evento(publicarFrame))
         publicarBoton.pack(pady=5, padx=20, fill="x")
 
+
     #Al tocar el boton de publicar debera guardar la noticia en el json.
     def publicar_evento(self, publicarFrame):
         global noticias
@@ -441,37 +443,37 @@ class VentanaNoticias:
                                 if hasattr(self, "info_evento"):
                                     self.info_evento.destroy()
                                 
-                                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Debes seleccionar una categoria.")
+                                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Seleccione una categoría.")
                                 self.info_evento.pack()
                         else:
                             if hasattr(self, "info_evento"):
                                 self.info_evento.destroy()
                         
-                            self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La descripcion de la noticia debe tener menos de 500 caracteres.")
+                            self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La descripción debe tener menos de 500 caracteres.")
                             self.info_evento.pack() 
                     else:
                         if hasattr(self, "info_evento"):
                             self.info_evento.destroy()
                         
-                        self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La ubicacion debe tener menos de 30 caracteres.")
+                        self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La ubicación debe tener menos de 30 caracteres.")
                         self.info_evento.pack() 
                 else:
                     if hasattr(self, "info_evento"):
                             self.info_evento.destroy()
                         
-                    self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "El titulo debe de tener menos de 70 caracteres.")
+                    self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "El título debe de tener menos de 70 caracteres.")
                     self.info_evento.pack() 
             else:
                 if hasattr(self, "info_evento"):
                             self.info_evento.destroy()
 
-                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ningun espacio puede estar vacio.")
+                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ningún espacio puede estar vacío.")
                 self.info_evento.pack()
         else:
             if hasattr(self, "info_evento"):
                 self.info_evento.destroy()
 
-            self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ya existe una noticia con el mismo titulo.")
+            self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ya existe una noticia con el mismo título.")
             self.info_evento.pack()       
     
     def publicarEvento(self):
@@ -559,7 +561,7 @@ class VentanaAdmin(VentanaNoticias):
         volver = ctk.CTkButton(master=sideFrame1, text="<  Volver", command=self.volver)
         volver.pack(pady=10, padx=20, fill="x")
 
-        cambiarAparienciaBtn = ctk.CTkOptionMenu(master=sideFrame1, values=["Dark", "Light"], command=self.cambiarApariencia)
+        cambiarAparienciaBtn = ctk.CTkOptionMenu(master=sideFrame1, values=["Dark", "Light"], command=self.cambiar_apariencia)
         cambiarAparienciaBtn.pack(pady=(10,30), padx=20, fill="x", side="bottom")
         
         cambiarAparienciaLabel = ctk.CTkLabel(master=sideFrame1, text="Cambiar apariencia", font=("",16,"bold"))
