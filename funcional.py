@@ -198,13 +198,18 @@ class VentanaLogin: # crea la ventana login
             if str(self.correo.get().lower()).strip() == str(usuarios[usuario]['correo'].lower()).strip():
                 if str(self.contrasena.get()) == str(usuarios[usuario]['contrasena']): #Si encuentra un correo que coincide con el ingresado, comprueba que tambien coincida la contraseña.
                     verificar = True #El correo y la contraseña coinciden.
-                
+                    break
         if verificar:
             if hasattr(self, "mensaje"):
                 self.mensaje.destroy()
             self.mensaje = ctk.CTkLabel(master = frame, text = "Iniciando Sesión...")
             self.mensaje.place(relx = 0.39, rely = 0.65) #FALTA poner pantallas de admin y de usuario.
 
+            if usuarios[usuario]["rol"] == "usuario":
+                pass #Tiene el rol de usuario
+            else:
+                pass #Tiene el rol de administrador
+            
         else:
             if hasattr(self, "mensaje"):
                 self.mensaje.destroy()
@@ -296,18 +301,25 @@ class VentanaInvitado:
         noticiaEventoBtn.pack(pady=0, padx=0, fill="x", side="right")
        
         #Mostrar todas las noticias en el menú.
+        mostradas = 0 
         try:
             if len(noticias) != 0:
                 for categoria, noticias_titulos in noticias.items():
-                    for noticia, det in noticias_titulos.items(): 
-                        ubicacion = det["ubicacion"]
-                        texto = det["contenido"]
-                        usuario = "Desconocido, falta ESPECIFICAR."
-                        fecha = "Falta especificar." 
-                        self.mostrar_publicacion(frame, noticia, ubicacion, categoria, texto, usuario, fecha)
-            else:
-                ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack() 
+                    for noticia, det in noticias_titulos.items():
+                        if noticias[categoria][noticia]["mostrar"]: 
+                            ubicacion = det["ubicacion"]
+                            texto = det["contenido"]
+                            usuario = "Desconocido, falta ESPECIFICAR."
+                            fecha = "Falta especificar." 
+                            self.mostrar_publicacion(frame, noticia, ubicacion, categoria, texto, usuario, fecha)
+                            mostradas += 1
 
+            else:
+                ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack()
+                mostradas += 1 
+
+            if mostradas == 0:
+                ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack() 
         except:
             ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack() 
                 
@@ -404,12 +416,6 @@ class VentanaInvitado:
         publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar", command=lambda: self.publicar_evento(publicarFrame))
         publicarBoton.pack(pady=5, padx=20, fill="x")
 
-        #Elegir entre Alarma o Noticia
-        self.switch_var = ctk.StringVar(value="off")
-        self.switch = ctk.CTkSwitch(master=publicarFrame, text="Alerta", variable=self.switch_var, onvalue="on", offvalue="off")
-        self.switch.pack(pady=2, padx= 20, fill="x")
-
-
     #Al tocar el boton de publicar debera guardar la noticia en el json.
     def publicar_evento(self, publicarFrame):
         global noticias
@@ -418,32 +424,31 @@ class VentanaInvitado:
             
             if self.categoria.get().lower() != "categoria":
 
-                if self.switch_var.get() == "on":
-                    print("es una alerta") #FALTA aca va el codigo de leo como si fuera una alerta.
-                else:
-                    if self.categoria.get() in noticias: #Si ya existe la categoria que ingreso el usuario guardara la noticia y los datos en la misma.
-                        if hasattr(self, "info_evento"):
-                            self.info_evento.destroy()
-                            
-                        self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Noticia creada correctamente.")
-                        self.info_evento.pack()
-                        noticias[self.categoria.get()][self.publicarTitulo.get()] = {"contenido": self.publicarTextbox.get("1.0", "end"),
-                                                    "autor": "desconocido FALTA especificar",
-                                                    "ubicacion": self.publicarUbicacion.get()} #Atributos de las noticias FALTA añadir nombres
-                        Sesion.guardar_datos_noticias()
+                if self.categoria.get() in noticias: #Si ya existe la categoria que ingreso el usuario guardara la noticia y los datos en la misma.
+                    if hasattr(self, "info_evento"):
+                        self.info_evento.destroy()
+                        
+                    self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Noticia creada correctamente.")
+                    self.info_evento.pack()
+                    noticias[self.categoria.get()][self.publicarTitulo.get()] = {"contenido": self.publicarTextbox.get("1.0", "end"),
+                                                "autor": "desconocido FALTA especificar",
+                                                "ubicacion": self.publicarUbicacion.get(),
+                                                "mostrar": False} #Atributos de las noticias FALTA añadir nombres
+                    Sesion.guardar_datos_noticias()
 
-                    else: #Si no existe esa categoria en el json, creara la categoria y guardara la noticia en este con los respectivos datos.
-                        if hasattr(self, "info_evento"):
-                            self.info_evento.destroy()
-                            
-                        self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Noticia creada correctamente.")
-                        self.info_evento.pack()
-                        noticias[self.categoria.get()] = {
-                                self.publicarTitulo.get(): {"contenido": self.publicarTextbox.get("1.0", "end"),
-                                        "autor": "desconocido",
-                                        "ubicacion": self.publicarUbicacion.get()}}           #Atributos de las noticias.
-                        Sesion.guardar_datos_noticias()
-                
+                else: #Si no existe esa categoria en el json, creara la categoria y guardara la noticia en este con los respectivos datos.
+                    if hasattr(self, "info_evento"):
+                        self.info_evento.destroy()
+                        
+                    self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Noticia creada correctamente.")
+                    self.info_evento.pack()
+                    noticias[self.categoria.get()] = {
+                            self.publicarTitulo.get(): {"contenido": self.publicarTextbox.get("1.0", "end"),
+                                    "autor": "desconocido",
+                                    "ubicacion": self.publicarUbicacion.get(),
+                                    "mostrar": False}}           #Atributos de las noticias.
+                    Sesion.guardar_datos_noticias()
+            
             else:
                 if hasattr(self, "info_evento"):
                     self.info_evento.destroy()
