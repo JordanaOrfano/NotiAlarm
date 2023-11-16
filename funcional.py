@@ -481,7 +481,7 @@ class VentanaNoticias:
     def Evento(self):
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm")
-        publicarVentana.geometry("650x440")
+        publicarVentana.geometry("650x290")
         publicarVentana.resizable(False, False)        
         
         currentPath = os.path.dirname(os.path.realpath(__file__))
@@ -495,20 +495,20 @@ class VentanaNoticias:
         publicarLabel = ctk.CTkLabel(master=publicarFrame, height=40,font=('Roboto', 24), text="Crear Publicación | Evento")
         publicarLabel.pack(pady=(20,15), padx=20, fill="x")
         
-        self.publicarTitulo = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Título")
-        self.publicarTitulo.pack(pady=5, padx=20, fill="x")
+        publicarTitulo = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Título")
+        publicarTitulo.pack(pady=5, padx=20, fill="x")
         
-        self.publicarUbicacion = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Ubicación")
-        self.publicarUbicacion.pack(pady=5, padx=20, fill="x")
+        publicarUbicacion = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Ubicación")
+        publicarUbicacion.pack(pady=5, padx=20, fill="x")
 
-        self.publicarHora = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Hora")
-        self.publicarHora.pack(pady=5, padx=20, fill="x")
-
-        self.publicarFecha = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Fecha | Formato Dia/Mes/Año")
-        self.publicarFecha.pack(pady=5, padx=20, fill="x")
+        fechaFrame = ctk.CTkFrame(master=publicarFrame, fg_color="transparent")
+        fechaFrame.pack(pady=0, padx=20, fill="x")
         
-        self.publicarTextbox = ctk.CTkTextbox(master=publicarFrame, height=100)
-        self.publicarTextbox.pack(pady=5, padx=20, fill="x")
+        publicarFecha = ctk.CTkEntry(master=fechaFrame, width=211, height=BTN_ALTURA, placeholder_text="Fecha (dd/mm/aa)")
+        publicarFecha.pack(pady=5, padx=0, fill="x", side="left")
+
+        publicarHora = ctk.CTkEntry(master=fechaFrame, width=211, height=BTN_ALTURA, placeholder_text="Hora (hh:mm)")
+        publicarHora.pack(pady=5, padx=0, fill="x", side="right")
         
         publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar", command= lambda: self.evento_pulsar(publicarFrame))
         publicarBoton.pack(pady=5, padx=20, fill="x")
