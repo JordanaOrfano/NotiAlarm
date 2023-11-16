@@ -53,7 +53,7 @@ class VentanaOpciones:
 
     def abrir_ventana_invitado(self):
         self.root.destroy()
-        ventana_invitado = VentanaInvitado()
+        ventana_invitado = VentanaNoticias()
 
 
 class VentanaRegistro: # crea la ventana registro
@@ -111,7 +111,9 @@ class VentanaRegistro: # crea la ventana registro
 
                                     self.mensaje = ctk.CTkLabel(master = frame, text = "Usuario creado con éxito, espere unos instantes...")
                                     self.mensaje.place(relx = 0.2, rely = 0.72) 
-                                    #FALTA, aca deberia volver al login y iniciar sesion.
+                                    
+                                    self.root.destroy()
+                                    ventana_opciones = VentanaLogin()
                                 else:
                                     
                                     if hasattr(self, "mensaje"):
@@ -162,6 +164,7 @@ class VentanaRegistro: # crea la ventana registro
             self.mensaje = ctk.CTkLabel(master = frame, text = "El nombre de usuario ya existe. ")
             self.mensaje.place(relx = 0.32, rely = 0.72) 
 
+
 class VentanaLogin: # crea la ventana login
     global usuarios
     def __init__(self):
@@ -205,11 +208,14 @@ class VentanaLogin: # crea la ventana login
                 self.mensaje.destroy()
             self.mensaje = ctk.CTkLabel(master = frame, text = "Iniciando Sesión...")
             self.mensaje.place(relx = 0.39, rely = 0.65) #FALTA poner pantallas de admin y de usuario.
+            
 
-            if usuarios[usuario]["rol"] == "usuario":
-                pass #Tiene el rol de usuario
+            if usuarios[usuario]["rol"] == "usuario": #Tiene el rol de usuario
+                self.root.destroy() # destruye la ventana actual
+                ventana_noticias = VentanaNoticias() # abre la ventana principal
             else:
-                pass #Tiene el rol de administrador
+                self.root.destroy() # destruye la ventana actual
+                ventana_admin = VentanaAdmin() #Tiene el rol de administrador
             
         else:
             if hasattr(self, "mensaje"):
@@ -218,7 +224,7 @@ class VentanaLogin: # crea la ventana login
             self.mensaje.place(relx = 0.32, rely = 0.65) 
 
 
-class VentanaInvitado:
+class VentanaNoticias:
     def __init__(self):
         self.root = ctk.CTk()
         opciones_universales(self)
@@ -227,7 +233,7 @@ class VentanaInvitado:
         frame.pack(pady=0, padx=260, fill="both", expand=True)
         
         # ------------------- side frames -------------------
-        # side frame izq
+        # side frame izquierdo
         sideFrame1 = ctk.CTkFrame(master=self.root, width=240)
         sideFrame1.place(relx=0, rely=0, relheight=1)
         sideFrame1.pack_propagate(False)
@@ -259,7 +265,7 @@ class VentanaInvitado:
         cambiarAparienciaLabel = ctk.CTkLabel(master=sideFrame1, text="Cambiar apariencia", font=("",16,"bold"))
         cambiarAparienciaLabel.pack(pady=0, padx=20, fill="x", side="bottom")
         
-        # side frame der
+        # side frame derecho
         sideFrame2 = ctk.CTkFrame(master=self.root, width=240)
         sideFrame2.place(relx=0.782, rely=0, relheight=1)
         sideFrame2.pack_propagate(False)
@@ -323,14 +329,6 @@ class VentanaInvitado:
                 ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack() 
         except:
             ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack() 
-                
-        # titulo = "Titulo de la noticia"
-        # ubicacion = "txtubicacion"
-        # categoria = "txtcategoria"
-        # texto = "Tkinter Label is a widget that is used to implement display boxes where you can place text or images. The text displayed by this widget can be changed by the developer at any time you want. It is also used to perform tasks such as to underline the part of the text and span the text across multiple lines. It is important to note that a label can use only one font at a time to display text. To use a label, you just have to specify what to display in it (this can be text, a bitmap, or an image). Python offers multiple options for developing a GUI (Graphical User Interface). Out of all the GUI methods, Tkinter is the most commonly used method. It is a standard Python interface to the Tk GUI toolkit shipped with Python. Python with Tkinter is the fastest and easiest way to create GUI applications. Creating a GUI using Tkinter is an easy task using widgets. Widgets are standard graphical user interfaces (GUI) elements, like buttons and menus."
-        # usuario = "Fulanito123"
-        # fecha = "10/10/2023 22:10"
-        
         
         self.root.mainloop()
 
@@ -542,13 +540,72 @@ class VentanaInvitado:
         ventana_opciones = VentanaOpciones()
 
 
-class VentanaNoticias:
+class VentanaAdmin(VentanaNoticias):
     def __init__(self):
-        self.root = ctk.CTk() # inicializa
+        self.root = ctk.CTk()
         opciones_universales(self)
-     
-        frame = ctk.CTkFrame(master=self.root)
-        frame.pack(pady=0, padx=300, fill="both", expand=True)
+        
+        frame = ctk.CTkScrollableFrame(master=self.root)
+        frame.pack(pady=0, padx=260, fill="both", expand=True)
+        
+        # side frame izquierdo
+        sideFrame1 = ctk.CTkFrame(master=self.root, width=240)
+        sideFrame1.place(relx=0, rely=0, relheight=1)
+        sideFrame1.pack_propagate(False)
+
+        cerrarSesionLabel = ctk.CTkLabel(master=sideFrame1, text="Cerrar sesión", font=("",16,"bold"))
+        cerrarSesionLabel.pack(pady=(30,0), padx=20, fill="x")
+        
+        volver = ctk.CTkButton(master=sideFrame1, text="<  Volver", command=self.volver)
+        volver.pack(pady=10, padx=20, fill="x")
+
+        cambiarAparienciaBtn = ctk.CTkOptionMenu(master=sideFrame1, values=["Dark", "Light"], command=self.cambiarApariencia)
+        cambiarAparienciaBtn.pack(pady=(10,30), padx=20, fill="x", side="bottom")
+        
+        cambiarAparienciaLabel = ctk.CTkLabel(master=sideFrame1, text="Cambiar apariencia", font=("",16,"bold"))
+        cambiarAparienciaLabel.pack(pady=0, padx=20, fill="x", side="bottom")
+        
+        # side frame derecho
+        sideFrame2 = ctk.CTkFrame(master=self.root, width=240)
+        sideFrame2.place(relx=0.782, rely=0, relheight=1)
+        sideFrame2.pack_propagate(False)
+        
+        # frame principal
+        titulo = ctk.CTkLabel(master=frame, text="(icono) NotiAlarm | Administrador", justify="left", anchor="w", font=(TITULOS_FUENTE))
+        titulo.pack(pady=20, padx=20, fill="x")
+        
+        administrarLabel = ctk.CTkLabel(master=frame, wraplength=520, height=40, font=("",14,"bold"), fg_color=ACCENT_COLOR, corner_radius=6, text="Administrar Publicaciones")
+        administrarLabel.pack(pady=5, padx=20, fill="x")
+        
+        self.mostrar_publicacion(frame, "titulo", "ubicacion", "categoria", "texto", "usuario", "fecha")
+        
+        self.root.mainloop()
+    
+    
+    def mostrar_publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creacion de publicacion
+        noticiaFrame = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#262626"))
+        noticiaFrame.pack(pady=10, padx=20, fill="x")
+        
+        noticiaTitulo = ctk.CTkLabel(master=noticiaFrame, fg_color=ACCENT_COLOR, wraplength=520, height=40, corner_radius=6, font=("",14,"bold"), text=titulo)
+        noticiaTitulo.pack(pady=0, padx=0, fill="x")
+        
+        noticiaTexto = ctk.CTkLabel(master=noticiaFrame, justify="left", anchor="w", wraplength=482, text=f"Ubicación: {ubicacion}\n\nCategoría: {categoria}\n\n{texto}")
+        noticiaTexto.pack(pady=14, padx=20, fill="x", expand=True)
+        
+        noticiaInfoFrame = ctk.CTkFrame(master=noticiaFrame, fg_color=ACCENT_COLOR, corner_radius=6)
+        noticiaInfoFrame.pack(pady=0, padx=0, fill="x")
+
+        noticiaInfo = ctk.CTkLabel(master=noticiaInfoFrame, justify="left", anchor="w", corner_radius=6, wraplength=520, text=f"{usuario}\n{fecha}")
+        noticiaInfo.pack(pady=0, padx=20, side="left")
+        
+        noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Borrar")
+        noticiaBorrar.pack(pady=0, padx=0, side="right")
+
+        noticiaPublicar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Publicar")
+        noticiaPublicar.pack(pady=0, padx=1, side="right")
+        
+        noticiaBanearUsuario = ctk.CTkButton(master=noticiaInfoFrame, width=100, height=40, text="Banear usuario")
+        noticiaBanearUsuario.pack(pady=0, padx=0, side="right")
 
 
 def opciones_universales(self):
