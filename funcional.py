@@ -4,7 +4,7 @@ import tkinter as tk
 from PIL import Image
 from collections import OrderedDict #Trabajar con diccionarios ordenados.
 import os
-import datetime
+from datetime import datetime, time
 
 ctk.set_appearance_mode("dark") # tema oscuro
 
@@ -166,6 +166,7 @@ class VentanaRegistro: # crea la ventana registro
             self.mensaje = ctk.CTkLabel(master = frame, text = "El nombre de usuario ya existe.")
             self.mensaje.place(relx = 0.32, rely = 0.72) 
 
+usuario_actual = "desconocido"
 
 class VentanaLogin: # crea la ventana login
     global usuarios
@@ -198,12 +199,14 @@ class VentanaLogin: # crea la ventana login
         ventana_opciones = VentanaOpciones()
 
     def login_evento(self, frame): #Al tocar el boton login.
+        global usuario_actual
         verificar = False #Por ahora, la contraseña no coincide; Valor predeterminado.
 
         for usuario in usuarios: #Verifica si algun correo en el diccionario usuarios coincide con el ingresado.
             if self.correo.get().lower().strip() == usuarios[usuario]['correo'].lower().strip():
                 if str(self.contrasena.get()) == str(usuarios[usuario]['contrasena']): #Si encuentra un correo que coincide con el ingresado, comprueba que tambien coincida la contraseña.
                     verificar = True #El correo y la contraseña coinciden.
+                    usuario_actual = usuario
                     break
         if verificar:
             if hasattr(self, "mensaje"):
@@ -278,20 +281,25 @@ class VentanaNoticias:
         sideFrame2Eventos = ctk.CTkScrollableFrame(master=sideFrame2, fg_color="transparent", scrollbar_button_color=("#dbdbdb","#2b2b2b"))
         sideFrame2Eventos.pack(pady=(0,20), fill="both", expand=True)
         
-        titulo1 = "Titulo corto"
-        titulo2 = "Titulo largo lorem ipsum dolor"
-        ubicacion = "Ubicacion"
-        fecha = "10/10/10 10:10"
-        
-        self.mostrar_evento(sideFrame2Eventos, titulo1, ubicacion, fecha)
-        self.mostrar_evento(sideFrame2Eventos, titulo2, ubicacion, fecha)
-        self.mostrar_evento(sideFrame2Eventos, titulo1, ubicacion, fecha)
-        self.mostrar_evento(sideFrame2Eventos, titulo1, ubicacion, fecha)
-        self.mostrar_evento(sideFrame2Eventos, titulo2, ubicacion, fecha)
-        self.mostrar_evento(sideFrame2Eventos, titulo2, ubicacion, fecha)
-        self.mostrar_evento(sideFrame2Eventos, titulo1, ubicacion, fecha)
-        self.mostrar_evento(sideFrame2Eventos, titulo1, ubicacion, fecha)
-        self.mostrar_evento(sideFrame2Eventos, titulo2, ubicacion, fecha)
+        #Mostrar todos los eventos en el menú.
+        try:
+            mostradas = 0
+            if len(eventos) != 0:
+                for titulo, det in reversed(eventos.items()):
+                    if eventos[titulo]["mostrar"]: 
+                        ubicacion = det["ubicacion"]
+                        fecha = det["fecha"]
+                        hora = det["hora"]
+                        autor = det["autor"]
+                        self.mostrar_evento(sideFrame2Eventos, titulo, ubicacion, fecha, hora, autor)
+                        mostradas += 1
+            else:
+                ctk.CTkLabel(master = sideFrame2Eventos, text = "No hay eventos para mostrar.",height=400, font=ctk.CTkFont(size=14)).pack()
+                mostradas += 1 
+            if mostradas == 0:
+                ctk.CTkLabel(master = sideFrame2Eventos, text = "No hay eventos para mostrar.",height=400, font=ctk.CTkFont(size=14)).pack() 
+        except:
+            ctk.CTkLabel(master = sideFrame2Eventos, text = "No hay eventos para mostrar.",height=400, font=ctk.CTkFont(size=14)).pack() 
         
         # -------------------- publicar -------------------
         titulo = ctk.CTkLabel(master=frame, text="(icono) NotiAlarm", justify="left", anchor="w", font=(TITULOS_FUENTE))
@@ -310,15 +318,15 @@ class VentanaNoticias:
         noticiaEventoBtn.pack(pady=0, padx=0, fill="x", side="right")
        
         #Mostrar todas las noticias en el menú.
-        mostradas = 0 
         try:
+            mostradas = 0 
             if len(noticias) != 0:
                 for titulo, det in reversed(noticias.items()):
                     if noticias[titulo]["mostrar"]: 
                         ubicacion = det["ubicacion"]
                         texto = det["contenido"]
-                        usuario = "Desconocido, falta ESPECIFICAR."
-                        fecha = "Falta especificar."
+                        usuario = det["autor"]
+                        fecha = det["fecha"]
                         categoria = noticias[titulo]["categoria"] 
                         self.mostrar_publicacion(frame, titulo, ubicacion, categoria, texto, usuario, fecha)
                         mostradas += 1
@@ -422,6 +430,7 @@ class VentanaNoticias:
     #Al tocar el boton de publicar debera guardar la noticia en el json.
     def publicar_evento(self, publicarFrame):
         global noticias
+        global usuarios_actual
         if self.publicarTitulo.get() not in noticias:
             if len(self.publicarTitulo.get().strip()) != 0 and len(self.publicarUbicacion.get().strip()) != 0 and len(self.publicarTextbox.get("1.0", "end").strip()) != 0:
                 if len(self.publicarTitulo.get()) < 68:
@@ -434,11 +443,13 @@ class VentanaNoticias:
                                     
                                 self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Noticia creada correctamente.")
                                 self.info_evento.pack()
+                                fecha_actual = datetime.now().strftime('%d/%m/%Y %H:%M')
                                 noticias[self.publicarTitulo.get()] = {"contenido": self.publicarTextbox.get("1.0", "end"),
-                                                            "autor": "desconocido FALTA especificar",
+                                                            "autor": usuario_actual,
                                                             "ubicacion": self.publicarUbicacion.get(),
                                                             "mostrar": False,
-                                                            "categoria": self.categoria.get()} #Atributos de las noticias FALTA añadir nombres
+                                                            "categoria": self.categoria.get(),
+                                                            "fecha": fecha_actual} #Atributos de las noticias FALTA añadir nombres
                                 Sesion.guardar_datos_noticias()
 
                             else:
@@ -495,30 +506,105 @@ class VentanaNoticias:
         publicarLabel = ctk.CTkLabel(master=publicarFrame, height=40,font=('Roboto', 24), text="Crear Publicación | Evento")
         publicarLabel.pack(pady=(20,15), padx=20, fill="x")
         
-        publicarTitulo = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Título")
-        publicarTitulo.pack(pady=5, padx=20, fill="x")
+        self.publicarTitulo = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Título")
+        self.publicarTitulo.pack(pady=5, padx=20, fill="x")
         
-        publicarUbicacion = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Ubicación")
-        publicarUbicacion.pack(pady=5, padx=20, fill="x")
+        self.publicarUbicacion = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Ubicación")
+        self.publicarUbicacion.pack(pady=5, padx=20, fill="x")
 
         fechaFrame = ctk.CTkFrame(master=publicarFrame, fg_color="transparent")
         fechaFrame.pack(pady=0, padx=20, fill="x")
         
-        publicarFecha = ctk.CTkEntry(master=fechaFrame, width=211, height=BTN_ALTURA, placeholder_text="Fecha (dd/mm/aa)")
-        publicarFecha.pack(pady=5, padx=0, fill="x", side="left")
+        self.publicarFecha = ctk.CTkEntry(master=fechaFrame, width=211, height=BTN_ALTURA, placeholder_text="Fecha (dd/mm/aa)")
+        self.publicarFecha.pack(pady=5, padx=0, fill="x", side="left")
 
-        publicarHora = ctk.CTkEntry(master=fechaFrame, width=211, height=BTN_ALTURA, placeholder_text="Hora (hh:mm)")
-        publicarHora.pack(pady=5, padx=0, fill="x", side="right")
+        self.publicarHora = ctk.CTkEntry(master=fechaFrame, width=211, height=BTN_ALTURA, placeholder_text="Hora (hh:mm)")
+        self.publicarHora.pack(pady=5, padx=0, fill="x", side="right")
         
         publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar", command= lambda: self.evento_pulsar(publicarFrame))
         publicarBoton.pack(pady=5, padx=20, fill="x")
     
     def evento_pulsar(self, publicarFrame):
-        #publicarLabel = ctk.CTkLabel(master=publicarFrame, height=40,font=('Roboto', 24), text="Hola, judio")
-        #publicarLabel.pack(pady=(20,15), padx=20, fill="x")
-        print("funciona")
+        global eventos
+        global usuario_actual
+        if self.publicarTitulo.get() not in eventos:
+            if len(self.publicarTitulo.get().strip()) != 0 and len(self.publicarUbicacion.get().strip()) and len(self.publicarFecha.get().strip()) != 0 and len(self.publicarHora.get().strip()) != 0:
+                if len(self.publicarTitulo.get()) <= 22:
+                    if len(self.publicarUbicacion.get()) <= 22:
+                        fecha = VentanaNoticias.es_fecha_valida(self.publicarFecha.get())
+                        if fecha is not None and fecha > datetime.now():
+                            hora = VentanaNoticias.es_hora_valida(self.publicarHora.get())
+                            if hora is not None:
+                                fecha = fecha.strftime( "%d/%m/%Y") #Lo pasa nuevamente a una fecha texto para guardarla correctamente en un json y que no de error.
+                                hora = hora.strftime( '%M/%H')
+                                eventos[self.publicarTitulo.get()] = {"ubicacion": self.publicarUbicacion.get(),
+                                                                    "fecha": self.publicarFecha.get(),
+                                                                    "hora": self.publicarHora.get(),
+                                                                    "mostrar": False,
+                                                                    "autor": usuario_actual}
+                                Sesion.guardar_datos_eventos()
+                                if hasattr(self, "info_evento"):
+                                    self.info_evento.destroy()
 
-    
+                                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Evento Publicado.")
+                                self.info_evento.pack() 
+                            else:
+                                if hasattr(self, "info_evento"):
+                                    self.info_evento.destroy()
+
+                                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La hora ingresada no es valida.")
+                                self.info_evento.pack() 
+                        else:
+                            if hasattr(self, "info_evento"):
+                                self.info_evento.destroy()
+
+                            self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La fecha ingresada no es valida.")
+                            self.info_evento.pack()
+                    else:
+                        if hasattr(self, "info_evento"):
+                            self.info_evento.destroy()
+
+                        self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La ubicacion debe tener menos de 20 caracteres.")
+                        self.info_evento.pack()  
+                else:
+                    if hasattr(self, "info_evento"):
+                        self.info_evento.destroy()
+
+                    self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "El titulo debe tener menos de 20 caracteres.")
+                    self.info_evento.pack()
+            else:
+                if hasattr(self, "info_evento"):
+                    self.info_evento.destroy()
+
+                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ningun campo puede estar vacio.")
+                self.info_evento.pack()  
+        else:
+            if hasattr(self, "info_evento"):
+                self.info_evento.destroy()
+
+            self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ya existe un evento con el mismo titulo.")
+            self.info_evento.pack() 
+
+    #Necesitamos comprobar si la hora ingresada es valida.
+    def es_hora_valida(hora):
+        try:
+            hora = datetime.strptime(hora,"%H:%M").time()
+            
+            if 0 <= hora.hour < 24 and 0 <= hora.minute < 60:
+                return hora
+            else:
+                return None
+        except:
+            return None
+        
+    #Comprueba si la fecha es valida.
+    def es_fecha_valida(fecha):
+        try:
+            fecha = datetime.strptime(fecha, "%d/%m/%Y")
+            return fecha
+        except:
+            return None
+
     def mostrar_publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creacion de publicacion
         noticiaFrame = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#262626"))
         noticiaFrame.pack(pady=10, padx=20, fill="x")
@@ -542,8 +628,8 @@ class VentanaNoticias:
         noticiaEditar.pack(pady=0, padx=1, side="right")
     
     
-    def mostrar_evento(self, frame, titulo, ubicacion, fecha):
-        eventoTitulo = ctk.CTkLabel(master=frame, text=f"{titulo} | {ubicacion}\n{fecha}", justify="left", anchor="w", wraplength=180, font=("",13,"bold"))
+    def mostrar_evento(self, frame, titulo, ubicacion, fecha, hora, autor):
+        eventoTitulo = ctk.CTkLabel(master=frame, text=f"{titulo} \n{ubicacion}\n{fecha} a las {hora}\n{autor}", justify="left", anchor="w", wraplength=180, font=("",13,"bold"))
         eventoTitulo.pack(pady=10, padx=20, fill="x")
     
     
@@ -670,15 +756,58 @@ class Sesion: #Maneja los datos se Sesión.
         except FileNotFoundError: 
             print("Archivo no encontrado, se creara uno nuevo.")
 
+    def cargar_datos_eventos(): 
+        global eventos
+        try:
+            with open("eventos.json", "r") as archivo:
+                eventos.update(json.load(archivo)) 
+        except:
+            print("Archivo de eventos no encontrado, se creara uno nuevo.")
+
+    def guardar_datos_eventos(): 
+        try: 
+            with open("eventos.json", "w") as archivo:
+                json.dump(eventos, archivo) 
+        except FileNotFoundError: 
+            print("Archivo no encontrado, se creara uno nuevo.")
+
+    def comprobar_fecha_eventos():
+        global eventos
+        try:
+            if len(eventos) != 0:
+
+                now = datetime.now()
+                eventos_copia = dict(eventos)
+
+                for titulo, det in reversed(eventos_copia.items()):
+                    fecha = datetime.strptime(det["fecha"], "%d/%m/%Y")
+                    hora = datetime.strptime(det["hora"], '%H:%M').time()
+
+                    if fecha.date() == now.date() and hora < now.time():
+                        del eventos[titulo]
+                    elif fecha.date() < now.date():
+                        del eventos[titulo]
+                Sesion.guardar_datos_eventos()
+        except:
+            print("¡Ocurrio un error inesperado al intentar borrar los eventos!")
+
 #Cargar datos previos.
 Sesion.cargar_datos_usuarios() 
 Sesion.cargar_datos_noticias()
+Sesion.cargar_datos_eventos()
+
+#Al iniciar el programa revisa si algun evento ya ocurrio.
+Sesion.comprobar_fecha_eventos()
 
 ventana_opciones = VentanaOpciones() # abre la ventana principal
 
 #Guardar datos.
 Sesion.guardar_datos_usuarios()
 Sesion.guardar_datos_noticias()
+Sesion.guardar_datos_eventos()
 
 
-print("Comprobar usuarios del json", usuarios)
+
+
+
+print("Comprobar usuarios del json", usuarios) #FALTA borrar esto al final del programa.
