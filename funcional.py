@@ -250,33 +250,36 @@ class VentanaNoticias:
         volver.pack(pady=10, padx=20, fill="x")
 
         sideFrame1Titulo = ctk.CTkLabel(master=sideFrame1, text="Información", justify="left", anchor="w", font=("",16,"bold"))
-        sideFrame1Titulo.pack(pady=(30,10), padx=66, fill="x")
+        sideFrame1Titulo.pack(pady=(80,0), padx=66, fill="x")
         
         numEmergencia = ctk.CTkLabel(master=sideFrame1, text="911 | Policía\n100 | Bomberos\n107 | Ambulancia", justify="left", anchor="w", wraplength=205, font=("",13,"bold"))
         numEmergencia.pack(pady=0, padx=66, fill="x")
         
-        alarmaLabel = ctk.CTkLabel(master=sideFrame1, text="Iniciar Alarma", font=("",16,"bold"))
-        alarmaLabel.pack(pady=(30,0), padx=20, fill="x")
-
-        seleccionAlarma = ctk.CTkOptionMenu(master=sideFrame1, values=["Elija una opción", "Robo", "Emergencia Medica", "Incendio"])
-        seleccionAlarma.pack(pady=(10,30), padx=20, fill="x")
+        volver = ctk.CTkButton(master=sideFrame1, text="Hacer denuncia online", command=self.volver)
+        volver.pack(pady=(120,10), padx=20, fill="x")
 
         activarAlarmaBtn = ctk.CTkButton(master=sideFrame1, text="Enviar Alarma", command=lambda: self.comprobar_alarma(seleccionAlarma.get(), sideFrame1))
-        activarAlarmaBtn.pack(pady=10, padx=20, fill="x")
+        activarAlarmaBtn.pack(pady=(10,30), padx=20, fill="x", side="bottom")
 
-        cambiarAparienciaBtn = ctk.CTkOptionMenu(master=sideFrame1, values=["Dark", "Light"], command=self.cambiar_apariencia)
-        cambiarAparienciaBtn.pack(pady=(10,30), padx=20, fill="x", side="bottom")
+        seleccionAlarma = ctk.CTkOptionMenu(master=sideFrame1, values=["Elija una opción", "Robo", "Emergencia Medica", "Incendio"])
+        seleccionAlarma.pack(pady=(10,0), padx=20, fill="x", side="bottom")
         
-        cambiarAparienciaLabel = ctk.CTkLabel(master=sideFrame1, text="Cambiar apariencia", font=("",16,"bold"))
-        cambiarAparienciaLabel.pack(pady=0, padx=20, fill="x", side="bottom")
+        alarmaLabel = ctk.CTkLabel(master=sideFrame1, text="Iniciar Alarma", font=("",16,"bold"))
+        alarmaLabel.pack(pady=(0,0), padx=20, fill="x", side="bottom")
         
         # side frame derecho
         sideFrame2 = ctk.CTkFrame(master=self.root, width=240)
         sideFrame2.place(relx=0.782, rely=0, relheight=1)
         sideFrame2.pack_propagate(False)
         
+        cambiarAparienciaLabel = ctk.CTkLabel(master=sideFrame2, text="Cambiar apariencia", font=("",16,"bold"))
+        cambiarAparienciaLabel.pack(pady=(30,10), padx=20, fill="x", side="top")
+        
+        cambiarAparienciaBtn = ctk.CTkOptionMenu(master=sideFrame2, values=["Dark", "Light"], command=self.cambiar_apariencia)
+        cambiarAparienciaBtn.pack(pady=(0,30), padx=20, fill="x", side="top")
+        
         sideFrame2Titulo = ctk.CTkLabel(master=sideFrame2, text="Eventos locales", font=("",16,"bold"))
-        sideFrame2Titulo.pack(pady=(30,20), padx=20, fill="x")
+        sideFrame2Titulo.pack(pady=0, padx=20, fill="x")
         
         sideFrame2Eventos = ctk.CTkScrollableFrame(master=sideFrame2, fg_color="transparent", scrollbar_button_color=("#dbdbdb","#2b2b2b"))
         sideFrame2Eventos.pack(pady=(0,20), fill="both", expand=True)
@@ -349,7 +352,7 @@ class VentanaNoticias:
             if hasattr(self, "errorOpcion"):
                 self.errorOpcion.destroy()
             usuarios["alerta"] = {"valor": True, "correo": "x"}
-            self.errorOpcion = ctk.CTkLabel(master = sideFrame1, text = "Debe elejir una opcion")
+            self.errorOpcion = ctk.CTkLabel(master = sideFrame1, text = "Debe elegir una opcion")
             self.errorOpcion.pack(fill="x",pady=0)
             #.place(relx=0.2, rely=0.1, fill="x") 
             #errorOpcion = ctk.CTkLabel(master=sideFrame1, text="Debe elegir una opción", font=("",16,"bold")).pack()
@@ -397,7 +400,7 @@ class VentanaNoticias:
     def publicar_noticia(self): #FALTA hacer que se obtenga el nombre del que publica
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm")
-        publicarVentana.geometry("650x470")
+        publicarVentana.geometry("650x435")
         publicarVentana.resizable(False, False)
         
         currentPath = os.path.dirname(os.path.realpath(__file__))
@@ -629,7 +632,7 @@ class VentanaNoticias:
     
     
     def mostrar_evento(self, frame, titulo, ubicacion, fecha, hora, autor):
-        eventoTitulo = ctk.CTkLabel(master=frame, text=f"{titulo} \n{ubicacion}\n{fecha} a las {hora}\n{autor}", justify="left", anchor="w", wraplength=180, font=("",13,"bold"))
+        eventoTitulo = ctk.CTkLabel(master=frame, text=f"{titulo} \n{ubicacion}\n{fecha} | {hora}\n{autor}", justify="left", anchor="w", wraplength=180, font=("",13,"bold"))
         eventoTitulo.pack(pady=10, padx=20, fill="x")
     
     
@@ -688,6 +691,9 @@ class VentanaAdmin(VentanaNoticias):
         except:
             ctk.CTkLabel(master = sideFrame2Eventos, text = "No hay eventos para mostrar.",height=400, font=ctk.CTkFont(size=14)).pack() 
         
+        
+        sideFrame2Titulo = ctk.CTkLabel(master=sideFrame2, text="Eventos locales", font=("",16,"bold"))
+        sideFrame2Titulo.pack(pady=30, padx=20, fill="x")
         
         # frame principal
         titulo = ctk.CTkLabel(master=frame, text="(icono) NotiAlarm | Administrador", justify="left", anchor="w", font=(TITULOS_FUENTE))
