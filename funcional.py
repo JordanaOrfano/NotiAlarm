@@ -664,9 +664,30 @@ class VentanaAdmin(VentanaNoticias):
         cambiarAparienciaLabel.pack(pady=0, padx=20, fill="x", side="bottom")
         
         # side frame derecho
-        sideFrame2 = ctk.CTkFrame(master=self.root, width=240)
-        sideFrame2.place(relx=0.782, rely=0, relheight=1)
-        sideFrame2.pack_propagate(False)
+        sideFrame2Eventos = ctk.CTkFrame(master=self.root, width=240)
+        sideFrame2Eventos.place(relx=0.782, rely=0, relheight=1)
+        sideFrame2Eventos.pack_propagate(False)
+
+        #Mostrar todos los eventos en el menú.
+        try:
+            mostradas = 0
+            if len(eventos) != 0:
+                for titulo, det in reversed(eventos.items()):
+                    if eventos[titulo]["mostrar"] == False: 
+                        ubicacion = det["ubicacion"]
+                        fecha = det["fecha"]
+                        hora = det["hora"]
+                        autor = det["autor"]
+                        self.mostrar_evento(sideFrame2Eventos, titulo, ubicacion, fecha, hora, autor)
+                        mostradas += 1
+            else:
+                ctk.CTkLabel(master = sideFrame2Eventos, text = "No hay eventos para mostrar.",height=400, font=ctk.CTkFont(size=14)).pack()
+                mostradas += 1 
+            if mostradas == 0:
+                ctk.CTkLabel(master = sideFrame2Eventos, text = "No hay eventos para mostrar.",height=400, font=ctk.CTkFont(size=14)).pack() 
+        except:
+            ctk.CTkLabel(master = sideFrame2Eventos, text = "No hay eventos para mostrar.",height=400, font=ctk.CTkFont(size=14)).pack() 
+        
         
         # frame principal
         titulo = ctk.CTkLabel(master=frame, text="(icono) NotiAlarm | Administrador", justify="left", anchor="w", font=(TITULOS_FUENTE))
@@ -675,7 +696,30 @@ class VentanaAdmin(VentanaNoticias):
         administrarLabel = ctk.CTkLabel(master=frame, wraplength=520, height=40, font=("",14,"bold"), fg_color=ACCENT_COLOR, corner_radius=6, text="Administrar Publicaciones")
         administrarLabel.pack(pady=5, padx=20, fill="x")
         
-        self.mostrar_publicacion(frame, "titulo", "ubicacion", "categoria", "texto", "usuario", "fecha")
+
+        #Mostrar todas las noticias en el menú.
+        try:
+            mostradas = 0 
+            if len(noticias) != 0:
+                for titulo, det in reversed(noticias.items()):
+                    if noticias[titulo]["mostrar"] == False: 
+                        ubicacion = det["ubicacion"]
+                        texto = det["contenido"]
+                        usuario = det["autor"]
+                        fecha = det["fecha"]
+                        categoria = noticias[titulo]["categoria"] 
+                        self.mostrar_publicacion(frame, titulo, ubicacion, categoria, texto, usuario, fecha)
+                        mostradas += 1
+
+            else:
+                ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack()
+                mostradas += 1 
+
+            if mostradas == 0:
+                ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack() 
+        except:
+            ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack() 
+        
         
         self.root.mainloop()
     
