@@ -751,10 +751,10 @@ class VentanaAdmin(VentanaNoticias):
         noticiaInfo = ctk.CTkLabel(master=noticiaInfoFrame, justify="left", anchor="w", corner_radius=6, wraplength=520, text=f"{usuario}\n{fecha}")
         noticiaInfo.pack(pady=0, padx=20, side="left")
 
-        noticiaPublicar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Publicar", command=lambda: self.AceptaPublicar(titulo))
+        noticiaPublicar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Publicar", command=lambda: self.AceptarNoticia(titulo, noticiaFrame))
         noticiaPublicar.pack(pady=0, padx=0, side="right")
         
-        noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Rechazar", command=lambda: self.RechazarNoticia(titulo))
+        noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Rechazar", command=lambda: self.RechazarNoticia(titulo, noticiaFrame))
         noticiaBorrar.pack(pady=0, padx=(1,0), side="right")
         
         noticiaBanearUsuario = ctk.CTkButton(master=noticiaInfoFrame, width=100, height=40, text="Banear usuario", command=lambda: self.confirmar_banear("test12345"))
@@ -779,60 +779,66 @@ class VentanaAdmin(VentanaNoticias):
         
     
     def mostrar_evento(self, frame, titulo, ubicacion, fecha, hora, autor):
-        eventoFrame1 = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#333333"))
-        eventoFrame1.pack(pady=5, padx=0, fill="x")
+        eventoFrame = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#333333"))
+        eventoFrame.pack(pady=5, padx=0, fill="x")
         
-        eventoTitulo = ctk.CTkLabel(master=eventoFrame1, text=f"{titulo} \n{ubicacion}\n{fecha} | {hora}\n{autor}", justify="left", anchor="w", wraplength=180, font=("",13,"bold"))
+        eventoTitulo = ctk.CTkLabel(master=eventoFrame, text=f"{titulo} \n{ubicacion}\n{fecha} | {hora}\n{autor}", justify="left", anchor="w", wraplength=180, font=("",13,"bold"))
         eventoTitulo.pack(pady=10, padx=20, fill="x")
         
-        btnBorrar = ctk.CTkButton(master=eventoFrame1, width=119, text="Rechazar")
+        btnBorrar = ctk.CTkButton(master=eventoFrame, width=119, text="Rechazar", command=lambda: self.RechazarEvento(titulo, eventoFrame))
         btnBorrar.pack(pady=0, padx=0, side="left")
         
-        btnPublicar = ctk.CTkButton(master=eventoFrame1, width=119, text="Publicar")
+        btnPublicar = ctk.CTkButton(master=eventoFrame, width=119, text="Publicar", command=lambda: self.AceptarEvento(titulo, eventoFrame))
         btnPublicar.pack(pady=0, padx=0, side="right")
 
 
     #Publica la noticia seleccionada.
-    def AceptaPublicar(self, titulo):
+    def AceptarNoticia(self, titulo, noticiaFrame):
         global noticias
         try:
             noticias[titulo]["mostrar"] = True
             Sesion.guardar_datos_noticias()
             Sesion.cargar_datos_noticias()
 
+            noticiaFrame.destroy()
         except:
-            print("La noticia ya fue rechazada o aceptada.") #FALTA UN LABEL O ALGO
+            print("La noticia ya fue aceptada.")
 
     #Rechaza la noticia.
-    def RechazarNoticia(self, titulo):
+    def RechazarNoticia(self, titulo, noticiaFrame):
         global noticias
         try:
             del noticias[titulo]
             Sesion.guardar_datos_noticias()
             Sesion.cargar_datos_noticias()
+            
+            noticiaFrame.destroy()
         except:
-            print("La noticia ya fue rechaza o aceptada.") #FALTA UN LABEL
+            print("La noticia ya fue rechazada.")
 
     #Publica el evento seleccionado.
-    def AceptaEvento(self, titulo):
+    def AceptarEvento(self, titulo, eventoFrame):
         global eventos
         try:
             eventos[titulo]["mostrar"] = True
             Sesion.guardar_datos_eventos()
             Sesion.cargar_datos_eventos()
+            
+            eventoFrame.destroy()
         except:
-            print("El evento ya fue rechazado o aceptado.") #FALTA un label
+            print("El evento ya fue aceptado.")
 
     #Rechaza el Evento.
-    def RechazarEvento(self, titulo):
+    def RechazarEvento(self, titulo, eventoFrame):
         global eventos
         try:
             del noticias[titulo]
             Sesion.guardar_datos_eventos()
             Sesion.cargar_datos_eventos()
-
+            
+            eventoFrame.destroy()
         except:
-            print("El evento ya fue rechazado o aceptado.") #Falta un label
+            print("El evento ya fue rechazado.")
 
 
     #Banea usuario que publico la noticia.
