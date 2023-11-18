@@ -670,10 +670,12 @@ class VentanaAdmin(VentanaNoticias):
         sideFrame2Eventos = ctk.CTkFrame(master=self.root, width=240)
         sideFrame2Eventos.place(relx=0.782, rely=0, relheight=1)
         sideFrame2Eventos.pack_propagate(False)
-
         
         sideFrame2Titulo = ctk.CTkLabel(master=sideFrame2Eventos, text="Eventos locales", font=("",16,"bold"))
-        sideFrame2Titulo.pack(pady=30, padx=20, fill="x")
+        sideFrame2Titulo.pack(pady=(30,20), padx=20, fill="x")
+        
+        sideFrame2Eventos = ctk.CTkScrollableFrame(master=sideFrame2Eventos, fg_color="transparent")
+        sideFrame2Eventos.pack(pady=(0,20), fill="both", expand=True)
         
         #Mostrar todos los eventos en el menú.
         try:
@@ -695,6 +697,7 @@ class VentanaAdmin(VentanaNoticias):
         except:
             ctk.CTkLabel(master = sideFrame2Eventos, text = "No hay eventos para mostrar.",height=400, font=ctk.CTkFont(size=14)).pack() 
         
+        
         # frame principal
         titulo = ctk.CTkLabel(master=frame, text="(icono) NotiAlarm | Administrador", justify="left", anchor="w", font=(TITULOS_FUENTE))
         titulo.pack(pady=20, padx=20, fill="x")
@@ -702,7 +705,6 @@ class VentanaAdmin(VentanaNoticias):
         administrarLabel = ctk.CTkLabel(master=frame, wraplength=520, height=40, font=("",14,"bold"), fg_color=ACCENT_COLOR, corner_radius=6, text="Administrar Publicaciones")
         administrarLabel.pack(pady=5, padx=20, fill="x")
         
-
         #Mostrar todas las noticias en el menú.
         try:
             mostradas = 0 
@@ -754,6 +756,21 @@ class VentanaAdmin(VentanaNoticias):
         
         noticiaBanearUsuario = ctk.CTkButton(master=noticiaInfoFrame, width=100, height=40, text="Banear usuario", command=lambda: self.BanearUsuario(usuario, frame))
         noticiaBanearUsuario.pack(pady=0, padx=0, side="right")
+        
+        
+    def mostrar_evento(self, frame, titulo, ubicacion, fecha, hora, autor):
+        eventoFrame1 = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#333333"))
+        eventoFrame1.pack(pady=5, padx=0, fill="x")
+        
+        eventoTitulo = ctk.CTkLabel(master=eventoFrame1, text=f"{titulo} \n{ubicacion}\n{fecha} | {hora}\n{autor}", justify="left", anchor="w", wraplength=180, font=("",13,"bold"))
+        eventoTitulo.pack(pady=10, padx=20, fill="x")
+        
+        btnBorrar = ctk.CTkButton(master=eventoFrame1, width=119, text="Rechazar")
+        btnBorrar.pack(pady=0, padx=0, side="left")
+        
+        btnPublicar = ctk.CTkButton(master=eventoFrame1, width=119, text="Publicar")
+        btnPublicar.pack(pady=0, padx=0, side="right")
+
 
     #Publica la noticia seleccionada.
     def AceptaPublicar(self, titulo):
