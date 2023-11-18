@@ -747,17 +747,34 @@ class VentanaAdmin(VentanaNoticias):
 
         noticiaInfo = ctk.CTkLabel(master=noticiaInfoFrame, justify="left", anchor="w", corner_radius=6, wraplength=520, text=f"{usuario}\n{fecha}")
         noticiaInfo.pack(pady=0, padx=20, side="left")
-        
-        noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Rechazar", command=lambda: self.RechazarNoticia(titulo))
-        noticiaBorrar.pack(pady=0, padx=0, side="right")
 
         noticiaPublicar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Publicar", command=lambda: self.AceptaPublicar(titulo))
-        noticiaPublicar.pack(pady=0, padx=1, side="right")
+        noticiaPublicar.pack(pady=0, padx=0, side="right")
         
-        noticiaBanearUsuario = ctk.CTkButton(master=noticiaInfoFrame, width=100, height=40, text="Banear usuario", command=lambda: self.BanearUsuario(usuario, frame))
+        noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Rechazar", command=lambda: self.RechazarNoticia(titulo))
+        noticiaBorrar.pack(pady=0, padx=(1,0), side="right")
+        
+        noticiaBanearUsuario = ctk.CTkButton(master=noticiaInfoFrame, width=100, height=40, text="Banear usuario", command=lambda: self.confirmar_banear("test12345"))
         noticiaBanearUsuario.pack(pady=0, padx=0, side="right")
         
+    
+    def confirmar_banear(self, usuario):
+        confirmarToplevel = ctk.CTkToplevel(master=self.root)
+        confirmarToplevel.title("NotiAlarm")
+        confirmarToplevel.geometry("470x180")
+        confirmarToplevel.resizable(False, False)
+        confirmarToplevel.attributes("-topmost", "true")
         
+        publicarLabel = ctk.CTkLabel(master=confirmarToplevel, height=40, font=("", 18), text=f"¿Está seguro que desea banear a {usuario}?")
+        publicarLabel.pack(pady=(40,0), padx=30, fill="x")
+        
+        btnCancelar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Cancelar")
+        btnCancelar.pack(pady=(0,40), padx=(70,0), side="left")
+        
+        btnAceptar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Aceptar")
+        btnAceptar.pack(pady=(0,40), padx=(0,70), side="right")
+        
+    
     def mostrar_evento(self, frame, titulo, ubicacion, fecha, hora, autor):
         eventoFrame1 = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#333333"))
         eventoFrame1.pack(pady=5, padx=0, fill="x")
