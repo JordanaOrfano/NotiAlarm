@@ -100,7 +100,7 @@ class VentanaRegistro: # crea la ventana registro
     def registro_evento(self, frame): #Al darle click a registrar se iniciara este metodo, se crea la variable alerta para luego eliminar labels.
         
         if self.nombre.get() not in usuarios: #Comprueba que el nombre no exista previamente, si no existe ejecuta.
-            if len(self.correo.get().strip()) != 0 and len(self.nombre.get().strip()) != 0 and len(self.contrasena.get().strip()) != 0: #chequea que ningun campo este vacio. #falta comprobar gmail
+            if len(self.correo.get().strip()) != 0 and len(self.nombre.get().strip()) != 0 and len(self.contrasena.get().strip()) != 0: #chequea que ningun campo este vacio.
                 if "@" in self.correo.get():
                     if VentanaRegistro.comprobar_correo(self.correo.get()):
                         if len(self.contrasena.get()) >= 8 and len(self.contrasena.get()) <20: #Comprueba que la contraseña tenga mas de 7 digitos y tenga al menos 20 digitos.
@@ -212,7 +212,7 @@ class VentanaLogin: # crea la ventana login
             if hasattr(self, "mensaje"):
                 self.mensaje.destroy()
             self.mensaje = ctk.CTkLabel(master = frame, text = "Iniciando Sesión...")
-            self.mensaje.place(relx = 0.39, rely = 0.65) #FALTA poner pantallas de admin y de usuario.
+            self.mensaje.place(relx = 0.39, rely = 0.65)
             
 
             if usuarios[usuario]["rol"] == "usuario": #Tiene el rol de usuario
@@ -397,7 +397,7 @@ class VentanaNoticias:
         ctk.set_appearance_mode(new_appearance_mode)
         
 
-    def publicar_noticia(self): #FALTA hacer que se obtenga el nombre del que publica
+    def publicar_noticia(self): 
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm")
         publicarVentana.geometry("650x435")
@@ -452,7 +452,7 @@ class VentanaNoticias:
                                                             "ubicacion": self.publicarUbicacion.get(),
                                                             "mostrar": False,
                                                             "categoria": self.categoria.get(),
-                                                            "fecha": fecha_actual} #Atributos de las noticias FALTA añadir nombres
+                                                            "fecha": fecha_actual} #Atributos de las noticias
                                 Sesion.guardar_datos_noticias()
 
                             else:
@@ -671,6 +671,10 @@ class VentanaAdmin(VentanaNoticias):
         sideFrame2Eventos.place(relx=0.782, rely=0, relheight=1)
         sideFrame2Eventos.pack_propagate(False)
 
+        
+        sideFrame2Titulo = ctk.CTkLabel(master=sideFrame2Eventos, text="Eventos locales", font=("",16,"bold"))
+        sideFrame2Titulo.pack(pady=30, padx=20, fill="x")
+        
         #Mostrar todos los eventos en el menú.
         try:
             mostradas = 0
@@ -690,10 +694,6 @@ class VentanaAdmin(VentanaNoticias):
                 ctk.CTkLabel(master = sideFrame2Eventos, text = "No hay eventos para mostrar.",height=400, font=ctk.CTkFont(size=14)).pack() 
         except:
             ctk.CTkLabel(master = sideFrame2Eventos, text = "No hay eventos para mostrar.",height=400, font=ctk.CTkFont(size=14)).pack() 
-        
-        
-        sideFrame2Titulo = ctk.CTkLabel(master=sideFrame2, text="Eventos locales", font=("",16,"bold"))
-        sideFrame2Titulo.pack(pady=30, padx=20, fill="x")
         
         # frame principal
         titulo = ctk.CTkLabel(master=frame, text="(icono) NotiAlarm | Administrador", justify="left", anchor="w", font=(TITULOS_FUENTE))
@@ -746,14 +746,68 @@ class VentanaAdmin(VentanaNoticias):
         noticiaInfo = ctk.CTkLabel(master=noticiaInfoFrame, justify="left", anchor="w", corner_radius=6, wraplength=520, text=f"{usuario}\n{fecha}")
         noticiaInfo.pack(pady=0, padx=20, side="left")
         
-        noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Borrar")
+        noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Rechazar", command=lambda: self.RechazarNoticia(titulo))
         noticiaBorrar.pack(pady=0, padx=0, side="right")
 
-        noticiaPublicar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Publicar")
+        noticiaPublicar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Publicar", command=lambda: self.AceptaPublicar(titulo))
         noticiaPublicar.pack(pady=0, padx=1, side="right")
         
-        noticiaBanearUsuario = ctk.CTkButton(master=noticiaInfoFrame, width=100, height=40, text="Banear usuario")
+        noticiaBanearUsuario = ctk.CTkButton(master=noticiaInfoFrame, width=100, height=40, text="Banear usuario", command=lambda: self.BanearUsuario(usuario, frame))
         noticiaBanearUsuario.pack(pady=0, padx=0, side="right")
+
+    #Publica la noticia seleccionada.
+    def AceptaPublicar(self, titulo):
+        global noticias
+        try:
+            noticias[titulo]["mostrar"] = True
+            Sesion.guardar_datos_noticias()
+            Sesion.cargar_datos_noticias()
+
+        except:
+            print("La noticia ya fue rechazada o aceptada.") #FALTA UN LABEL O ALGO
+
+    #Rechaza la noticia.
+    def RechazarNoticia(self, titulo):
+        global noticias
+        try:
+            del noticias[titulo]
+            Sesion.guardar_datos_noticias()
+            Sesion.cargar_datos_noticias()
+        except:
+            print("La noticia ya fue rechaza o aceptada.") #FALTA UN LABEL
+
+    #Publica el evento seleccionado.
+    def AceptaEvento(self, titulo):
+        global eventos
+        try:
+            eventos[titulo]["mostrar"] = True
+            Sesion.guardar_datos_eventos()
+            Sesion.cargar_datos_eventos()
+        except:
+            print("El evento ya fue rechazado o aceptado.") #FALTA un label
+
+    #Rechaza el Evento.
+    def RechazarEvento(self, titulo):
+        global eventos
+        try:
+            del noticias[titulo]
+            Sesion.guardar_datos_eventos()
+            Sesion.cargar_datos_eventos()
+
+        except:
+            print("El evento ya fue rechazado o aceptado.") #Falta un label
+
+
+    #Banea usuario que publico la noticia.
+    def BanearUsuario(self, usuario, frame):
+        global usuarios
+        try:
+            del usuarios[usuario] #Tal vez sea mejor crear un registro para saber si el usuario ya esta baneado y que le salte una alerta.
+            Sesion.guardar_datos_usuarios()
+            Sesion.guardar_datos_usuarios()
+        except:
+            print("Usuario no encontrado.") #Falta un label.
+
 
 
 def opciones_universales(self):
