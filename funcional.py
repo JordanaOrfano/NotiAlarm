@@ -832,7 +832,7 @@ class VentanaAdmin(VentanaNoticias):
     def RechazarEvento(self, titulo, eventoFrame):
         global eventos
         try:
-            del noticias[titulo]
+            del eventos[titulo]
             Sesion.guardar_datos_eventos()
             Sesion.cargar_datos_eventos()
             
