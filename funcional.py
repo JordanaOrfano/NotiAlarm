@@ -250,13 +250,13 @@ class VentanaNoticias:
         volver.pack(pady=10, padx=20, fill="x")
 
         sideFrame1Titulo = ctk.CTkLabel(master=sideFrame1, text="Información", justify="left", anchor="w", font=("",16,"bold"))
-        sideFrame1Titulo.pack(pady=(80,0), padx=66, fill="x")
+        sideFrame1Titulo.pack(pady=(100,0), padx=66, fill="x")
         
         numEmergencia = ctk.CTkLabel(master=sideFrame1, text="911 | Policía\n100 | Bomberos\n107 | Ambulancia", justify="left", anchor="w", wraplength=205, font=("",13,"bold"))
         numEmergencia.pack(pady=0, padx=66, fill="x")
         
         volver = ctk.CTkButton(master=sideFrame1, text="Hacer denuncia online", command=self.volver)
-        volver.pack(pady=(120,10), padx=20, fill="x")
+        volver.pack(pady=(100,10), padx=20, fill="x")
 
         activarAlarmaBtn = ctk.CTkButton(master=sideFrame1, text="Enviar Alarma", command=lambda: self.comprobar_alarma(seleccionAlarma.get(), sideFrame1))
         activarAlarmaBtn.pack(pady=(10,30), padx=20, fill="x", side="bottom")
@@ -768,10 +768,10 @@ class VentanaAdmin(VentanaNoticias):
         confirmarToplevel.resizable(False, False)
         confirmarToplevel.attributes("-topmost", "true")
         
-        publicarLabel = ctk.CTkLabel(master=confirmarToplevel, height=40, font=("", 18), text=f"¿Está seguro que desea banear a {usuario}?")
-        publicarLabel.pack(pady=(40,0), padx=30, fill="x")
+        banearLabel = ctk.CTkLabel(master=confirmarToplevel, height=40, font=("", 18), text=f"¿Está seguro que desea banear a {usuario}?")
+        banearLabel.pack(pady=(40,0), padx=30, fill="x")
         
-        btnCancelar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Cancelar")
+        btnCancelar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Cancelar", command=confirmarToplevel.destroy)
         btnCancelar.pack(pady=(0,40), padx=(70,0), side="left")
         
         btnAceptar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Aceptar")
