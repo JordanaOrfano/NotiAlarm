@@ -387,6 +387,7 @@ class VentanaNoticias:
         # Crear una nueva ventana para mostrar el mensaje
         ventana_mensaje = ctk.CTkToplevel()
         ventana_mensaje.title(f"Mensaje para {usuario}")
+        ventana_mensaje.attributes("-topmost", "true")
 
         # Etiqueta con el mensaje
         etiqueta_mensaje = ctk.CTkLabel(master=ventana_mensaje, text=mensaje, padx=20, pady=20)
@@ -402,6 +403,7 @@ class VentanaNoticias:
         publicarVentana.title("NotiAlarm")
         publicarVentana.geometry("650x435")
         publicarVentana.resizable(False, False)
+        publicarVentana.attributes("-topmost", "true")
         
         currentPath = os.path.dirname(os.path.realpath(__file__))
         imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
@@ -496,7 +498,8 @@ class VentanaNoticias:
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm")
         publicarVentana.geometry("650x290")
-        publicarVentana.resizable(False, False)        
+        publicarVentana.resizable(False, False)  
+        publicarVentana.attributes("-topmost", "true")      
         
         currentPath = os.path.dirname(os.path.realpath(__file__))
         imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
