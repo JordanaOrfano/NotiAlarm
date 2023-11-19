@@ -1,11 +1,11 @@
 import json # para trabajar con archivos .json y guardar datos de forma permanente
-import customtkinter as ctk
+import customtkinter as ctk  # interfaz gráfica
 import tkinter as tk
-from PIL import Image
-from collections import OrderedDict # trabajar con diccionarios ordenados
-import os
-from datetime import datetime, time
 import webbrowser  # para abrir link en denunciaBtn
+import os  # para obtener directorio actual
+from PIL import Image  # para utilizar imágenes
+from collections import OrderedDict # trabajar con diccionarios ordenados
+from datetime import datetime, time
 
 ctk.set_appearance_mode("dark") # tema oscuro
 
@@ -110,7 +110,7 @@ class VentanaRegistro: # crea la ventana registro
     
     def registro_evento(self, frame): # al darle click a registrar se iniciara este método, se crea la variable alerta para luego eliminar labels
         if self.nombre.get() not in usuarios: # comprueba que el nombre no exista previamente, si no existe ejecuta
-            if len(self.correo.get().strip()) != 0 and len(self.nombre.get().strip()) != 0 and len(self.contrasena.get().strip()) != 0: # chequea que ningún campo este vació
+            if len(self.correo.get().strip()) != 0 and len(self.nombre.get().strip()) != 0 and len(self.contrasena.get().strip()) != 0: # chequea que ningún campo este vacío
                 if "@" in self.correo.get():
                     if VentanaRegistro.comprobar_correo(self.correo.get()):
                         if len(self.contrasena.get()) >= 8 and len(self.contrasena.get()) <20: # comprueba que la contraseña tenga entre 8 y 19 dígitos
@@ -173,7 +173,7 @@ class VentanaRegistro: # crea la ventana registro
                 if hasattr(self, "mensaje"):
                     self.mensaje.destroy()
 
-                self.mensaje = ctk.CTkLabel(master = frame, text = "Ningún campo debería estar vacío.")
+                self.mensaje = ctk.CTkLabel(master = frame, text = "Ningún campo debe estar vacío.")
                 self.mensaje.place(relx = 0.30, rely = 0.72)
         else:
             
@@ -535,7 +535,7 @@ class VentanaNoticias:
                 if hasattr(self, "info_evento"):
                             self.info_evento.destroy()
 
-                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ningún espacio puede estar vacío.")
+                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ningún campo debe estar vacío.")
                 self.info_evento.pack()
         else:
             if hasattr(self, "info_evento"):
@@ -609,37 +609,37 @@ class VentanaNoticias:
                                 if hasattr(self, "info_evento"):
                                     self.info_evento.destroy()
 
-                                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La hora ingresada no es valida.")
+                                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La hora ingresada no es válida.")
                                 self.info_evento.pack() 
                         else:
                             if hasattr(self, "info_evento"):
                                 self.info_evento.destroy()
 
-                            self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La fecha ingresada no es valida.")
+                            self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La fecha ingresada no es válida.")
                             self.info_evento.pack()
                     else:
                         if hasattr(self, "info_evento"):
                             self.info_evento.destroy()
 
-                        self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La ubicacion debe tener menos de 20 caracteres.")
+                        self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "La ubicación debe tener menos de 20 caracteres.")
                         self.info_evento.pack()  
                 else:
                     if hasattr(self, "info_evento"):
                         self.info_evento.destroy()
 
-                    self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "El titulo debe tener menos de 20 caracteres.")
+                    self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "El título debe tener menos de 20 caracteres.")
                     self.info_evento.pack()
             else:
                 if hasattr(self, "info_evento"):
                     self.info_evento.destroy()
 
-                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ningún campo puede estar vació.")
+                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ningún campo debe estar vacío.")
                 self.info_evento.pack()  
         else:
             if hasattr(self, "info_evento"):
                 self.info_evento.destroy()
 
-            self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ya existe un evento con el mismo titulo.")
+            self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ya existe un evento con el mismo título.")
             self.info_evento.pack() 
 
     # necesitamos comprobar si la hora ingresada es valida
@@ -895,43 +895,6 @@ class VentanaAdmin(VentanaNoticias):
         except:
             print("Usuario no encontrado.") 
 
-def opciones_universales(self):
-    # self.root.geometry("1100x680+350+240")
-    centrar_ventana(self.root, "1100", "680")
-    self.root.title("NotiAlarm")
-    self.root.resizable(False, False)
-    
-    currentPath = os.path.dirname(os.path.realpath(__file__))
-    imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
-    imagenLabel = ctk.CTkLabel(self.root, image=imagenFondo, text="")
-    imagenLabel.place(relx=0, rely=0)
-
-def centrar_ventana(ventana, ancho, alto):
-
-    # obten el ancho y el alto de la pantalla
-    ancho_pantalla = ventana.winfo_screenwidth()
-    alto_pantalla = ventana.winfo_screenheight()
-
-    # calcula las coordenadas para centrar la ventana
-    x = (ancho_pantalla - int(ancho)) // 2
-    y = (alto_pantalla - int(alto)) // 2
-
-    # establece el tamaño y posicion de la ventana
-    ventana.geometry(f"{ancho}x{alto}+{x}+{y}")
-
-
-def notialarmLogo(frame, texto, padLeft):
-    tituloFrame = ctk.CTkFrame(master=frame)
-    tituloFrame.pack(pady=0, padx=(padLeft,20), fill="x")
-    
-    currentPath = os.path.dirname(os.path.realpath(__file__))
-    imagenIcono = ctk.CTkImage(Image.open(currentPath + "/img/icon.png"), size=(50, 50))
-    imagenLabel = ctk.CTkLabel(tituloFrame, image=imagenIcono, text="")
-    imagenLabel.pack(side="left")
-    
-    titulo = ctk.CTkLabel(master=tituloFrame, text=texto, justify="left", anchor="w", font=(TITULOS_FUENTE))
-    titulo.pack(pady=20, padx=20, fill="x", side="left")
-
 
 class Sesion: # maneja los datos se sesión 
     def cargar_datos_usuarios(): #Carga el archivo anterior con los usuarios existentes.
@@ -1009,6 +972,45 @@ class Sesion: # maneja los datos se sesión
         except:
             print("¡Ocurrio un error inesperado al intentar borrar los eventos!")
 
+
+def opciones_universales(self):
+    # self.root.geometry("1100x680+350+240")
+    centrar_ventana(self.root, "1100", "680")
+    self.root.title("NotiAlarm")
+    self.root.resizable(False, False)
+    
+    currentPath = os.path.dirname(os.path.realpath(__file__))
+    imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
+    imagenLabel = ctk.CTkLabel(self.root, image=imagenFondo, text="")
+    imagenLabel.place(relx=0, rely=0)
+
+
+def centrar_ventana(ventana, ancho, alto):
+    # obten el ancho y el alto de la pantalla
+    ancho_pantalla = ventana.winfo_screenwidth()
+    alto_pantalla = ventana.winfo_screenheight()
+
+    # calcula las coordenadas para centrar la ventana
+    x = (ancho_pantalla - int(ancho)) // 2
+    y = (alto_pantalla - int(alto)) // 2
+
+    # establece el tamaño y posicion de la ventana
+    ventana.geometry(f"{ancho}x{alto}+{x}+{y}")
+
+
+def notialarmLogo(frame, texto, padLeft):
+    tituloFrame = ctk.CTkFrame(master=frame)
+    tituloFrame.pack(pady=0, padx=(padLeft,20), fill="x")
+    
+    currentPath = os.path.dirname(os.path.realpath(__file__))
+    imagenIcono = ctk.CTkImage(Image.open(currentPath + "/img/icon.png"), size=(50, 50))
+    imagenLabel = ctk.CTkLabel(tituloFrame, image=imagenIcono, text="")
+    imagenLabel.pack(side="left")
+    
+    titulo = ctk.CTkLabel(master=tituloFrame, text=texto, justify="left", anchor="w", font=(TITULOS_FUENTE))
+    titulo.pack(pady=20, padx=20, fill="x", side="left")
+
+
 # cargar datos previos
 Sesion.cargar_datos_usuarios() 
 Sesion.cargar_datos_noticias()
@@ -1023,9 +1025,6 @@ ventana_opciones = VentanaOpciones() # abre la ventana principal
 Sesion.guardar_datos_usuarios()
 Sesion.guardar_datos_noticias()
 Sesion.guardar_datos_eventos()
-
-
-
 
 
 print("Comprobar usuarios del json", usuarios) #FALTA borrar esto al final del programa.
