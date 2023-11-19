@@ -1,14 +1,15 @@
-import json #Para trabajar con archivos .json y guardar datos de forma permanente.
+import json # para trabajar con archivos .json y guardar datos de forma permanente
 import customtkinter as ctk
 import tkinter as tk
 from PIL import Image
-from collections import OrderedDict #Trabajar con diccionarios ordenados.
+from collections import OrderedDict # trabajar con diccionarios ordenados
 import os
 from datetime import datetime, time
 import webbrowser  # para abrir link en denunciaBtn
 
 ctk.set_appearance_mode("dark") # tema oscuro
 
+# diccionarios utilizados en el programa
 usuarios = {}
 noticias = OrderedDict()
 eventos = OrderedDict()
@@ -35,7 +36,7 @@ class VentanaOpciones:
         titulo = ctk.CTkLabel(master=frame, text="¡Bienvenido!", font=(TITULOS_FUENTE))
         titulo.place(relx=0.5, rely=0.59, anchor=tk.CENTER)
 
-        btnRegistro = ctk.CTkButton(master=frame, height=BTN_ALTURA, width=BTN_ANCHO, text="Registrarse", command=self.abrir_ventana_registro) # crea el boton
+        btnRegistro = ctk.CTkButton(master=frame, height=BTN_ALTURA, width=BTN_ANCHO, text="Registrarse", command=self.abrir_ventana_registro) # crea el botón
         btnRegistro.place(relx=0.5, rely=0.71, anchor=tk.CENTER) # lo posiciona en la ventana
 
         btnLogin = ctk.CTkButton(master=frame, height=BTN_ALTURA, width=BTN_ANCHO, text="Iniciar sesión", command=self.abrir_ventana_login)
@@ -107,16 +108,16 @@ class VentanaRegistro: # crea la ventana registro
                 return False
         return True
     
-    def registro_evento(self, frame): #Al darle click a registrar se iniciara este metodo, se crea la variable alerta para luego eliminar labels.
+    def registro_evento(self, frame): # al darle click a registrar se iniciara este método, se crea la variable alerta para luego eliminar labels
         
-        if self.nombre.get() not in usuarios: #Comprueba que el nombre no exista previamente, si no existe ejecuta.
-            if len(self.correo.get().strip()) != 0 and len(self.nombre.get().strip()) != 0 and len(self.contrasena.get().strip()) != 0: #chequea que ningun campo este vacio.
+        if self.nombre.get() not in usuarios: # comprueba que el nombre no exista previamente, si no existe ejecuta
+            if len(self.correo.get().strip()) != 0 and len(self.nombre.get().strip()) != 0 and len(self.contrasena.get().strip()) != 0: # chequea que ningún campo este vació
                 if "@" in self.correo.get():
                     if VentanaRegistro.comprobar_correo(self.correo.get()):
-                        if len(self.contrasena.get()) >= 8 and len(self.contrasena.get()) <20: #Comprueba que la contraseña tenga mas de 7 digitos y tenga al menos 20 digitos.
-                            if any(char.isdigit() for char in self.contrasena.get()): #Comprueba que la contraseña tenga al menos un numero.
-                                if any(char in "!@#$%∧&*(._-)" for char in self.contrasena.get()): #Comprueba si la contraseña tiene digitos especiales
-                                    usuarios[self.nombre.get()] = {"contrasena": self.contrasena.get(), "rol": "usuario", "correo": self.correo.get()} #De forma predeterminada cualquier usuario nuevo tendrá el rol "usuario", donde no tiene grandes permisos.
+                        if len(self.contrasena.get()) >= 8 and len(self.contrasena.get()) <20: # comprueba que la contraseña tenga entre 8 y 19 dígitos
+                            if any(char.isdigit() for char in self.contrasena.get()): # comprueba que la contraseña tenga al menos un numero
+                                if any(char in "!@#$%∧&*(._-)" for char in self.contrasena.get()): # comprueba si la contraseña tiene dígitos especiales
+                                    usuarios[self.nombre.get()] = {"contrasena": self.contrasena.get(), "rol": "usuario", "correo": self.correo.get()} # de forma predeterminada cualquier usuario nuevo tendrá el rol "usuario", donde no tiene grandes permisos
                                     Sesion.guardar_datos_usuarios()
                                     if hasattr(self, "mensaje"):
                                         self.mensaje.destroy()
@@ -131,7 +132,7 @@ class VentanaRegistro: # crea la ventana registro
                                     if hasattr(self, "mensaje"):
                                         self.mensaje.destroy()
                             
-                                    self.mensaje = ctk.CTkLabel(master = frame, text = "La contraseña debe tener al menos un caracter especial '!@#$%∧&*(._-)'. ")
+                                    self.mensaje = ctk.CTkLabel(master = frame, text = "La contraseña debe tener al menos un carácter especial '!@#$%∧&*(._-)'. ")
                                     self.mensaje.place(relx = 0.11, rely = 0.72) 
                             else:
                                 
@@ -175,7 +176,6 @@ class VentanaRegistro: # crea la ventana registro
 
             self.mensaje = ctk.CTkLabel(master = frame, text = "El nombre de usuario ya existe.")
             self.mensaje.place(relx = 0.32, rely = 0.72) 
-    
     
     def terminos_condiciones(self):
         terminosVentana = ctk.CTkToplevel(master=self.root)
@@ -231,14 +231,14 @@ class VentanaLogin: # crea la ventana login
         self.root.destroy()
         ventana_opciones = VentanaOpciones()
 
-    def login_evento(self, frame): #Al tocar el boton login.
+    def login_evento(self, frame): # al tocar el botón login
         global usuario_actual
-        verificar = False #Por ahora, la contraseña no coincide; Valor predeterminado.
+        verificar = False # por ahora, la contraseña no coincide; Valor predeterminado
 
-        for usuario in usuarios: #Verifica si algun correo en el diccionario usuarios coincide con el ingresado.
+        for usuario in usuarios: # verifica si algún correo en el diccionario usuarios coincide con el ingresado
             if self.correo.get().lower().strip() == usuarios[usuario]['correo'].lower().strip():
-                if str(self.contrasena.get()) == str(usuarios[usuario]['contrasena']): #Si encuentra un correo que coincide con el ingresado, comprueba que tambien coincida la contraseña.
-                    verificar = True #El correo y la contraseña coinciden.
+                if str(self.contrasena.get()) == str(usuarios[usuario]['contrasena']): # si encuentra un correo que coincide con el ingresado, comprueba que también coincida la contraseña
+                    verificar = True # el correo y la contraseña coinciden
                     usuario_actual = usuario
                     break
         if verificar:
@@ -248,12 +248,12 @@ class VentanaLogin: # crea la ventana login
             self.mensaje.place(relx = 0.39, rely = 0.65)
             
 
-            if usuarios[usuario]["rol"] == "usuario": #Tiene el rol de usuario
+            if usuarios[usuario]["rol"] == "usuario": # tiene el rol de usuario
                 self.root.destroy() # destruye la ventana actual
                 ventana_noticias = VentanaNoticias() # abre la ventana principal
             else:
                 self.root.destroy() # destruye la ventana actual
-                ventana_admin = VentanaAdmin() #Tiene el rol de administrador
+                ventana_admin = VentanaAdmin() # tiene el rol de administrador
             
         else:
             if hasattr(self, "mensaje"):
@@ -320,7 +320,7 @@ class VentanaNoticias:
         sideFrame2Eventos = ctk.CTkScrollableFrame(master=sideFrame2, fg_color="transparent", scrollbar_button_color=("#dbdbdb","#2b2b2b"))
         sideFrame2Eventos.pack(pady=(0,20), fill="both", expand=True)
         
-        #Mostrar todos los eventos en el menú.
+        # mostrar todos los eventos en el menú
         try:
             mostradas = 0
             if len(eventos) != 0:
@@ -355,7 +355,7 @@ class VentanaNoticias:
         noticiaEventoBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar evento", command=self.Evento)
         noticiaEventoBtn.pack(pady=0, padx=0, fill="x", side="right")
        
-        #Mostrar todas las noticias en el menú.
+        # mostrar todas las noticias en el menú 
         try:
             mostradas = 0 
             if len(noticias) != 0:
@@ -380,10 +380,8 @@ class VentanaNoticias:
         
         self.root.mainloop()
 
-
     def abrir_link(self):
         webbrowser.open_new("https://www.seguridad.gba.gob.ar/#/home")
-
 
     def comprobar_alarma(self, opcion, sideFrame1):
         print(opcion)
@@ -396,46 +394,42 @@ class VentanaNoticias:
             #.place(relx=0.2, rely=0.1, fill="x") 
             #errorOpcion = ctk.CTkLabel(master=sideFrame1, text="Debe elegir una opción", font=("",16,"bold")).pack()
 
-
     def activar_alarma(self):
-        # Iterar sobre cada usuario y enviar un mensaje
+        # iterar sobre cada usuario y enviar un mensaje
         for usuario in usuarios:
             if usuario == "alarma":
                 if usuario["valor"]:
-                    #Muestra mensaje
+                    # muestra mensaje
 
-                    #Cambia el valor
+                    # cambia el valor
                     usuario["valor"] = False
                     pass
-                    #si es true lanza mensaje
+                    # si es true lanza mensaje
                 else:
                     pass
-                    #no lanza mensaje
+                    # no lanza mensaje
         
             mensaje = f"¡ALERTA! La alarma ha sido activada. Por favor, toma las precauciones necesarias."
 
             print(f"Mensaje enviado a {usuarios[usuario]}: {mensaje}")
 
-            #Mostrar el mensaje en la interfaz de usuario del remitente
+            # mostrar el mensaje en la interfaz de usuario del remitente
         self.mostrar_mensaje(usuarios[usuario], mensaje)
     
         #self.root=VentanaAlerta()
 
-
     def mostrar_mensaje(self, usuario, mensaje):
-        # Crear una nueva ventana para mostrar el mensaje
+        # crear una nueva ventana para mostrar el mensaje
         ventana_mensaje = ctk.CTkToplevel()
         ventana_mensaje.title(f"Mensaje para {usuario}")
         ventana_mensaje.attributes("-topmost", "true")
 
-        # Etiqueta con el mensaje
+        # etiqueta con el mensaje
         etiqueta_mensaje = ctk.CTkLabel(master=ventana_mensaje, text=mensaje, padx=20, pady=20)
         etiqueta_mensaje.pack()
 
-    
     def cambiar_apariencia(self, new_appearance_mode: str):
         ctk.set_appearance_mode(new_appearance_mode)
-        
 
     def publicar_noticia(self): 
         publicarVentana = ctk.CTkToplevel(master=self.root)
@@ -470,8 +464,7 @@ class VentanaNoticias:
         publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar", command=lambda: self.publicar_evento(publicarFrame))
         publicarBoton.pack(pady=5, padx=20, fill="x")
 
-
-    #Al tocar el boton de publicar debera guardar la noticia en el json.
+    # al tocar el botón de publicar deberá guardar la noticia en el json.
     def publicar_evento(self, publicarFrame):
         global noticias
         global usuarios_actual
@@ -580,7 +573,7 @@ class VentanaNoticias:
                         if fecha is not None and fecha > datetime.now():
                             hora = VentanaNoticias.es_hora_valida(self.publicarHora.get())
                             if hora is not None:
-                                fecha = fecha.strftime( "%d/%m/%Y") #Lo pasa nuevamente a una fecha texto para guardarla correctamente en un json y que no de error.
+                                fecha = fecha.strftime( "%d/%m/%Y") # lo pasa nuevamente a una fecha texto para guardarla correctamente en un json y que no de error
                                 hora = hora.strftime( '%M/%H')
                                 eventos[self.publicarTitulo.get()] = {"ubicacion": self.publicarUbicacion.get(),
                                                                     "fecha": self.publicarFecha.get(),
@@ -621,7 +614,7 @@ class VentanaNoticias:
                 if hasattr(self, "info_evento"):
                     self.info_evento.destroy()
 
-                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ningun campo puede estar vacio.")
+                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ningún campo puede estar vació.")
                 self.info_evento.pack()  
         else:
             if hasattr(self, "info_evento"):
@@ -630,7 +623,7 @@ class VentanaNoticias:
             self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ya existe un evento con el mismo titulo.")
             self.info_evento.pack() 
 
-    #Necesitamos comprobar si la hora ingresada es valida.
+    # necesitamos comprobar si la hora ingresada es valida
     def es_hora_valida(hora):
         try:
             hora = datetime.strptime(hora,"%H:%M").time()
@@ -642,7 +635,7 @@ class VentanaNoticias:
         except:
             return None
         
-    #Comprueba si la fecha es valida.
+    # comprueba si la fecha es valida
     def es_fecha_valida(fecha):
         try:
             fecha = datetime.strptime(fecha, "%d/%m/%Y")
@@ -650,7 +643,7 @@ class VentanaNoticias:
         except:
             return None
 
-    def mostrar_publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creacion de publicacion
+    def mostrar_publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creación de publicación
         noticiaFrame = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#262626"))
         noticiaFrame.pack(pady=10, padx=20, fill="x")
         
@@ -672,11 +665,9 @@ class VentanaNoticias:
         noticiaEditar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Editar")
         noticiaEditar.pack(pady=0, padx=1, side="right")
     
-    
     def mostrar_evento(self, frame, titulo, ubicacion, fecha, hora, autor):
         eventoTitulo = ctk.CTkLabel(master=frame, text=f"{titulo} \n{ubicacion}\n{fecha} | {hora}\n{autor}", justify="left", anchor="w", wraplength=180, font=("",13,"bold"))
         eventoTitulo.pack(pady=10, padx=20, fill="x")
-    
     
     def volver(self):
         self.root.destroy()
@@ -719,7 +710,7 @@ class VentanaAdmin(VentanaNoticias):
         sideFrame2Eventos = ctk.CTkScrollableFrame(master=sideFrame2Eventos, fg_color="transparent")
         sideFrame2Eventos.pack(pady=(0,20), fill="both", expand=True)
         
-        #Mostrar todos los eventos en el menú.
+        # mostrar todos los eventos en el menú
         try:
             mostradas = 0
             if len(eventos) != 0:
@@ -746,7 +737,7 @@ class VentanaAdmin(VentanaNoticias):
         administrarLabel = ctk.CTkLabel(master=frame, wraplength=520, height=40, font=("",14,"bold"), fg_color=ACCENT_COLOR, corner_radius=6, text="Administrar Publicaciones")
         administrarLabel.pack(pady=5, padx=20, fill="x")
         
-        #Mostrar todas las noticias en el menú.
+        # mostrar todas las noticias en el menú
         try:
             mostradas = 0 
             if len(noticias) != 0:
@@ -769,11 +760,9 @@ class VentanaAdmin(VentanaNoticias):
         except:
             ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack() 
         
-        
         self.root.mainloop()
     
-    
-    def mostrar_publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creacion de publicacion
+    def mostrar_publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creación de publicación
         noticiaFrame = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#262626"))
         noticiaFrame.pack(pady=10, padx=20, fill="x")
         
@@ -798,7 +787,6 @@ class VentanaAdmin(VentanaNoticias):
         noticiaBanearUsuario = ctk.CTkButton(master=noticiaInfoFrame, width=100, height=40, text="Banear usuario", command=lambda: self.confirmar_banear("test12345"))
         noticiaBanearUsuario.pack(pady=0, padx=0, side="right")
         
-    
     def confirmar_banear(self, usuario):
         confirmarToplevel = ctk.CTkToplevel(master=self.root)
         confirmarToplevel.title("NotiAlarm | Banear usuario")
@@ -815,7 +803,6 @@ class VentanaAdmin(VentanaNoticias):
         btnAceptar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Aceptar")
         btnAceptar.pack(pady=(0,40), padx=(0,70), side="right")
         
-    
     def mostrar_evento(self, frame, titulo, ubicacion, fecha, hora, autor):
         eventoFrame = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#333333"))
         eventoFrame.pack(pady=5, padx=0, fill="x")
@@ -829,8 +816,7 @@ class VentanaAdmin(VentanaNoticias):
         btnPublicar = ctk.CTkButton(master=eventoFrame, width=119, text="Publicar", command=lambda: self.AceptarEvento(titulo, eventoFrame))
         btnPublicar.pack(pady=0, padx=0, side="right")
 
-
-    #Publica la noticia seleccionada.
+    # publica la noticia seleccionada
     def AceptarNoticia(self, titulo, noticiaFrame):
         global noticias
         try:
@@ -842,7 +828,7 @@ class VentanaAdmin(VentanaNoticias):
         except:
             print("La noticia ya fue aceptada.")
 
-    #Rechaza la noticia.
+    # rechaza la noticia 
     def RechazarNoticia(self, titulo, noticiaFrame):
         global noticias
         try:
@@ -854,7 +840,7 @@ class VentanaAdmin(VentanaNoticias):
         except:
             print("La noticia ya fue rechazada.")
 
-    #Publica el evento seleccionado.
+    # publica el evento seleccionado
     def AceptarEvento(self, titulo, eventoFrame):
         global eventos
         try:
@@ -866,7 +852,7 @@ class VentanaAdmin(VentanaNoticias):
         except:
             print("El evento ya fue aceptado.")
 
-    #Rechaza el Evento.
+    # rechaza el evento
     def RechazarEvento(self, titulo, eventoFrame):
         global eventos
         try:
@@ -878,18 +864,15 @@ class VentanaAdmin(VentanaNoticias):
         except:
             print("El evento ya fue rechazado.")
 
-
-    #Banea usuario que publico la noticia.
+    # banea usuario que publico la noticia
     def BanearUsuario(self, usuario, frame):
         global usuarios
         try:
-            del usuarios[usuario] #Tal vez sea mejor crear un registro para saber si el usuario ya esta baneado y que le salte una alerta.
+            del usuarios[usuario] # tal vez sea mejor crear un registro para saber si el usuario ya esta baneado y que le salte una alerta 
             Sesion.guardar_datos_usuarios()
             Sesion.guardar_datos_usuarios()
         except:
-            print("Usuario no encontrado.") #Falta un label.
-
-
+            print("Usuario no encontrado.") 
 
 def opciones_universales(self):
     self.root.geometry(TAMANO_VENTANA)
@@ -900,7 +883,6 @@ def opciones_universales(self):
     imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
     imagenLabel = ctk.CTkLabel(self.root, image=imagenFondo, text="")
     imagenLabel.place(relx=0, rely=0)
-
 
 def notialarmLogo(frame, texto, padLeft):
     tituloFrame = ctk.CTkFrame(master=frame)
@@ -915,42 +897,42 @@ def notialarmLogo(frame, texto, padLeft):
     titulo.pack(pady=20, padx=20, fill="x", side="left")
 
 
-class Sesion: #Maneja los datos se Sesión.
+class Sesion: # maneja los datos se sesión 
     def cargar_datos_usuarios(): #Carga el archivo anterior con los usuarios existentes.
         global usuarios
         try:
             with open("usuarios.json", "r") as archivo:
-                usuarios.update(json.load(archivo)) #Actualiza el diccionario usuarios con los valores de usuario.json, para eso sirve el .update y load
+                usuarios.update(json.load(archivo)) # actualiza el diccionario usuarios con los valores de usuario.json, para eso sirve el .update y load
         except:
             print("Archivo no encontrado, se creara con un usuario admin.")
             usuarios["admin"] = {"contrasena": "12345", 
                                  "rol": "admin", 
-                                 "correo": "admin"} #Creara el usuario "admin" con el rol admin y la contraseña 12345.
-            Sesion.guardar_datos_usuarios() #Llama el metodo para guardar los datos nuevos.
+                                 "correo": "admin"} # creara el usuario "admin" con el rol admin y la contraseña 12345
+            Sesion.guardar_datos_usuarios() # llama el metodo para guardar los datos nuevos
 
 
-    def guardar_datos_usuarios(): #Guarda los nuevos registros de usuarios.
-        try: #Primero intenta escribir sobre el json de usuarios.
+    def guardar_datos_usuarios(): # guarda los nuevos registros de usuarios
+        try: # primero intenta escribir sobre el json de usuarios
             with open("usuarios.json", "w") as archivo:
-                json.dump(usuarios, archivo) #Dump sirve para "tirar" o guardar los datos en el archivo ya leído "usuarios.json"
-        except FileNotFoundError: #En caso de no encontrar el json, avisa y crea el archivo.
+                json.dump(usuarios, archivo) # dump sirve para "tirar" o guardar los datos en el archivo ya leído "usuarios.json"
+        except FileNotFoundError: # en caso de no encontrar el json, avisa y crea el archivo
             print("Archivo no encontrado, se creara uno nuevo para los usuarios.")
             usuarios["admin"] = {"contrasena": "12345",
                                 "rol": "admin", 
-                                "correo": "admin"} #Creara el usuario "admin" con el rol admin y la contraseña 12345.
+                                "correo": "admin"} # creara el usuario "admin" con el rol admin y la contraseña 12345
             
-    def cargar_datos_noticias(): #Carga el archivo anterior con las noticias existentes.
+    def cargar_datos_noticias(): # carga el archivo anterior con las noticias existentes
         global noticias
         try:
             with open("noticias.json", "r") as archivo:
-                noticias.update(json.load(archivo)) #Actualiza el diccionario noticias con los valores de usuario.json, para eso sirve el .update y load
+                noticias.update(json.load(archivo)) # actualiza el diccionario noticias con los valores de usuario.json, para eso sirve el .update y load
         except:
             print("Archivo de noticias no encontrado, se creara uno nuevo.")
 
-    def guardar_datos_noticias(): #Guarda los nuevos registros de las noticias
-        try: #Primero intenta escribir sobre el json de noticias
+    def guardar_datos_noticias(): # guarda los nuevos registros de las noticias
+        try: # primero intenta escribir sobre el json de noticias
             with open("noticias.json", "w") as archivo:
-                json.dump(noticias, archivo) #Dump sirve para "tirar" o guardar los datos en el archivo ya leído "noticias.json"
+                json.dump(noticias, archivo) # dump sirve para "tirar" o guardar los datos en el archivo ya leído "noticias.json"
         except FileNotFoundError: 
             print("Archivo no encontrado, se creara uno nuevo.")
 
@@ -989,17 +971,17 @@ class Sesion: #Maneja los datos se Sesión.
         except:
             print("¡Ocurrio un error inesperado al intentar borrar los eventos!")
 
-#Cargar datos previos.
+# cargar datos previos
 Sesion.cargar_datos_usuarios() 
 Sesion.cargar_datos_noticias()
 Sesion.cargar_datos_eventos()
 
-#Al iniciar el programa revisa si algun evento ya ocurrio.
+# al iniciar el programa revisa si algun evento ya ocurrio
 Sesion.comprobar_fecha_eventos()
 
 ventana_opciones = VentanaOpciones() # abre la ventana principal
 
-#Guardar datos.
+# guardar datos
 Sesion.guardar_datos_usuarios()
 Sesion.guardar_datos_noticias()
 Sesion.guardar_datos_eventos()
