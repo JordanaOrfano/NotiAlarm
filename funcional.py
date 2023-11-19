@@ -84,8 +84,8 @@ class VentanaRegistro: # crea la ventana registro
         frameTerminos = ctk.CTkFrame(master=frame, fg_color="transparent")
         frameTerminos.pack(pady=(0,10), padx=105, fill="x")
         
-        terminosCheckbox = ctk.CTkCheckBox(master=frameTerminos, width=0, text="")
-        terminosCheckbox.pack(pady=0, padx=0, side="left")
+        self.terminosCheckbox = ctk.CTkCheckBox(master=frameTerminos, width=0, text="", onvalue="on", offvalue="off")
+        self.terminosCheckbox.pack(pady=0, padx=0, side="left")
         
         terminosBtn = ctk.CTkButton(master=frameTerminos, width=310, fg_color="transparent", text="Acepto los términos y condiciones", anchor="w", command=self.terminos_condiciones)
         terminosBtn.pack(pady=0, padx=0, fill="x", side="left")
@@ -109,7 +109,6 @@ class VentanaRegistro: # crea la ventana registro
         return True
     
     def registro_evento(self, frame): # al darle click a registrar se iniciara este método, se crea la variable alerta para luego eliminar labels
-        
         if self.nombre.get() not in usuarios: # comprueba que el nombre no exista previamente, si no existe ejecuta
             if len(self.correo.get().strip()) != 0 and len(self.nombre.get().strip()) != 0 and len(self.contrasena.get().strip()) != 0: # chequea que ningún campo este vació
                 if "@" in self.correo.get():
@@ -117,17 +116,23 @@ class VentanaRegistro: # crea la ventana registro
                         if len(self.contrasena.get()) >= 8 and len(self.contrasena.get()) <20: # comprueba que la contraseña tenga entre 8 y 19 dígitos
                             if any(char.isdigit() for char in self.contrasena.get()): # comprueba que la contraseña tenga al menos un numero
                                 if any(char in "!@#$%∧&*(._-)" for char in self.contrasena.get()): # comprueba si la contraseña tiene dígitos especiales
-                                    
-                                    usuarios[self.nombre.get()] = {"contrasena": self.contrasena.get(), "rol": "usuario", "correo": self.correo.get()} # de forma predeterminada cualquier usuario nuevo tendrá el rol "usuario", donde no tiene grandes permisos
-                                    Sesion.guardar_datos_usuarios()
-                                    if hasattr(self, "mensaje"):
-                                        self.mensaje.destroy()
+                                    if self.terminosCheckbox.get() == "on":
+                                        usuarios[self.nombre.get()] = {"contrasena": self.contrasena.get(), "rol": "usuario", "correo": self.correo.get()} # de forma predeterminada cualquier usuario nuevo tendrá el rol "usuario", donde no tiene grandes permisos
+                                        Sesion.guardar_datos_usuarios()
+                                        if hasattr(self, "mensaje"):
+                                            self.mensaje.destroy()
 
-                                    self.mensaje = ctk.CTkLabel(master = frame, text = "Usuario creado con éxito, espere unos instantes...")
-                                    self.mensaje.place(relx = 0.2, rely = 0.72) 
-                                    
-                                    self.root.destroy()
-                                    ventana_opciones = VentanaLogin()
+                                        self.mensaje = ctk.CTkLabel(master = frame, text = "Usuario creado con éxito, espere unos instantes...")
+                                        self.mensaje.place(relx = 0.2, rely = 0.72) 
+                                        
+                                        self.root.destroy()
+                                        ventana_opciones = VentanaLogin()
+                                    else:
+                                        if hasattr(self, "mensaje"):
+                                            self.mensaje.destroy()
+                            
+                                        self.mensaje = ctk.CTkLabel(master = frame, text = "Debes aceptar los términos y condiciones para usar nuestra aplicación.")
+                                        self.mensaje.place(relx = 0.11, rely = 0.72) 
                                 else:
                                     
                                     if hasattr(self, "mensaje"):
@@ -162,7 +167,7 @@ class VentanaRegistro: # crea la ventana registro
                         self.mensaje.destroy()
 
                     self.mensaje = ctk.CTkLabel(master = frame, text = "Ingrese un correo electrónico válido.")
-                    self.mensaje.place(relx = 0.25, rely = 0.72) 
+                    self.mensaje.place(relx = 0.30, rely = 0.72) 
             else:
                 
                 if hasattr(self, "mensaje"):
