@@ -341,8 +341,7 @@ class VentanaNoticias:
             ctk.CTkLabel(master = sideFrame2Eventos, text = "No hay eventos para mostrar.",height=400, font=ctk.CTkFont(size=14)).pack() 
         
         # -------------------- publicar -------------------
-        titulo = ctk.CTkLabel(master=frame, text="(icono) NotiAlarm", justify="left", anchor="w", font=(TITULOS_FUENTE))
-        titulo.pack(pady=20, padx=20, fill="x")
+        notialarmLogo(frame, "NotiAlarm", 170)
         
         crearFrame = ctk.CTkFrame(master=frame)
         crearFrame.pack(pady=(0,10), padx=20, fill="x")
@@ -742,8 +741,7 @@ class VentanaAdmin(VentanaNoticias):
         
         
         # frame principal
-        titulo = ctk.CTkLabel(master=frame, text="(icono) NotiAlarm | Administrador", justify="left", anchor="w", font=(TITULOS_FUENTE))
-        titulo.pack(pady=20, padx=20, fill="x")
+        notialarmLogo(frame, "NotiAlarm - Admin", 110)
         
         administrarLabel = ctk.CTkLabel(master=frame, wraplength=520, height=40, font=("",14,"bold"), fg_color=ACCENT_COLOR, corner_radius=6, text="Administrar Publicaciones")
         administrarLabel.pack(pady=5, padx=20, fill="x")
@@ -902,6 +900,19 @@ def opciones_universales(self):
     imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
     imagenLabel = ctk.CTkLabel(self.root, image=imagenFondo, text="")
     imagenLabel.place(relx=0, rely=0)
+
+
+def notialarmLogo(frame, texto, padLeft):
+    tituloFrame = ctk.CTkFrame(master=frame)
+    tituloFrame.pack(pady=0, padx=(padLeft,20), fill="x")
+    
+    currentPath = os.path.dirname(os.path.realpath(__file__))
+    imagenIcono = ctk.CTkImage(Image.open(currentPath + "/img/icon.png"), size=(50, 50))
+    imagenLabel = ctk.CTkLabel(tituloFrame, image=imagenIcono, text="")
+    imagenLabel.pack(side="left")
+    
+    titulo = ctk.CTkLabel(master=tituloFrame, text=texto, justify="left", anchor="w", font=(TITULOS_FUENTE))
+    titulo.pack(pady=20, padx=20, fill="x", side="left")
 
 
 class Sesion: #Maneja los datos se Sesión.
