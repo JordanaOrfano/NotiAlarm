@@ -117,7 +117,7 @@ class VentanaRegistro: # crea la ventana registro
                             if any(char.isdigit() for char in self.contrasena.get()): # comprueba que la contraseña tenga al menos un numero
                                 if any(char in "!@#$%∧&*(._-)" for char in self.contrasena.get()): # comprueba si la contraseña tiene dígitos especiales
                                     if self.terminosCheckbox.get() == "on":
-                                        usuarios[self.nombre.get()] = {"contrasena": self.contrasena.get(), "rol": "usuario", "correo": self.correo.get()} # de forma predeterminada cualquier usuario nuevo tendrá el rol "usuario", donde no tiene grandes permisos
+                                        usuarios[self.nombre.get()] = {"contrasena": self.contrasena.get(), "rol": "usuario", "correo": self.correo.get(), "baneado": False} # de forma predeterminada cualquier usuario nuevo tendrá el rol "usuario", donde no tiene grandes permisos
                                         Sesion.guardar_datos_usuarios()
                                         if hasattr(self, "mensaje"):
                                             self.mensaje.destroy()
@@ -244,23 +244,31 @@ class VentanaLogin: # crea la ventana login
 
         for usuario in usuarios: # verifica si algún correo en el diccionario usuarios coincide con el ingresado
             if self.correo.get().lower().strip() == usuarios[usuario]['correo'].lower().strip():
-                if str(self.contrasena.get()) == str(usuarios[usuario]['contrasena']): # si encuentra un correo que coincide con el ingresado, comprueba que también coincida la contraseña
-                    verificar = True # el correo y la contraseña coinciden
-                    usuario_actual = usuario
-                    break
-        if verificar:
-            if hasattr(self, "mensaje"):
-                self.mensaje.destroy()
-            self.mensaje = ctk.CTkLabel(master = frame, text = "Iniciando Sesión...")
-            self.mensaje.place(relx = 0.39, rely = 0.65)
-            
+                    if str(self.contrasena.get()) == str(usuarios[usuario]['contrasena']): # si encuentra un correo que coincide con el ingresado, comprueba que también coincida la contraseña
+                        verificar = True # el correo y la contraseña coinciden
+                        usuario_actual = usuario
+                        break
 
-            if usuarios[usuario]["rol"] == "usuario": # tiene el rol de usuario
-                self.root.destroy() # destruye la ventana actual
-                ventana_noticias = VentanaNoticias() # abre la ventana principal
+
+        if verificar:
+            if not usuarios[usuario]["baneado"]:
+                if hasattr(self, "mensaje"):
+                    self.mensaje.destroy()
+                self.mensaje = ctk.CTkLabel(master = frame, text = "Iniciando Sesión...")
+                self.mensaje.place(relx = 0.39, rely = 0.65)
+                
+                if usuarios[usuario]["rol"] == "usuario": # tiene el rol de usuario
+                    self.root.destroy() # destruye la ventana actual
+                    ventana_noticias = VentanaNoticias() # abre la ventana principal
+                else:
+                    self.root.destroy() # destruye la ventana actual
+                    ventana_admin = VentanaAdmin() # tiene el rol de administrador
+
             else:
-                self.root.destroy() # destruye la ventana actual
-                ventana_admin = VentanaAdmin() # tiene el rol de administrador
+                if hasattr(self, "mensaje"):
+                    self.mensaje.destroy()
+                self.mensaje = ctk.CTkLabel(master = frame, text = "El usuario se encuentra baneado permanentemente.", text_color="red", font=('', 14))
+                self.mensaje.place(relx = 0.2, rely = 0.65)
             
         else:
             if hasattr(self, "mensaje"):
@@ -395,7 +403,9 @@ class VentanaNoticias:
         if opcion=="Elija una opción":
             if hasattr(self, "errorOpcion"):
                 self.errorOpcion.destroy()
-            usuarios["alerta"] = {"valor": True, "correo": "x"}
+            usuarios["alerta"] = {"valor": True, "correo": "x", "baneado": False}
+            Sesion.guardar_datos_usuarios()
+            Sesion.cargar_datos_usuarios()
             self.errorOpcion = ctk.CTkLabel(master = sideFrame1, text = "Debe elegir una opcion")
             self.errorOpcion.pack(fill="x",pady=0)
             #.place(relx=0.2, rely=0.1, fill="x") 
@@ -793,7 +803,7 @@ class VentanaAdmin(VentanaNoticias):
         noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Rechazar", command=lambda: self.RechazarNoticia(titulo, noticiaFrame))
         noticiaBorrar.pack(pady=0, padx=(1,0), side="right")
         
-        noticiaBanearUsuario = ctk.CTkButton(master=noticiaInfoFrame, width=100, height=40, text="Banear usuario", command=lambda: self.confirmar_banear("test12345"))
+        noticiaBanearUsuario = ctk.CTkButton(master=noticiaInfoFrame, width=100, height=40, text="Banear usuario", command=lambda: self.confirmar_banear(usuario))
         noticiaBanearUsuario.pack(pady=0, padx=0, side="right")
         
     def confirmar_banear(self, usuario):
@@ -810,7 +820,7 @@ class VentanaAdmin(VentanaNoticias):
         btnCancelar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Cancelar", command=confirmarToplevel.destroy)
         btnCancelar.pack(pady=(0,40), padx=(70,0), side="left")
         
-        btnAceptar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Aceptar")
+        btnAceptar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Aceptar", command=lambda: self.BanearUsuario(usuario, confirmarToplevel))
         btnAceptar.pack(pady=(0,40), padx=(0,70), side="right")
         
     def mostrar_evento(self, frame, titulo, ubicacion, fecha, hora, autor):
@@ -875,12 +885,13 @@ class VentanaAdmin(VentanaNoticias):
             print("El evento ya fue rechazado.")
 
     # banea usuario que publico la noticia
-    def BanearUsuario(self, usuario, frame):
+    def BanearUsuario(self, usuario, confirmarToplevel):
         global usuarios
         try:
-            del usuarios[usuario] # tal vez sea mejor crear un registro para saber si el usuario ya esta baneado y que le salte una alerta 
+            usuarios[usuario]["baneado"] = True
             Sesion.guardar_datos_usuarios()
-            Sesion.guardar_datos_usuarios()
+            Sesion.cargar_datos_usuarios()
+            confirmarToplevel.destroy()
         except:
             print("Usuario no encontrado.") 
 
@@ -932,7 +943,8 @@ class Sesion: # maneja los datos se sesión
             print("Archivo no encontrado, se creara con un usuario admin.")
             usuarios["admin"] = {"contrasena": "12345", 
                                  "rol": "admin", 
-                                 "correo": "admin"} # creara el usuario "admin" con el rol admin y la contraseña 12345
+                                 "correo": "admin",
+                                 "baneado": False} # creara el usuario "admin" con el rol admin y la contraseña 12345
             Sesion.guardar_datos_usuarios() # llama el metodo para guardar los datos nuevos
 
 
@@ -944,7 +956,8 @@ class Sesion: # maneja los datos se sesión
             print("Archivo no encontrado, se creara uno nuevo para los usuarios.")
             usuarios["admin"] = {"contrasena": "12345",
                                 "rol": "admin", 
-                                "correo": "admin"} # creara el usuario "admin" con el rol admin y la contraseña 12345
+                                "correo": "admin",
+                                "baneado": False} # creara el usuario "admin" con el rol admin y la contraseña 12345
             
     def cargar_datos_noticias(): # carga el archivo anterior con las noticias existentes
         global noticias
