@@ -68,22 +68,31 @@ class VentanaRegistro: # crea la ventana registro
         frame.pack(pady=0, padx=300, fill="both", expand=True)
 
         label = ctk.CTkLabel(master=frame, text="Registrarse", font=(TITULOS_FUENTE))
-        label.place(relx=0.5, rely=0.30, anchor=tk.CENTER)
+        label.pack(pady=(170,30), padx=0)
 
         self.correo = ctk.CTkEntry(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, placeholder_text="Correo electrónico")
-        self.correo.place(relx=0.5, rely=0.4, anchor=tk.CENTER)
+        self.correo.pack(pady=(0,10), padx=0)
 
         self.nombre = ctk.CTkEntry(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, placeholder_text="Usuario")
-        self.nombre.place(relx = 0.5, rely = 0.47, anchor = tk.CENTER)
+        self.nombre.pack(pady=(0,10), padx=0)
 
         self.contrasena = ctk.CTkEntry(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, show="*", placeholder_text="Contraseña")
-        self.contrasena.place(relx=0.5, rely=0.54, anchor=tk.CENTER)
+        self.contrasena.pack(pady=(0,10), padx=0)
+        
+        frameTerminos = ctk.CTkFrame(master=frame, fg_color="transparent")
+        frameTerminos.pack(pady=(0,10), padx=105, fill="x")
+        
+        terminosCheckbox = ctk.CTkCheckBox(master=frameTerminos, width=0, text="")
+        terminosCheckbox.pack(pady=0, padx=0, side="left")
+        
+        terminosBtn = ctk.CTkButton(master=frameTerminos, width=310, fg_color="transparent", text="Acepto los términos y condiciones", anchor="w", command=self.terminos_condiciones)
+        terminosBtn.pack(pady=0, padx=0, fill="x", side="left")
 
         registrar = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Registrarse", command = lambda: self.registro_evento(frame))
-        registrar.place(relx=0.5, rely=0.61, anchor=tk.CENTER)
-
+        registrar.pack(pady=(0,10), padx=0)
+        
         volver = ctk.CTkButton(master=frame, width=BTN_ANCHO, height=BTN_ALTURA, text="Volver", fg_color="transparent", text_color=("#1a1a1a","#ffffff"), hover=False, command=self.abrir_ventana_opciones)
-        volver.place(relx=0.5, rely=0.68, anchor=tk.CENTER)
+        volver.pack(pady=(0,10), padx=0, fill="x")
 
         self.root.mainloop()
 
@@ -165,6 +174,29 @@ class VentanaRegistro: # crea la ventana registro
 
             self.mensaje = ctk.CTkLabel(master = frame, text = "El nombre de usuario ya existe.")
             self.mensaje.place(relx = 0.32, rely = 0.72) 
+    
+    
+    def terminos_condiciones(self):
+        terminosVentana = ctk.CTkToplevel(master=self.root)
+        terminosVentana.title("NotiAlarm | Términos y condiciones")
+        terminosVentana.geometry("600x400")
+        terminosVentana.resizable(False, False)
+        terminosVentana.attributes("-topmost", "true")
+        
+        terminosLabel = ctk.CTkLabel(master=terminosVentana, font=('', 24), text="Términos y condiciones")
+        terminosLabel.pack(pady=20, padx=0, fill="x")
+        
+        frame = ctk.CTkScrollableFrame(master=terminosVentana)
+        frame.pack(pady=0, padx=30, fill="both", expand=True)
+        
+        terminosTxt = "\nBases y Condiciones del Software de NotiAlarm.\n\nParticipación:\nEl software está disponible para la participación de residentes locales interesados en compartir noticias de seguridad e informar sobre eventos locales relevantes. La participación es voluntaria y abierta a personas mayores de 18 años.\n\nContenido:\nSe invita a los usuarios a subir noticias relacionadas con la seguridad en la zona, incluyendo incidentes de inseguridad, medidas preventivas y eventos locales de interés comunitario.\n\nVeracidad de la Información:\nLos participantes deben proporcionar información veraz y corroborada en la medida de lo posible. La difusión de información falsa puede resultar en la exclusión del usuario del software.\n\nRespeto y Ética:\nSe prohíbe la publicación de contenido difamatorio, ofensivo o que viole los derechos de privacidad de terceros. El respeto y la ética son fundamentales para mantener un ambiente colaborativo y seguro.\n\nConfidencialidad:\nLos usuarios deben ser conscientes de no compartir información que viole la privacidad de otras personas o comprometa la seguridad de la comunidad.\n\nUso Responsable:\nEl software se proporciona con el propósito de mejorar la seguridad y la conciencia comunitaria. Su uso debe ser responsable y respetuoso. Cualquier mal uso del software puede resultar en la desactivación de la cuenta del usuario.\n\nPropiedad Intelectual:\nLos usuarios conservan los derechos de propiedad intelectual sobre el contenido que suben al software. Al subir contenido, los usuarios otorgan una licencia no exclusiva para su uso en la plataforma.\n\nColaboración Comunitaria:\nSe fomenta la colaboración y el intercambio constructivo de información entre los usuarios. La plataforma se reserva el derecho de moderar y eliminar contenido que viole las normas de colaboración.\n\nDuración:\nEl uso del software no tiene limitaciones de tiempo y estará sujeto a revisiones periódicas para garantizar su eficacia y cumplimiento de normas.\n"
+        
+        terminosTexto = ctk.CTkLabel(master=frame, wraplength=500, justify="left", text=terminosTxt)
+        terminosTexto.pack(pady=0, padx=0, fill="x")
+        
+        terminosLabel = ctk.CTkLabel(master=terminosVentana, justify="left", wraplength=550, text="Al utilizar este software, los usuarios aceptan adherirse a estas bases y condiciones. La plataforma se reserva el derecho de modificar estas condiciones con notificación previa a los usuarios.")
+        terminosLabel.pack(pady=20, padx=0, fill="x")
+        
 
 usuario_actual = "desconocido"
 
