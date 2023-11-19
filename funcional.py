@@ -6,6 +6,7 @@ from collections import OrderedDict # trabajar con diccionarios ordenados
 import os
 from datetime import datetime, time
 import webbrowser  # para abrir link en denunciaBtn
+import time # se usará como temporizador
 
 ctk.set_appearance_mode("dark") # tema oscuro
 
@@ -125,8 +126,8 @@ class VentanaRegistro: # crea la ventana registro
                                         self.mensaje = ctk.CTkLabel(master = frame, text = "Usuario creado con éxito, espere unos instantes...")
                                         self.mensaje.place(relx = 0.2, rely = 0.72) 
                                         
-                                        self.root.destroy()
-                                        ventana_opciones = VentanaLogin()
+                                        self.root.after(3000, self.abrir_ventana_login)
+                                        
                                     else:
                                         if hasattr(self, "mensaje"):
                                             self.mensaje.destroy()
@@ -205,7 +206,11 @@ class VentanaRegistro: # crea la ventana registro
         
         terminosLabel = ctk.CTkLabel(master=terminosVentana, justify="left", wraplength=550, text="Al utilizar este software, los usuarios aceptan adherirse a estas bases y condiciones. La plataforma se reserva el derecho de modificar estas condiciones con notificación previa a los usuarios.")
         terminosLabel.pack(pady=20, padx=0, fill="x")
-        
+
+    def abrir_ventana_login(self):
+        # Código para abrir la ventana de login
+        self.root.destroy()
+        ventana_opciones = VentanaLogin() 
 
 usuario_actual = "desconocido"
 
@@ -259,11 +264,9 @@ class VentanaLogin: # crea la ventana login
                 self.mensaje.place(relx = 0.39, rely = 0.65)
                 
                 if usuarios[usuario]["rol"] == "usuario": # tiene el rol de usuario
-                    self.root.destroy() # destruye la ventana actual
-                    ventana_noticias = VentanaNoticias() # abre la ventana principal
+                    self.root.after(3000, self.abrir_ventana_usuario)
                 else:
-                    self.root.destroy() # destruye la ventana actual
-                    ventana_admin = VentanaAdmin() # tiene el rol de administrador
+                    self.root.after(3000, self.abrir_ventana_admin)
 
             else:
                 if hasattr(self, "mensaje"):
@@ -277,6 +280,14 @@ class VentanaLogin: # crea la ventana login
             self.mensaje = ctk.CTkLabel(master = frame, text = "Correo o contraseña inválidos.")
             self.mensaje.place(relx = 0.32, rely = 0.65) 
 
+    def abrir_ventana_usuario(self):
+        self.root.destroy() # destruye la ventana actual
+        ventana_noticias = VentanaNoticias() # abre la ventana principal
+
+    def abrir_ventana_admin(self):
+        self.root.destroy() # destruye la ventana actual
+        ventana_admin = VentanaAdmin() # tiene el rol de administrador
+        
 
 class VentanaNoticias:
     def __init__(self):
@@ -681,11 +692,12 @@ class VentanaNoticias:
         noticiaInfo = ctk.CTkLabel(master=noticiaInfoFrame, justify="left", anchor="w", corner_radius=6, wraplength=520, text=f"{usuario}\n{fecha}")
         noticiaInfo.pack(pady=0, padx=20, side="left")
         
-        noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Borrar")
-        noticiaBorrar.pack(pady=0, padx=0, side="right")
+        if usuario == usuario_actual:
+            noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Borrar")
+            noticiaBorrar.pack(pady=0, padx=0, side="right")
 
-        noticiaEditar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Editar")
-        noticiaEditar.pack(pady=0, padx=1, side="right")
+            noticiaEditar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Editar")
+            noticiaEditar.pack(pady=0, padx=1, side="right")
     
     def mostrar_evento(self, frame, titulo, ubicacion, fecha, hora, autor):
         eventoTitulo = ctk.CTkLabel(master=frame, text=f"{titulo} \n{ubicacion}\n{fecha} | {hora}\n{autor}", justify="left", anchor="w", wraplength=180, font=("",13,"bold"))
