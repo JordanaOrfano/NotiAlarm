@@ -440,7 +440,7 @@ class VentanaNoticias:
 
     def publicar_noticia(self): 
         publicarVentana = ctk.CTkToplevel(master=self.root)
-        publicarVentana.title("NotiAlarm")
+        publicarVentana.title("NotiAlarm | Crear noticia")
         publicarVentana.geometry("650x435")
         publicarVentana.resizable(False, False)
         publicarVentana.attributes("-topmost", "true")
@@ -536,7 +536,7 @@ class VentanaNoticias:
     
     def Evento(self):
         publicarVentana = ctk.CTkToplevel(master=self.root)
-        publicarVentana.title("NotiAlarm")
+        publicarVentana.title("NotiAlarm | Crear evento")
         publicarVentana.geometry("650x290")
         publicarVentana.resizable(False, False)  
         publicarVentana.attributes("-topmost", "true")      
@@ -803,7 +803,7 @@ class VentanaAdmin(VentanaNoticias):
     
     def confirmar_banear(self, usuario):
         confirmarToplevel = ctk.CTkToplevel(master=self.root)
-        confirmarToplevel.title("NotiAlarm")
+        confirmarToplevel.title("NotiAlarm | Banear usuario")
         confirmarToplevel.geometry("470x180")
         confirmarToplevel.resizable(False, False)
         confirmarToplevel.attributes("-topmost", "true")
