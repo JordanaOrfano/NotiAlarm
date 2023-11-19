@@ -10,6 +10,7 @@ import webbrowser  # para abrir link en denunciaBtn
 ctk.set_appearance_mode("dark") # tema oscuro
 
 # diccionarios utilizados en el programa
+# diccionarios utilizados en el programa
 usuarios = {}
 noticias = OrderedDict()
 eventos = OrderedDict()
@@ -233,6 +234,7 @@ class VentanaLogin: # crea la ventana login
 
     def login_evento(self, frame): # al tocar el botón login
         global usuario_actual
+        verificar = False # por ahora, la contraseña no coincide; Valor predeterminado
         verificar = False # por ahora, la contraseña no coincide; Valor predeterminado
 
         for usuario in usuarios: # verifica si algún correo en el diccionario usuarios coincide con el ingresado
