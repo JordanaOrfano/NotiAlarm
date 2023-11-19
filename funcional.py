@@ -127,7 +127,7 @@ class VentanaRegistro: # crea la ventana registro
                                         self.mensaje = ctk.CTkLabel(master = frame, text = "Usuario creado con éxito, espere unos instantes...")
                                         self.mensaje.place(relx = 0.2, rely = 0.72) 
                                         
-                                        self.root.after(3000, self.abrir_ventana_login)
+                                        self.root.after(1200, self.abrir_ventana_login)
                                         
                                     else:
                                         if hasattr(self, "mensaje"):
@@ -265,9 +265,9 @@ class VentanaLogin: # crea la ventana login
                 self.mensaje.place(relx = 0.39, rely = 0.65)
                 
                 if usuarios[usuario]["rol"] == "usuario": # tiene el rol de usuario
-                    self.root.after(3000, self.abrir_ventana_usuario)
+                    self.root.after(1200, self.abrir_ventana_usuario)
                 else:
-                    self.root.after(3000, self.abrir_ventana_admin)
+                    self.root.after(1200, self.abrir_ventana_admin)
 
             else:
                 if hasattr(self, "mensaje"):
@@ -510,7 +510,7 @@ class VentanaNoticias:
                                 if hasattr(self, "info_evento"):
                                     self.info_evento.destroy()
                                     
-                                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Noticia creada correctamente.")
+                                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Noticia creada correctamente. Espere a que sea aprobada.")
                                 self.info_evento.pack()
                                 fecha_actual = datetime.now().strftime('%d/%m/%Y %H:%M')
                                 noticias[self.publicarTitulo.get()] = {"contenido": self.publicarTextbox.get("1.0", "end"),
@@ -618,7 +618,7 @@ class VentanaNoticias:
                                 if hasattr(self, "info_evento"):
                                     self.info_evento.destroy()
 
-                                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Evento Publicado.")
+                                self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Evento creado correctamente. Espere a que sea aprobado.")
                                 self.info_evento.pack() 
                             else:
                                 if hasattr(self, "info_evento"):
@@ -691,7 +691,7 @@ class VentanaNoticias:
         noticiaInfoFrame.pack(pady=0, padx=0, fill="x")
 
         noticiaInfo = ctk.CTkLabel(master=noticiaInfoFrame, justify="left", anchor="w", corner_radius=6, wraplength=520, text=f"{usuario}\n{fecha}")
-        noticiaInfo.pack(pady=0, padx=20, side="left")
+        noticiaInfo.pack(pady=5, padx=20, side="left")
         
         if usuario == usuario_actual:
             noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Borrar")
@@ -722,12 +722,30 @@ class VentanaAdmin(VentanaNoticias):
         sideFrame1.place(relx=0, rely=0, relheight=1)
         sideFrame1.pack_propagate(False)
 
+        # cerrar sesión
         cerrarSesionLabel = ctk.CTkLabel(master=sideFrame1, text="Cerrar sesión", font=("",16,"bold"))
         cerrarSesionLabel.pack(pady=(30,0), padx=20, fill="x")
         
         volver = ctk.CTkButton(master=sideFrame1, text="<  Volver", command=self.volver)
         volver.pack(pady=10, padx=20, fill="x")
-
+        
+        # banear usuario
+        banearLabel = ctk.CTkLabel(master=sideFrame1, text="Banear usuario", font=("",16,"bold"))
+        banearLabel.pack(pady=(130,10), padx=20, fill="x")
+        
+        banearEntry = ctk.CTkEntry(master=sideFrame1, placeholder_text="Nombre de usuario")
+        banearEntry.pack(pady=0, padx=20, fill="x")
+        
+        banearTxt = ctk.CTkLabel(master=sideFrame1, text="ó")
+        banearTxt.pack(pady=5, padx=20, fill="x")
+        
+        banearDesplegable = ctk.CTkOptionMenu(master=sideFrame1, values=["user1", "user2"])
+        banearDesplegable.pack(pady=(0,10), padx=20, fill="x")
+         
+        banearAceptar = ctk.CTkButton(master=sideFrame1, text="Banear")
+        banearAceptar.pack(pady=(0,10), padx=20, fill="x")
+        
+        # cambiar apariencia
         cambiarAparienciaBtn = ctk.CTkOptionMenu(master=sideFrame1, values=["Dark", "Light"], command=self.cambiar_apariencia)
         cambiarAparienciaBtn.pack(pady=(10,30), padx=20, fill="x", side="bottom")
         
