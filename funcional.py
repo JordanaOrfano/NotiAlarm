@@ -187,6 +187,7 @@ class VentanaRegistro: # crea la ventana registro
         terminosVentana = ctk.CTkToplevel(master=self.root)
         terminosVentana.title("NotiAlarm | Términos y condiciones")
         centrar_ventana(terminosVentana, "600", "400")
+        NotiAlarm_icono(terminosVentana)
         # terminosVentana.geometry("600x400+500+240")
         terminosVentana.resizable(False, False)
         terminosVentana.attributes("-topmost", "true")
@@ -452,6 +453,7 @@ class VentanaNoticias:
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm | Crear noticia")
         centrar_ventana(publicarVentana, "650", "435")
+        NotiAlarm_icono(publicarVentana)
         # publicarVentana.geometry("650x435+500+240")
         publicarVentana.resizable(False, False)
         publicarVentana.attributes("-topmost", "true")
@@ -548,6 +550,7 @@ class VentanaNoticias:
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm | Crear evento")
         centrar_ventana(publicarVentana, "650", "290")
+        NotiAlarm_icono(publicarVentana)
         # publicarVentana.geometry("650x290+500+240")
         publicarVentana.resizable(False, False)  
         publicarVentana.attributes("-topmost", "true")      
@@ -810,6 +813,7 @@ class VentanaAdmin(VentanaNoticias):
         confirmarToplevel = ctk.CTkToplevel(master=self.root)
         confirmarToplevel.title("NotiAlarm | Banear usuario")
         centrar_ventana(confirmarToplevel, "470", "180")
+        NotiAlarm_icono(confirmarToplevel)
         # confirmarToplevel.geometry("470x180+500+240")
         confirmarToplevel.resizable(False, False)
         confirmarToplevel.attributes("-topmost", "true")
@@ -897,6 +901,7 @@ class VentanaAdmin(VentanaNoticias):
 
 def opciones_universales(self):
     # self.root.geometry("1100x680+350+240")
+    NotiAlarm_icono(self.root)
     centrar_ventana(self.root, "1100", "680")
     self.root.title("NotiAlarm")
     self.root.resizable(False, False)
@@ -919,6 +924,10 @@ def centrar_ventana(ventana, ancho, alto):
     # establece el tamaño y posicion de la ventana
     ventana.geometry(f"{ancho}x{alto}+{x}+{y}")
 
+def NotiAlarm_icono(ventana):
+    carpeta_principal = os.path.dirname(__file__)
+    carpeta_imagenes = os.path.join(carpeta_principal, "img")
+    ventana.iconbitmap(os.path.join(carpeta_imagenes, "ventana.ico"))
 
 def notialarmLogo(frame, texto, padLeft):
     tituloFrame = ctk.CTkFrame(master=frame)
