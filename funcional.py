@@ -5,6 +5,7 @@ from PIL import Image
 from collections import OrderedDict #Trabajar con diccionarios ordenados.
 import os
 from datetime import datetime, time
+import webbrowser  # para abrir link en denunciaBtn
 
 ctk.set_appearance_mode("dark") # tema oscuro
 
@@ -280,23 +281,26 @@ class VentanaNoticias:
         
         volver = ctk.CTkButton(master=sideFrame1, text="<  Volver", command=self.volver)
         volver.pack(pady=10, padx=20, fill="x")
+        
+        denunciaLabel = ctk.CTkLabel(master=sideFrame1, text="¿Sabías que podés realizar tu denuncia de forma virtual?", wraplength=210, font=("",16,"bold"))
+        denunciaLabel.pack(pady=(90,10), padx=20, fill="x")
+        
+        denunciaBtn = ctk.CTkButton(master=sideFrame1, text="seguridad.gba.gob.ar", command=self.abrir_link)
+        denunciaBtn.pack(pady=(0), padx=20, fill="x")
 
-        sideFrame1Titulo = ctk.CTkLabel(master=sideFrame1, text="Información", justify="left", anchor="w", font=("",16,"bold"))
-        sideFrame1Titulo.pack(pady=(100,0), padx=66, fill="x")
+        infoLabel = ctk.CTkLabel(master=sideFrame1, text="Información", justify="left", anchor="w", font=("",16,"bold"))
+        infoLabel.pack(pady=(90,0), padx=66, fill="x")
         
         numEmergencia = ctk.CTkLabel(master=sideFrame1, text="911 | Policía\n100 | Bomberos\n107 | Ambulancia", justify="left", anchor="w", wraplength=205, font=("",13,"bold"))
         numEmergencia.pack(pady=0, padx=66, fill="x")
-        
-        volver = ctk.CTkButton(master=sideFrame1, text="Hacer denuncia online", command=self.volver)
-        volver.pack(pady=(100,10), padx=20, fill="x")
 
-        activarAlarmaBtn = ctk.CTkButton(master=sideFrame1, text="Enviar Alarma", command=lambda: self.comprobar_alarma(seleccionAlarma.get(), sideFrame1))
+        activarAlarmaBtn = ctk.CTkButton(master=sideFrame1, text="Enviar alarma", command=lambda: self.comprobar_alarma(seleccionAlarma.get(), sideFrame1))
         activarAlarmaBtn.pack(pady=(10,30), padx=20, fill="x", side="bottom")
 
         seleccionAlarma = ctk.CTkOptionMenu(master=sideFrame1, values=["Elija una opción", "Robo", "Emergencia Medica", "Incendio"])
         seleccionAlarma.pack(pady=(10,0), padx=20, fill="x", side="bottom")
         
-        alarmaLabel = ctk.CTkLabel(master=sideFrame1, text="Iniciar Alarma", font=("",16,"bold"))
+        alarmaLabel = ctk.CTkLabel(master=sideFrame1, text="Iniciar alarma", font=("",16,"bold"))
         alarmaLabel.pack(pady=(0,0), padx=20, fill="x", side="bottom")
         
         # side frame derecho
@@ -376,6 +380,10 @@ class VentanaNoticias:
             ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack() 
         
         self.root.mainloop()
+
+
+    def abrir_link(self):
+        webbrowser.open_new("https://www.seguridad.gba.gob.ar/#/home")
 
 
     def comprobar_alarma(self, opcion, sideFrame1):
