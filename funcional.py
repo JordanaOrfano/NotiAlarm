@@ -10,7 +10,6 @@ import webbrowser  # para abrir link en denunciaBtn
 ctk.set_appearance_mode("dark") # tema oscuro
 
 # diccionarios utilizados en el programa
-# diccionarios utilizados en el programa
 usuarios = {}
 noticias = OrderedDict()
 eventos = OrderedDict()
@@ -118,6 +117,7 @@ class VentanaRegistro: # crea la ventana registro
                         if len(self.contrasena.get()) >= 8 and len(self.contrasena.get()) <20: # comprueba que la contraseña tenga entre 8 y 19 dígitos
                             if any(char.isdigit() for char in self.contrasena.get()): # comprueba que la contraseña tenga al menos un numero
                                 if any(char in "!@#$%∧&*(._-)" for char in self.contrasena.get()): # comprueba si la contraseña tiene dígitos especiales
+                                    
                                     usuarios[self.nombre.get()] = {"contrasena": self.contrasena.get(), "rol": "usuario", "correo": self.correo.get()} # de forma predeterminada cualquier usuario nuevo tendrá el rol "usuario", donde no tiene grandes permisos
                                     Sesion.guardar_datos_usuarios()
                                     if hasattr(self, "mensaje"):
@@ -181,7 +181,8 @@ class VentanaRegistro: # crea la ventana registro
     def terminos_condiciones(self):
         terminosVentana = ctk.CTkToplevel(master=self.root)
         terminosVentana.title("NotiAlarm | Términos y condiciones")
-        terminosVentana.geometry("600x400")
+        centrar_ventana(terminosVentana, "600", "400")
+        # terminosVentana.geometry("600x400+500+240")
         terminosVentana.resizable(False, False)
         terminosVentana.attributes("-topmost", "true")
         
@@ -234,8 +235,7 @@ class VentanaLogin: # crea la ventana login
 
     def login_evento(self, frame): # al tocar el botón login
         global usuario_actual
-        verificar = False # por ahora, la contraseña no coincide; Valor predeterminado
-        verificar = False # por ahora, la contraseña no coincide; Valor predeterminado
+        verificar = False # por ahora, la contraseña no coincide; valor predeterminado
 
         for usuario in usuarios: # verifica si algún correo en el diccionario usuarios coincide con el ingresado
             if self.correo.get().lower().strip() == usuarios[usuario]['correo'].lower().strip():
@@ -436,7 +436,8 @@ class VentanaNoticias:
     def publicar_noticia(self): 
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm | Crear noticia")
-        publicarVentana.geometry("650x435")
+        centrar_ventana(publicarVentana, "650", "435")
+        # publicarVentana.geometry("650x435+500+240")
         publicarVentana.resizable(False, False)
         publicarVentana.attributes("-topmost", "true")
         
@@ -531,7 +532,8 @@ class VentanaNoticias:
     def Evento(self):
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm | Crear evento")
-        publicarVentana.geometry("650x290")
+        centrar_ventana(publicarVentana, "650", "290")
+        # publicarVentana.geometry("650x290+500+240")
         publicarVentana.resizable(False, False)  
         publicarVentana.attributes("-topmost", "true")      
         
@@ -792,7 +794,8 @@ class VentanaAdmin(VentanaNoticias):
     def confirmar_banear(self, usuario):
         confirmarToplevel = ctk.CTkToplevel(master=self.root)
         confirmarToplevel.title("NotiAlarm | Banear usuario")
-        confirmarToplevel.geometry("470x180")
+        centrar_ventana(confirmarToplevel, "470", "180")
+        # confirmarToplevel.geometry("470x180+500+240")
         confirmarToplevel.resizable(False, False)
         confirmarToplevel.attributes("-topmost", "true")
         
@@ -877,7 +880,8 @@ class VentanaAdmin(VentanaNoticias):
             print("Usuario no encontrado.") 
 
 def opciones_universales(self):
-    self.root.geometry(TAMANO_VENTANA)
+    # self.root.geometry("1100x680+350+240")
+    centrar_ventana(self.root, "1100", "680")
     self.root.title("NotiAlarm")
     self.root.resizable(False, False)
     
@@ -885,6 +889,20 @@ def opciones_universales(self):
     imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
     imagenLabel = ctk.CTkLabel(self.root, image=imagenFondo, text="")
     imagenLabel.place(relx=0, rely=0)
+
+def centrar_ventana(ventana, ancho, alto):
+
+    # obten el ancho y el alto de la pantalla
+    ancho_pantalla = ventana.winfo_screenwidth()
+    alto_pantalla = ventana.winfo_screenheight()
+
+    # calcula las coordenadas para centrar la ventana
+    x = (ancho_pantalla - int(ancho)) // 2
+    y = (alto_pantalla - int(alto)) // 2
+
+    # establece el tamaño y posicion de la ventana
+    ventana.geometry(f"{ancho}x{alto}+{x}+{y}")
+
 
 def notialarmLogo(frame, texto, padLeft):
     tituloFrame = ctk.CTkFrame(master=frame)
