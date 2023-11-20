@@ -416,7 +416,7 @@ class VentanaNoticias:
         if opcion=="Elija una opción":
             if hasattr(self, "errorOpcion"):
                 self.errorOpcion.destroy()
-            usuarios["alerta"] = {"valor": True, "correo": "x", "baneado": False}
+            usuarios["alerta"] = {"valor": True, "correo": "x", "baneado": False, "rol": "desconocido"}
             Sesion.guardar_datos_usuarios()
             Sesion.cargar_datos_usuarios()
             self.errorOpcion = ctk.CTkLabel(master = sideFrame1, text = "Debe elegir una opcion")
@@ -733,16 +733,25 @@ class VentanaAdmin(VentanaNoticias):
         banearLabel = ctk.CTkLabel(master=sideFrame1, text="Banear usuario", font=("",16,"bold"))
         banearLabel.pack(pady=(130,10), padx=20, fill="x")
         
-        banearEntry = ctk.CTkEntry(master=sideFrame1, placeholder_text="Nombre de usuario")
-        banearEntry.pack(pady=0, padx=20, fill="x")
+        self.banearEntry = ctk.CTkEntry(master=sideFrame1, placeholder_text="Nombre de usuario")
+        self.banearEntry.pack(pady=0, padx=20, fill="x")
         
         banearTxt = ctk.CTkLabel(master=sideFrame1, text="ó")
         banearTxt.pack(pady=5, padx=20, fill="x")
         
-        banearDesplegable = ctk.CTkOptionMenu(master=sideFrame1, values=["user1", "user2"])
-        banearDesplegable.pack(pady=(0,10), padx=20, fill="x")
+        # añadir todos los usuarios al desplegable banearDesplegable
+        elementos_desplegable = []
+        for usuario in usuarios:
+            if usuarios[usuario]["rol"] == "admin" or usuario == "alerta" or usuarios[usuario]["baneado"] == True: # ignora la alerta, los usuarios con el rol administrador y los baneados.
+                pass 
+            else:
+                elementos_desplegable.append(usuario)
+        
+        self.banearDesplegable = ctk.CTkOptionMenu(master=sideFrame1, values=["Mostrar Usuarios"] + elementos_desplegable)
+        self.banearDesplegable.pack(pady=(0,10), padx=20, fill="x")
          
-        banearAceptar = ctk.CTkButton(master=sideFrame1, text="Banear")
+
+        banearAceptar = ctk.CTkButton(master=sideFrame1, text="Banear", command=lambda:self.BanearUsuario("", sideFrame1))
         banearAceptar.pack(pady=(0,10), padx=20, fill="x")
         
         # cambiar apariencia
@@ -814,7 +823,7 @@ class VentanaAdmin(VentanaNoticias):
             ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack() 
         
         self.root.mainloop()
-    
+
     def mostrar_publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creación de publicación
         noticiaFrame = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#262626"))
         noticiaFrame.pack(pady=10, padx=20, fill="x")
@@ -855,7 +864,7 @@ class VentanaAdmin(VentanaNoticias):
         btnCancelar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Cancelar", command=confirmarToplevel.destroy)
         btnCancelar.pack(pady=(0,40), padx=(70,0), side="left")
         
-        btnAceptar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Aceptar", command=lambda: self.BanearUsuario(usuario, confirmarToplevel))
+        btnAceptar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Aceptar", command=lambda: self.BanearUsuario_de_noticias(usuario, confirmarToplevel))
         btnAceptar.pack(pady=(0,40), padx=(0,70), side="right")
         
     def mostrar_evento(self, frame, titulo, ubicacion, fecha, hora, autor):
@@ -919,17 +928,64 @@ class VentanaAdmin(VentanaNoticias):
         except:
             print("El evento ya fue rechazado.")
 
-    # banea usuario que publico la noticia
+    # banea usuario que publico la noticia o ingresa el admin
     def BanearUsuario(self, usuario, confirmarToplevel):
         global usuarios
+        if len(self.banearEntry.get().strip()) != 0:
+            try:
+                if self.banearEntry.get() in usuarios:
+                    if usuarios[self.banearEntry.get()]["baneado"] == True:
+                        if hasattr(self, "mensaje"):
+                            self.mensaje.destroy()
+                        self.mensaje = ctk.CTkLabel(master = confirmarToplevel, text = "El usuario ya se encuentra baneado.")
+                        self.mensaje.pack()
+                    else:
+                        usuarios[self.banearEntry.get()]["baneado"] = True
+                        if hasattr(self, "mensaje"):
+                            self.mensaje.destroy()
+                        self.mensaje = ctk.CTkLabel(master = confirmarToplevel, text = "Usuario baneado correctamente.")
+                        self.mensaje.pack()
+
+                else:
+                    if hasattr(self, "mensaje"):
+                            self.mensaje.destroy()
+                    self.mensaje = ctk.CTkLabel(master = confirmarToplevel, text = "Usuario no encontrado.")
+                    self.mensaje.pack()
+
+            except:
+                print("Error al banear usuario con el entry")
+        elif self.banearDesplegable.get() != "Mostrar Usuarios":
+            try:
+                if usuarios[self.banearDesplegable.get()]["baneado"] == True:
+                    if hasattr(self, "mensaje"):
+                        self.mensaje.destroy()
+                    self.mensaje = ctk.CTkLabel(master = confirmarToplevel, text = "El usuario ya se encuentra baneado.")
+                    self.mensaje.pack()
+                else:
+                    usuarios[self.banearDesplegable.get()]["baneado"] = True
+                    if hasattr(self, "mensaje"):
+                        self.mensaje.destroy()
+                    self.mensaje = ctk.CTkLabel(master = confirmarToplevel, text = "Usuario baneado correctamente.")
+                    self.mensaje.pack()
+            except:
+                print("Error al banear usuario con el desplegable.")
+        elif self.banearDesplegable.get() == "Mostrar Usuarios":
+            if hasattr(self, "mensaje"):
+                self.mensaje.destroy()
+            self.mensaje = ctk.CTkLabel(master = confirmarToplevel, text = "Debes seleccionar un usuario.")
+            self.mensaje.pack()
+
+        Sesion.guardar_datos_usuarios()
+        Sesion.cargar_datos_usuarios()
+
+    def BanearUsuario_de_noticias(self, usuario, confirmarToplevel):
         try:
             usuarios[usuario]["baneado"] = True
+            confirmarToplevel.destroy()
             Sesion.guardar_datos_usuarios()
             Sesion.cargar_datos_usuarios()
-            confirmarToplevel.destroy()
         except:
             print("Usuario no encontrado.") 
-
 
 class Sesion: # maneja los datos se sesión 
     def cargar_datos_usuarios(): #Carga el archivo anterior con los usuarios existentes.
