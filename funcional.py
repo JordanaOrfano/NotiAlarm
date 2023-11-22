@@ -59,7 +59,7 @@ class VentanaOpciones:
 
     def abrir_ventana_invitado(self):
         self.root.destroy()
-        ventana_invitado = VentanaNoticias()
+        ventana_invitado = VentanaInvitado()
 
 
 class VentanaRegistro: # crea la ventana registro
@@ -986,6 +986,12 @@ class VentanaAdmin(VentanaNoticias):
             Sesion.cargar_datos_usuarios()
         except:
             print("Usuario no encontrado.") 
+
+
+class VentanaInvitado(VentanaNoticias):
+    def __init__(self):
+        super().__init__()
+
 
 class Sesion: # maneja los datos se sesión 
     def cargar_datos_usuarios(): #Carga el archivo anterior con los usuarios existentes.
