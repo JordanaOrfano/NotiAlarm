@@ -59,7 +59,7 @@ class VentanaOpciones:
 
     def abrir_ventana_invitado(self):
         self.root.destroy()
-        ventana_invitado = VentanaNoticias()
+        ventana_invitado = VentanaInvitado()
 
 
 class VentanaRegistro: # crea la ventana registro
@@ -377,8 +377,8 @@ class VentanaNoticias:
         crearLabel = ctk.CTkLabel(master=crearFrame, wraplength=520, height=40, font=("",14,"bold"), fg_color=ACCENT_COLOR, corner_radius=6, text="Crear publicación")
         crearLabel.pack(pady=0, padx=0, fill="x")
         
-        crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicar_noticia)
-        crearAlarmaBtn.pack(pady=0, padx=0, fill="x", side="left")
+        self.crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicar_noticia)
+        self.crearAlarmaBtn.pack(pady=0, padx=0, fill="x", side="left")
         
         noticiaEventoBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar evento", command=self.Evento)
         noticiaEventoBtn.pack(pady=0, padx=0, fill="x", side="right")
@@ -986,6 +986,15 @@ class VentanaAdmin(VentanaNoticias):
             Sesion.cargar_datos_usuarios()
         except:
             print("Usuario no encontrado.") 
+
+
+class VentanaInvitado(VentanaNoticias):
+    def __init__(self):
+        super().__init__()
+        self.crearAlarmaBtn_invitado = self.crearAlarmaBtn
+        self.crearFrame = self.crearFrame
+        self.crearAlarmaBtn_invitado = ctk.CTkButton(master=self.crearFrame,state="disabled", height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicar_noticia)
+
 
 class Sesion: # maneja los datos se sesión 
     def cargar_datos_usuarios(): #Carga el archivo anterior con los usuarios existentes.
