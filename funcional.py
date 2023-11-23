@@ -283,7 +283,7 @@ class VentanaLogin: # crea la ventana login
 
     def abrir_ventana_usuario(self):
         self.root.destroy() # destruye la ventana actual
-        ventana_noticias = VentanaNoticias() # abre la ventana principal
+        ventana_noticias = VentanaNoticias(invitado=False) # abre la ventana principal
 
     def abrir_ventana_admin(self):
         self.root.destroy() # destruye la ventana actual
@@ -291,7 +291,7 @@ class VentanaLogin: # crea la ventana login
         
 
 class VentanaNoticias:
-    def __init__(self):
+    def __init__(self, invitado):
         self.root = ctk.CTk()
         opciones_universales(self)
         
@@ -373,15 +373,23 @@ class VentanaNoticias:
         
         crearFrame = ctk.CTkFrame(master=frame)
         crearFrame.pack(pady=(0,10), padx=20, fill="x")
-        
+
         crearLabel = ctk.CTkLabel(master=crearFrame, wraplength=520, height=40, font=("",14,"bold"), fg_color=ACCENT_COLOR, corner_radius=6, text="Crear publicación")
         crearLabel.pack(pady=0, padx=0, fill="x")
+
+        crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicar_noticia, state="disabled")
+        crearAlarmaBtn.pack(pady=0, padx=0, fill="x", side="left")
         
-        self.crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicar_noticia)
-        self.crearAlarmaBtn.pack(pady=0, padx=0, fill="x", side="left")
-        
-        noticiaEventoBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar evento", command=self.Evento)
+        noticiaEventoBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar evento", command=self.Evento, state="disabled")
         noticiaEventoBtn.pack(pady=0, padx=0, fill="x", side="right")
+        
+        # Configuracion de inicio para invitado, se desactivan las funciones de publicación y alarma
+        if invitado:
+            crearLabel.configure(text="Inicia sesión para acceder a las funciones.", text_color="red")
+            crearAlarmaBtn.configure(state="disabled")
+            noticiaEventoBtn.configure(state="disabled")
+            activarAlarmaBtn.configure(state="disabled")
+            seleccionAlarma.configure(state="disabled")
        
         # mostrar todas las noticias en el menú 
         try:
@@ -990,10 +998,8 @@ class VentanaAdmin(VentanaNoticias):
 
 class VentanaInvitado(VentanaNoticias):
     def __init__(self):
-        super().__init__()
-        self.crearAlarmaBtn_invitado = self.crearAlarmaBtn
-        self.crearFrame = self.crearFrame
-        self.crearAlarmaBtn_invitado = ctk.CTkButton(master=self.crearFrame,state="disabled", height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicar_noticia)
+        invitado = True
+        super().__init__(invitado)
 
 
 class Sesion: # maneja los datos se sesión 
