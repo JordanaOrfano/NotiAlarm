@@ -377,13 +377,13 @@ class VentanaNoticias:
         crearLabel = ctk.CTkLabel(master=crearFrame, wraplength=520, height=40, font=("",14,"bold"), fg_color=ACCENT_COLOR, corner_radius=6, text="Crear publicación")
         crearLabel.pack(pady=0, padx=0, fill="x")
 
-        crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicar_noticia, state="disabled")
+        crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicar_noticia)
         crearAlarmaBtn.pack(pady=0, padx=0, fill="x", side="left")
         
-        noticiaEventoBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar evento", command=self.Evento, state="disabled")
+        noticiaEventoBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar evento", command=self.Evento)
         noticiaEventoBtn.pack(pady=0, padx=0, fill="x", side="right")
         
-        # Configuracion de inicio para invitado, se desactivan las funciones de publicación y alarma
+        # configuracion de inicio para invitado, se desactivan las funciones de publicación y alarma
         if invitado:
             crearLabel.configure(text="Inicia sesión para acceder a las funciones.", text_color="red")
             crearAlarmaBtn.configure(state="disabled")
