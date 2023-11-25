@@ -680,7 +680,8 @@ class VentanaNoticias:
     # comprueba si la fecha es valida
     def es_fecha_valida(fecha):
         try:
-            fecha = datetime.strptime(fecha, "%d/%m/%Y")
+            formato = "%d/%m/%y"
+            fecha = datetime.strptime(fecha, formato)
             return fecha
         except:
             return None
@@ -1058,6 +1059,8 @@ class Sesion: # maneja los datos se sesión
         except FileNotFoundError: 
             print("Archivo no encontrado, se creara uno nuevo.")
 
+
+    # si algun evento ya ocurrio lo eliminara para no mostrarlo
     def comprobar_fecha_eventos():
         global eventos
         try:
@@ -1067,7 +1070,7 @@ class Sesion: # maneja los datos se sesión
                 eventos_copia = dict(eventos)
 
                 for titulo, det in reversed(eventos_copia.items()):
-                    fecha = datetime.strptime(det["fecha"], "%d/%m/%Y")
+                    fecha = datetime.strptime(det["fecha"], "%d/%m/%y")
                     hora = datetime.strptime(det["hora"], '%H:%M').time()
 
                     if fecha.date() == now.date() and hora < now.time():
@@ -1118,7 +1121,7 @@ def centrar_ventana(ventana, ancho, alto):
 
     # calcula las coordenadas para centrar la ventana
     x = (ancho_pantalla - int(ancho)) // 2
-    y = (alto_pantalla - int(alto)) // 2
+    y = (alto_pantalla - int(alto)) // 2 - 40
 
     # establece el tamaño y posicion de la ventana
     ventana.geometry(f"{ancho}x{alto}+{x}+{y}")
