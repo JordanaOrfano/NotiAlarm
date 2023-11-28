@@ -6,8 +6,8 @@ import os  # para obtener directorio actual
 from PIL import Image  # para utilizar imágenes
 from collections import OrderedDict # trabajar con diccionarios ordenados
 from datetime import datetime, time
-import webbrowser  # para abrir link en denunciaBtn
-import time # se usará como temporizador
+from pygame import mixer #Sonidos
+
 
 ctk.set_appearance_mode("dark") # tema oscuro
 
@@ -190,7 +190,6 @@ class VentanaRegistro: # crea la ventana registro
         terminosVentana.title("NotiAlarm | Términos y condiciones")
         centrar_ventana(terminosVentana, "600", "400")
         notialarm_icono(terminosVentana)
-        # terminosVentana.geometry("600x400+500+240")
         terminosVentana.resizable(False, False)
         terminosVentana.attributes("-topmost", "true")
         
@@ -321,16 +320,16 @@ class VentanaNoticias:
         
         numEmergencia = ctk.CTkLabel(master=sideFrame1, text="911 | Policía\n100 | Bomberos\n107 | Ambulancia", justify="left", anchor="w", wraplength=205, font=("",13,"bold"))
         numEmergencia.pack(pady=0, padx=66, fill="x")
-
-        activarAlarmaBtn = ctk.CTkButton(master=sideFrame1, text="Enviar alarma", command=lambda: self.comprobar_alarma(seleccionAlarma.get(), sideFrame1))
-        activarAlarmaBtn.pack(pady=(10,30), padx=20, fill="x", side="bottom")
-
-        seleccionAlarma = ctk.CTkOptionMenu(master=sideFrame1, values=["Elija una opción", "Robo", "Emergencia Medica", "Incendio"])
-        seleccionAlarma.pack(pady=(10,0), padx=20, fill="x", side="bottom")
         
         alarmaLabel = ctk.CTkLabel(master=sideFrame1, text="Iniciar alarma", font=("",16,"bold"))
-        alarmaLabel.pack(pady=(0,0), padx=20, fill="x", side="bottom")
-        
+        alarmaLabel.pack(pady=(70,0), padx=20, fill="x")
+
+        seleccionAlarma = ctk.CTkOptionMenu(master=sideFrame1, values=["Elija una opción", "Robo", "Emergencia Medica", "Incendio"])
+        seleccionAlarma.pack(pady=(10,0), padx=20, fill="x")
+
+        activarAlarmaBtn = ctk.CTkButton(master=sideFrame1, text="Enviar alarma", command=lambda: self.comprobar_alarma(seleccionAlarma.get(), sideFrame1))
+        activarAlarmaBtn.pack(pady=(10,10), padx=20, fill="x")
+
         # side frame derecho
         sideFrame2 = ctk.CTkFrame(master=self.root, width=240)
         sideFrame2.place(relx=0.782, rely=0, relheight=1)
@@ -391,6 +390,9 @@ class VentanaNoticias:
             activarAlarmaBtn.configure(state="disabled")
             seleccionAlarma.configure(state="disabled")
        
+        # comprueba el estado de la alerta
+        self.estado_alarma() # comprueba el estado de la alarma, si es True muestra un mensaje.
+
         # mostrar todas las noticias en el menú 
         try:
             mostradas = 0 
@@ -416,45 +418,87 @@ class VentanaNoticias:
         
         self.root.mainloop()
 
+
     def abrir_link(self):
         webbrowser.open_new("https://www.seguridad.gba.gob.ar/#/home")
 
     def comprobar_alarma(self, opcion, sideFrame1):
-        print(opcion)
-        if opcion=="Elija una opción":
-            if hasattr(self, "errorOpcion"):
-                self.errorOpcion.destroy()
-            usuarios["alerta"] = {"valor": True, "correo": "x", "baneado": False, "rol": "desconocido"}
+        fecha_actual = datetime.now().strftime('%d/%m/%Y %H:%M')
+        
+        if opcion != "Elija una opción":
+            if opcion=="Incendio":
+                mensaje = (
+                        f"""ALARMA DE INCENDIO ACTIVADA POR: {usuario_actual} 
+                                BOMBEROS: 100
+                                AMBULANCIA: 107""" )
+                ruta="bom"
+
+            elif opcion=="Robo":
+                mensaje = (
+                            f"""ALARMA DE ROBO ACTIVADA POR: {usuario_actual} 
+                                        POLICIA: 911
+                                        AMBULANCIA: 107""" )
+                            
+                ruta="pol"
+
+            elif opcion=="Emergencia Medica":
+                mensaje = (
+                            f"""ALARMA DE EMERGENCIA MEDICA ACTIVADA POR: {usuario_actual} 
+                                           AMBULANCIA: 107""" )
+                ruta="amb"
+
+            #envia el nombre de la imagen para completar la ruta
+            self.mostrar_alarma(ruta)
+            usuarios["alerta"] = {"valor": True, "correo": "x", "baneado": False, "rol": "desconocido", "mensaje": mensaje, "activador": usuario_actual}
             Sesion.guardar_datos_usuarios()
             Sesion.cargar_datos_usuarios()
-            self.errorOpcion = ctk.CTkLabel(master = sideFrame1, text = "Debe elegir una opcion")
-            self.errorOpcion.pack(fill="x",pady=0)
-            #.place(relx=0.2, rely=0.1, fill="x") 
-            #errorOpcion = ctk.CTkLabel(master=sideFrame1, text="Debe elegir una opción", font=("",16,"bold")).pack()
 
-    def activar_alarma(self):
-        # iterar sobre cada usuario y enviar un mensaje
+        else:
+            if hasattr(self, "errorOpcion"):
+                self.errorOpcion.destroy()
+            self.errorOpcion = ctk.CTkLabel(master = sideFrame1, text = "Debe elegir una opción")
+            self.errorOpcion.pack()
+
+            # dependiendo de la opcion, se envia un mensaje de advertencia y una ruta a una imagen diferente, todo a la funcion mostrar_alarma()
+            
+    # comprueba el estado de la alarma
+    def estado_alarma(self):
         for usuario in usuarios:
-            if usuario == "alarma":
-                if usuario["valor"]:
-                    # muestra mensaje
+            if usuario == "alerta":
+                if usuarios[usuario]["valor"]: # si es true lanza mensaje
+                    mensaje = usuarios["alerta"]["mensaje"]
+                    self.mostrar_mensaje(usuario, mensaje)                    
 
-                    # cambia el valor
-                    usuario["valor"] = False
-                    pass
-                    # si es true lanza mensaje
-                else:
-                    pass
-                    # no lanza mensaje
-        
-            mensaje = f"¡ALERTA! La alarma ha sido activada. Por favor, toma las precauciones necesarias."
 
-            print(f"Mensaje enviado a {usuarios[usuario]}: {mensaje}")
+    def mostrar_alarma(self,ruta):
+        #Ancho y Largo de la imagen, se debe cambiar tanto en el tamaño de la ventana como en el 
+        anc=600
+        lar=500
 
-            # mostrar el mensaje en la interfaz de usuario del remitente
-        self.mostrar_mensaje(usuarios[usuario], mensaje)
-    
-        #self.root=VentanaAlerta()
+       # inicia el mixer
+        mixer.init()
+
+        # reproduce el sonido
+        mixer.music.load(os.path.join(os.path.dirname(os.path.realpath(__file__)), "sonidos", "POLICE.mp3"))
+        mixer.music.play()
+
+
+        ventana_mensaje = ctk.CTkToplevel()
+        ventana_mensaje.title(f"ALERTA ENVIADA")
+        ventana_mensaje.attributes("-topmost", "true")
+        centrar_ventana(ventana_mensaje, str(anc), str(lar))
+        ventana_mensaje.resizable(width=False, height=False)
+        currentPath = os.path.dirname(os.path.realpath(__file__))
+        imagenFondo = ctk.CTkImage(Image.open(currentPath + f"/img/{ruta}.jpg"), size=(anc, lar))
+        imagenLabel = ctk.CTkLabel(ventana_mensaje, image=imagenFondo, text="")
+        imagenLabel.place(relx=0, rely=0)
+
+        # al cerrar la ventana, apaga el sonido
+        ventana_mensaje.protocol("WM_DELETE_WINDOW", lambda: self.parar_sonido(ventana_mensaje))
+
+    def parar_sonido(self, ventana_mensaje):
+            mixer.music.stop()
+            ventana_mensaje.destroy()
 
     def mostrar_mensaje(self, usuario, mensaje):
         # crear una nueva ventana para mostrar el mensaje
@@ -462,9 +506,22 @@ class VentanaNoticias:
         ventana_mensaje.title(f"Mensaje para {usuario}")
         ventana_mensaje.attributes("-topmost", "true")
 
+        mixer.init()
+
+        mixer.music.load(os.path.join(os.path.dirname(os.path.realpath(__file__)), "sonidos", "POLICE.mp3"))
+        mixer.music.play()
+
         # etiqueta con el mensaje
         etiqueta_mensaje = ctk.CTkLabel(master=ventana_mensaje, text=mensaje, padx=20, pady=20)
         etiqueta_mensaje.pack()
+
+        ventana_mensaje.protocol("WM_DELETE_WINDOW", lambda: self.desactivar_alarma(ventana_mensaje))
+
+    def desactivar_alarma(self, ventana):
+        usuarios["alerta"]["valor"] = False
+        ventana.destroy()
+        self.parar_sonido(ventana)
+        Sesion.guardar_datos_usuarios()
 
     def cambiar_apariencia(self, new_appearance_mode: str):
         ctk.set_appearance_mode(new_appearance_mode)
@@ -474,7 +531,6 @@ class VentanaNoticias:
         publicarVentana.title("NotiAlarm | Crear noticia")
         centrar_ventana(publicarVentana, "650", "435")
         notialarm_icono(publicarVentana)
-        # publicarVentana.geometry("650x435+500+240")
         publicarVentana.resizable(False, False)
         publicarVentana.attributes("-topmost", "true")
         
@@ -549,13 +605,13 @@ class VentanaNoticias:
                         self.info_evento.pack() 
                 else:
                     if hasattr(self, "info_evento"):
-                            self.info_evento.destroy()
+                        self.info_evento.destroy()
                         
                     self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "El título debe de tener menos de 70 caracteres.")
                     self.info_evento.pack() 
             else:
                 if hasattr(self, "info_evento"):
-                            self.info_evento.destroy()
+                    self.info_evento.destroy()
 
                 self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ningún campo debe estar vacío.")
                 self.info_evento.pack()
@@ -571,7 +627,6 @@ class VentanaNoticias:
         publicarVentana.title("NotiAlarm | Crear evento")
         centrar_ventana(publicarVentana, "650", "290")
         notialarm_icono(publicarVentana)
-        # publicarVentana.geometry("650x290+500+240")
         publicarVentana.resizable(False, False)  
         publicarVentana.attributes("-topmost", "true")      
         
@@ -703,11 +758,77 @@ class VentanaNoticias:
         noticiaInfo.pack(pady=5, padx=20, side="left")
         
         if usuario == usuario_actual:
-            noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Borrar")
+            noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Borrar", command=lambda: self.confirmar_eliminacion(titulo, noticiaFrame))
             noticiaBorrar.pack(pady=0, padx=0, side="right")
 
-            noticiaEditar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Editar")
+            noticiaEditar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Editar", command= lambda: self.editar_noticia(titulo))
             noticiaEditar.pack(pady=0, padx=1, side="right")
+
+    def editar_noticia(self, titulo): 
+        publicarVentana = ctk.CTkToplevel(master=self.root)
+        publicarVentana.title("NotiAlarm | Editar noticia")
+        centrar_ventana(publicarVentana, "650", "435")
+        notialarm_icono(publicarVentana)
+        publicarVentana.resizable(False, False)
+        publicarVentana.attributes("-topmost", "true")
+        
+        currentPath = os.path.dirname(os.path.realpath(__file__))
+        imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
+        imagenLabel = ctk.CTkLabel(publicarVentana, image=imagenFondo, text="")
+        imagenLabel.place(relx=0, rely=0)
+        
+        publicarFrame = ctk.CTkFrame(master=publicarVentana)
+        publicarFrame.pack(pady=0, padx=90, fill="both", expand=True)
+        
+        publicarLabel = ctk.CTkLabel(master=publicarFrame, height=40,font=('Roboto', 24), text="Editar publicación | Noticia")
+        publicarLabel.pack(pady=(20,15), padx=20, fill="x")
+        
+        self.publicarTitulo = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Título")
+        self.publicarTitulo.pack(pady=5, padx=20, fill="x")
+        
+        self.publicarUbicacion = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Ubicación")
+        self.publicarUbicacion.pack(pady=5, padx=20, fill="x")
+        
+        self.publicarTextbox = ctk.CTkTextbox(master=publicarFrame, height=140)
+        self.publicarTextbox.pack(pady=5, padx=20, fill="x")
+
+        self.categoria = ctk.CTkOptionMenu(master=publicarFrame, values=["Categoria", "Robo", "Accidentes", "Asesinatos", "Eventos Locales", "Trafico", "Incendios y Rescates", "Eventos de emergencia", "Obras Publicas", "Otras"])
+        self.categoria.pack(pady=5, padx=20, fill="x")
+        
+        publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar", command=lambda: self.publicar_evento(publicarFrame))
+        publicarBoton.pack(pady=5, padx=20, fill="x")
+        Sesion.guardar_datos_noticias()
+        Sesion.cargar_datos_noticias()
+
+    def eliminar_noticia(self, titulo, noticiaFrame, confirmarToplevel):
+        global noticias
+        try:
+            del noticias[titulo]
+            Sesion.guardar_datos_noticias()
+            Sesion.cargar_datos_noticias()
+            noticiaFrame.destroy()
+            confirmarToplevel.destroy()
+
+        except:
+            print("La noticia fue eliminada.")
+
+    def confirmar_eliminacion(self, titulo , noticiaFrame):
+        confirmarToplevel = ctk.CTkToplevel(master=self.root)
+        confirmarToplevel.title("NotiAlarm | Eliminar Publicación")
+        centrar_ventana(confirmarToplevel, "470", "180")
+        notialarm_icono(confirmarToplevel)
+        confirmarToplevel.resizable(False, False)
+        confirmarToplevel.attributes("-topmost", "true")
+        
+        confirmarelimLabel = ctk.CTkLabel(master=confirmarToplevel, height=40, font=("", 18), text=f"¿Está seguro que desea eliminarla?")
+        confirmarelimLabel.pack(pady=(40,0), padx=30, fill="x")
+        
+        btnCancelar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Cancelar", command=confirmarToplevel.destroy)
+        btnCancelar.pack(pady=(0,40), padx=(70,0), side="left")
+
+        btnAceptar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Aceptar", command=lambda: self.eliminar_noticia(titulo,noticiaFrame, confirmarToplevel))
+        btnAceptar.pack(pady=(0,40), padx=(0,70), side="right")
+
     
     def mostrar_evento(self, frame, titulo, ubicacion, fecha, hora, autor):
         eventoTitulo = ctk.CTkLabel(master=frame, text=f"{titulo} \n{ubicacion}\n{fecha} | {hora}\n{autor}", justify="left", anchor="w", wraplength=180, font=("",13,"bold"))
@@ -863,7 +984,6 @@ class VentanaAdmin(VentanaNoticias):
         confirmarToplevel.title("NotiAlarm | Banear usuario")
         centrar_ventana(confirmarToplevel, "470", "180")
         notialarm_icono(confirmarToplevel)
-        # confirmarToplevel.geometry("470x180+500+240")
         confirmarToplevel.resizable(False, False)
         confirmarToplevel.attributes("-topmost", "true")
         
@@ -1083,7 +1203,6 @@ class Sesion: # maneja los datos se sesión
 
 
 def opciones_universales(self):
-    # self.root.geometry("1100x680+350+240")
     notialarm_icono(self.root)
     centrar_ventana(self.root, "1100", "680")
     self.root.title("NotiAlarm")
@@ -1132,8 +1251,8 @@ Sesion.cargar_datos_usuarios()
 Sesion.cargar_datos_noticias()
 Sesion.cargar_datos_eventos()
 
-# al iniciar el programa revisa si algun evento ya ocurrio
-Sesion.comprobar_fecha_eventos()
+# al iniciar ocurren estas cosas:
+Sesion.comprobar_fecha_eventos() # comprueba las fechas de todos los eventos, si alguna ya paso la elimina
 
 ventana_opciones = VentanaOpciones() # abre la ventana principal
 
@@ -1141,6 +1260,7 @@ ventana_opciones = VentanaOpciones() # abre la ventana principal
 Sesion.guardar_datos_usuarios()
 Sesion.guardar_datos_noticias()
 Sesion.guardar_datos_eventos()
+
 
 
 print("Comprobar usuarios del json", usuarios) #FALTA borrar esto al final del programa.
