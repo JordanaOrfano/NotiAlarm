@@ -861,7 +861,7 @@ class VentanaAdmin(VentanaNoticias):
         
         # banear usuario
         banearLabel = ctk.CTkLabel(master=sideFrame1, text="Banear usuario", font=("",16,"bold"))
-        banearLabel.pack(pady=(130,10), padx=20, fill="x")
+        banearLabel.pack(pady=(90,10), padx=20, fill="x")
         
         self.banearEntry = ctk.CTkEntry(master=sideFrame1, placeholder_text="Nombre de usuario")
         self.banearEntry.pack(pady=0, padx=20, fill="x")
@@ -880,9 +880,26 @@ class VentanaAdmin(VentanaNoticias):
         self.banearDesplegable = ctk.CTkOptionMenu(master=sideFrame1, values=["Mostrar Usuarios"] + elementos_desplegable)
         self.banearDesplegable.pack(pady=(0,10), padx=20, fill="x")
          
-
         banearAceptar = ctk.CTkButton(master=sideFrame1, text="Banear", command=lambda:self.BanearUsuario("", sideFrame1))
         banearAceptar.pack(pady=(0,10), padx=20, fill="x")
+        
+        
+        # crear administrador
+        nuevoAdminLabel = ctk.CTkLabel(master=sideFrame1, text="Dar permisos de admin", font=("",16,"bold"))
+        nuevoAdminLabel.pack(pady=(90,10), padx=20, fill="x")
+        
+        self.nuevoAdminEntry = ctk.CTkEntry(master=sideFrame1, placeholder_text="Nombre de usuario")
+        self.nuevoAdminEntry.pack(pady=0, padx=20, fill="x")
+        
+        nuevoAdminTxt = ctk.CTkLabel(master=sideFrame1, text="ó")
+        nuevoAdminTxt.pack(pady=5, padx=20, fill="x")
+        
+        self.nuevoAdminDesplegable = ctk.CTkOptionMenu(master=sideFrame1, values=["Mostrar Usuarios"] + elementos_desplegable)
+        self.nuevoAdminDesplegable.pack(pady=(0,10), padx=20, fill="x")
+         
+        nuevoAdminAceptar = ctk.CTkButton(master=sideFrame1, text="Crear admin")
+        nuevoAdminAceptar.pack(pady=(0,10), padx=20, fill="x")
+        
         
         # cambiar apariencia
         cambiarAparienciaBtn = ctk.CTkOptionMenu(master=sideFrame1, values=["Dark", "Light"], command=self.cambiar_apariencia)
@@ -890,6 +907,7 @@ class VentanaAdmin(VentanaNoticias):
         
         cambiarAparienciaLabel = ctk.CTkLabel(master=sideFrame1, text="Cambiar apariencia", font=("",16,"bold"))
         cambiarAparienciaLabel.pack(pady=0, padx=20, fill="x", side="bottom")
+        
         
         # side frame derecho
         sideFrame2Eventos = ctk.CTkFrame(master=self.root, width=240)
