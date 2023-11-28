@@ -460,7 +460,7 @@ class VentanaNoticias:
             self.errorOpcion.pack()
 
             # dependiendo de la opcion, se envia un mensaje de advertencia y una ruta a una imagen diferente, todo a la funcion mostrar_alarma()
-            
+
     # comprueba el estado de la alarma
     def estado_alarma(self):
         for usuario in usuarios:
@@ -761,10 +761,10 @@ class VentanaNoticias:
             noticiaBorrar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Borrar", command=lambda: self.confirmar_eliminacion(titulo, noticiaFrame))
             noticiaBorrar.pack(pady=0, padx=0, side="right")
 
-            noticiaEditar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Editar", command= lambda: self.editar_noticia(titulo))
+            noticiaEditar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Editar", command= lambda: self.editar_noticia(titulo, noticiaFrame))
             noticiaEditar.pack(pady=0, padx=1, side="right")
 
-    def editar_noticia(self, titulo): 
+    def editar_noticia(self, titulo, noticiaFrame): 
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm | Editar noticia")
         centrar_ventana(publicarVentana, "650", "435")
@@ -777,28 +777,99 @@ class VentanaNoticias:
         imagenLabel = ctk.CTkLabel(publicarVentana, image=imagenFondo, text="")
         imagenLabel.place(relx=0, rely=0)
         
-        publicarFrame = ctk.CTkFrame(master=publicarVentana)
-        publicarFrame.pack(pady=0, padx=90, fill="both", expand=True)
+        editarFrame = ctk.CTkFrame(master=publicarVentana)
+        editarFrame.pack(pady=0, padx=90, fill="both", expand=True)
         
-        publicarLabel = ctk.CTkLabel(master=publicarFrame, height=40,font=('Roboto', 24), text="Editar publicación | Noticia")
+        publicarLabel = ctk.CTkLabel(master=editarFrame, height=40,font=('Roboto', 24), text="Editar publicación | Noticia")
         publicarLabel.pack(pady=(20,15), padx=20, fill="x")
         
-        self.publicarTitulo = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Título")
+        self.publicarTitulo = ctk.CTkEntry(master=editarFrame, height=BTN_ALTURA, placeholder_text="Título")
         self.publicarTitulo.pack(pady=5, padx=20, fill="x")
         
-        self.publicarUbicacion = ctk.CTkEntry(master=publicarFrame, height=BTN_ALTURA, placeholder_text="Ubicación")
+        self.publicarUbicacion = ctk.CTkEntry(master=editarFrame, height=BTN_ALTURA, placeholder_text="Ubicación")
         self.publicarUbicacion.pack(pady=5, padx=20, fill="x")
         
-        self.publicarTextbox = ctk.CTkTextbox(master=publicarFrame, height=140)
+        self.publicarTextbox = ctk.CTkTextbox(master=editarFrame, height=140)
         self.publicarTextbox.pack(pady=5, padx=20, fill="x")
 
-        self.categoria = ctk.CTkOptionMenu(master=publicarFrame, values=["Categoria", "Robo", "Accidentes", "Asesinatos", "Eventos Locales", "Trafico", "Incendios y Rescates", "Eventos de emergencia", "Obras Publicas", "Otras"])
+        self.categoria = ctk.CTkOptionMenu(master=editarFrame, values=["Categoria", "Robo", "Accidentes", "Asesinatos", "Eventos Locales", "Trafico", "Incendios y Rescates", "Eventos de emergencia", "Obras Publicas", "Otras"])
         self.categoria.pack(pady=5, padx=20, fill="x")
         
-        publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar", command=lambda: self.publicar_evento(publicarFrame))
+        publicarBoton = ctk.CTkButton(master=editarFrame, height=BTN_ALTURA, text="Publicar", command=lambda: self.editar_noticia_evento(titulo, editarFrame, noticiaFrame, publicarVentana))
         publicarBoton.pack(pady=5, padx=20, fill="x")
-        Sesion.guardar_datos_noticias()
-        Sesion.cargar_datos_noticias()
+        
+    def editar_noticia_evento(self, titulo, editarFrame, noticiaFrame, ventana):
+        global noticias
+        fecha_actual = datetime.now().strftime('%d/%m/%Y %H:%M')
+        bandera_modificacion = False #Sirve para saber si el usuario realizo alguna modificacion.
+
+        if len(self.publicarTitulo.get().strip()) != 0 and len(self.publicarTitulo.get().strip()) < 68:
+            tituloNuevo = self.publicarTitulo.get()
+            bandera_modificacion = True
+        elif len(self.publicarTitulo.get().strip()) == 0:
+            tituloNuevo = titulo
+        else:
+            if hasattr(self, "info_evento"):
+                self.info_evento.destroy()
+                        
+            self.info_evento = ctk.CTkLabel(master = editarFrame, text = "El titulo debe tener menos de 68 caracteres.")
+            self.info_evento.pack()
+
+        if len(self.publicarUbicacion.get().strip()) != 0 and len(self.publicarUbicacion.get().strip()) <= 30:
+            ubicacion = self.publicarUbicacion.get()
+            bandera_modificacion = True
+        elif len(self.publicarUbicacion.get().strip()) == 0:
+            ubicacion = noticias[titulo]["ubicacion"]
+        else:
+            if hasattr(self, "info_evento"):
+                self.info_evento.destroy()
+                        
+            self.info_evento = ctk.CTkLabel(master = editarFrame, text = "La ubicación debe tener menos de 30 caracteres.")
+            self.info_evento.pack()
+
+        if len(self.publicarTextbox.get("1.0", "end").strip()) != 0 and len(self.publicarTextbox.get("1.0", "end"))  <= 600:
+            contenido = self.publicarTextbox.get("1.0", "end")
+            bandera_modificacion = True
+        elif len(self.publicarTextbox.get("1.0", "end").strip()) == 0:
+            contenido = noticias[titulo]["contenido"]
+        else:
+            if hasattr(self, "info_evento"):
+                self.info_evento.destroy()
+                        
+            self.info_evento = ctk.CTkLabel(master = editarFrame, text = "La descripción debe tener menos de 500 caracteres.")
+            self.info_evento.pack() 
+
+        if self.categoria.get() != "Categoria":
+            categoria = self.categoria.get()
+            bandera_modificacion = True
+        else:
+            categoria = noticias[titulo]["categoria"]
+
+        if bandera_modificacion:
+            if hasattr(self, "info_evento"):
+                self.info_evento.destroy()
+
+            self.info_evento = ctk.CTkLabel(master = editarFrame, text = "Noticia modificada correctamente, actualiza para verla.")
+            self.info_evento.pack()
+
+            noticiaFrame.destroy()
+            editarFrame.destroy()
+            ventana.destroy()
+            del noticias[titulo]
+            noticias[tituloNuevo] = {"contenido": contenido,
+                                "autor": usuario_actual,
+                                "ubicacion": ubicacion,
+                                "mostrar": False,
+                                "categoria": categoria,
+                                "fecha": fecha_actual} #Atributos de las noticias
+            Sesion.guardar_datos_noticias()
+        else:
+            if hasattr(self, "info_evento"):
+                self.info_evento.destroy()
+                        
+            self.info_evento = ctk.CTkLabel(master = editarFrame, text = "Debes de realizar almenos una modificacion.")
+            self.info_evento.pack() 
+
 
     def eliminar_noticia(self, titulo, noticiaFrame, confirmarToplevel):
         global noticias
