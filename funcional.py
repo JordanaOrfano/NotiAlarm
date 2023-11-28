@@ -512,7 +512,6 @@ class VentanaNoticias:
 
         mixer.music.load(os.path.join(os.path.dirname(os.path.realpath(__file__)), "sonidos", "POLICE.mp3"))
         mixer.music.play()
-
         currentPath = os.path.dirname(os.path.realpath(__file__))
         imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
         imagenLabel = ctk.CTkLabel(ventana_mensaje, image=imagenFondo, text="")
@@ -989,7 +988,7 @@ class VentanaAdmin(VentanaNoticias):
         self.nuevoAdminDesplegable = ctk.CTkOptionMenu(master=sideFrame1, values=["Mostrar Usuarios"] + elementos_desplegable)
         self.nuevoAdminDesplegable.pack(pady=(0,10), padx=20, fill="x")
          
-        nuevoAdminAceptar = ctk.CTkButton(master=sideFrame1, text="Crear admin")
+        nuevoAdminAceptar = ctk.CTkButton(master=sideFrame1, text="Crear admin", command=lambda: self.nuevoAdmin(sideFrame1))
         nuevoAdminAceptar.pack(pady=(0,10), padx=20, fill="x")
         
         
@@ -1063,6 +1062,46 @@ class VentanaAdmin(VentanaNoticias):
             ctk.CTkLabel(master = frame, text = "No hay noticias para mostrar.",height=400, font=ctk.CTkFont(size=20)).pack() 
         
         self.root.mainloop()
+
+    def nuevoAdmin(self, ventana):
+        global usuarios
+        if len(self.nuevoAdminEntry.get().strip()) != 0:
+            try:
+                if self.nuevoAdminEntry.get() in usuarios:
+                        usuarios[self.nuevoAdminEntry.get()]["rol"] = "admin"
+                        if hasattr(self, "mensaje"):
+                            self.mensaje.destroy()
+                        self.mensaje = ctk.CTkLabel(master = ventana, text = f"El usuario {self.nuevoAdminEntry.get()} ahora es administrador.")
+                        self.mensaje.pack()
+
+                else:
+                    if hasattr(self, "mensaje"):
+                            self.mensaje.destroy()
+                    self.mensaje = ctk.CTkLabel(master = ventana, text = "Usuario no encontrado.")
+                    self.mensaje.pack()
+
+            except:
+                print("Error al otorgar rol admin con el entry")
+
+        elif self.nuevoAdminDesplegable.get() != "Mostrar Usuarios":
+            try:
+                if self.nuevoAdminDesplegable.get() in usuarios:
+                    usuarios[self.nuevoAdminDesplegable.get()]["rol"] = "admin"
+                    if hasattr(self, "mensaje"):
+                        self.mensaje.destroy()
+                    self.mensaje = ctk.CTkLabel(master = ventana, text = f"El usuario {self.nuevoAdminEntry.get()} ahora es administrador.")
+                    self.mensaje.pack()
+            except:
+                print("Error al otorgar rol admin con el desplegable.")
+        elif self.banearDesplegable.get() == "Mostrar Usuarios":
+
+            if hasattr(self, "mensaje"):
+                self.mensaje.destroy()
+            self.mensaje = ctk.CTkLabel(master = ventana, text = "Debes seleccionar un usuario.")
+            self.mensaje.pack()
+
+        Sesion.guardar_datos_usuarios()
+        Sesion.cargar_datos_usuarios()
 
     def mostrar_publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creación de publicación
         noticiaFrame = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#262626"))
