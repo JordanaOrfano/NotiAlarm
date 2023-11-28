@@ -427,29 +427,26 @@ class VentanaNoticias:
         
         if opcion != "Elija una opción":
             if opcion=="Incendio":
-                mensaje = (
-                        f"""ALARMA DE INCENDIO ACTIVADA POR: {usuario_actual} 
-                                BOMBEROS: 100
-                                AMBULANCIA: 107""" )
+                mensaje = ("ALARMA DE INCENDIO")
+                publicador = (f"ACTIVADA POR: {usuario_actual}")
+                telefonos = (f"BOMBEROS: 100\nAMBULANCIA: 107")
                 ruta="bom"
 
             elif opcion=="Robo":
-                mensaje = (
-                            f"""ALARMA DE ROBO ACTIVADA POR: {usuario_actual} 
-                                        POLICIA: 911
-                                        AMBULANCIA: 107""" )
-                            
+                mensaje = (f"ALARMA DE ROBO")
+                publicador = (f"ACTIVADA POR: {usuario_actual}")
+                telefonos = (f"POLICIA: 911\nAMBULANCIA: 107")
                 ruta="pol"
 
             elif opcion=="Emergencia Medica":
-                mensaje = (
-                            f"""ALARMA DE EMERGENCIA MEDICA ACTIVADA POR: {usuario_actual} 
-                                           AMBULANCIA: 107""" )
+                mensaje = (f"ALARMA DE EMERGENCIA MEDICA")
+                publicador = (f"ACTIVADA POR: {usuario_actual}")
+                telefonos = (f"AMBULANCIA: 107")
                 ruta="amb"
 
             #envia el nombre de la imagen para completar la ruta
             self.mostrar_alarma(ruta)
-            usuarios["alerta"] = {"valor": True, "correo": "x", "baneado": False, "rol": "desconocido", "mensaje": mensaje, "activador": usuario_actual}
+            usuarios["alerta"] = {"valor": True, "correo": "x", "baneado": False, "rol": "desconocido", "mensaje": mensaje, "telefonos": telefonos, "publicador": publicador, "activador": usuario_actual}
             Sesion.guardar_datos_usuarios()
             Sesion.cargar_datos_usuarios()
 
@@ -467,7 +464,9 @@ class VentanaNoticias:
             if usuario == "alerta":
                 if usuarios[usuario]["valor"]: # si es true lanza mensaje
                     mensaje = usuarios["alerta"]["mensaje"]
-                    self.mostrar_mensaje(usuario, mensaje)                    
+                    telefonos = usuarios["alerta"]["telefonos"]
+                    publicador = usuarios["alerta"]["publicador"]
+                    self.mostrar_mensaje(usuario, mensaje, telefonos, publicador)                    
 
 
     def mostrar_alarma(self,ruta):
@@ -500,10 +499,13 @@ class VentanaNoticias:
             mixer.music.stop()
             ventana_mensaje.destroy()
 
-    def mostrar_mensaje(self, usuario, mensaje):
+    def mostrar_mensaje(self, usuario, mensaje, telefonos, publicador):
         # crear una nueva ventana para mostrar el mensaje
         ventana_mensaje = ctk.CTkToplevel()
         ventana_mensaje.title(f"Mensaje para {usuario}")
+        centrar_ventana(ventana_mensaje, "550", "400")
+        notialarm_icono(ventana_mensaje)
+        ventana_mensaje.resizable(False, False)
         ventana_mensaje.attributes("-topmost", "true")
 
         mixer.init()
@@ -511,9 +513,28 @@ class VentanaNoticias:
         mixer.music.load(os.path.join(os.path.dirname(os.path.realpath(__file__)), "sonidos", "POLICE.mp3"))
         mixer.music.play()
 
+        currentPath = os.path.dirname(os.path.realpath(__file__))
+        imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
+        imagenLabel = ctk.CTkLabel(ventana_mensaje, image=imagenFondo, text="")
+        imagenLabel.place(relx=0, rely=0)
+        
+        ventanaFrame = ctk.CTkFrame(master=ventana_mensaje)
+        ventanaFrame.pack(pady=0, padx=50, fill="both", expand=True)
+        
+        currentPath = os.path.dirname(os.path.realpath(__file__))
+        imagenAlerta = ctk.CTkImage(Image.open(currentPath + "/img/alerta.png"), size=(200, 150))
+        imagenAlertaLabel = ctk.CTkLabel(ventanaFrame, image=imagenAlerta, text="")
+        imagenAlertaLabel.pack(pady=40, fill="x")
+        
         # etiqueta con el mensaje
-        etiqueta_mensaje = ctk.CTkLabel(master=ventana_mensaje, text=mensaje, padx=20, pady=20)
-        etiqueta_mensaje.pack()
+        etiqueta_mensaje = ctk.CTkLabel(master=ventanaFrame, text=mensaje, font=("", 24))
+        etiqueta_mensaje.pack(pady=(0,20), fill="x")
+        
+        etiqueta_publicador = ctk.CTkLabel(master=ventanaFrame, text=publicador)
+        etiqueta_publicador.pack(pady=(0,10), fill="x")
+        
+        etiqueta_telefonos = ctk.CTkLabel(master=ventanaFrame, text=telefonos)
+        etiqueta_telefonos.pack(pady=(0,10), fill="x")
 
         ventana_mensaje.protocol("WM_DELETE_WINDOW", lambda: self.desactivar_alarma(ventana_mensaje))
 
