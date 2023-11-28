@@ -427,29 +427,23 @@ class VentanaNoticias:
         
         if opcion != "Elija una opción":
             if opcion=="Incendio":
-                mensaje = (
-                        f"""ALARMA DE INCENDIO ACTIVADA POR: {usuario_actual} 
-                                BOMBEROS: 100
-                                AMBULANCIA: 107""" )
+                mensaje = ("ALARMA DE INCENDIO ACTIVADA POR: {usuario_actual}")
+                telefonos = (f"BOMBEROS: 100\nAMBULANCIA: 107")
                 ruta="bom"
 
             elif opcion=="Robo":
-                mensaje = (
-                            f"""ALARMA DE ROBO ACTIVADA POR: {usuario_actual} 
-                                        POLICIA: 911
-                                        AMBULANCIA: 107""" )
-                            
+                mensaje = (f"ALARMA DE ROBO ACTIVADA POR: {usuario_actual}")
+                telefonos = (f"POLICIA: 911\nAMBULANCIA: 107")
                 ruta="pol"
 
             elif opcion=="Emergencia Medica":
-                mensaje = (
-                            f"""ALARMA DE EMERGENCIA MEDICA ACTIVADA POR: {usuario_actual} 
-                                           AMBULANCIA: 107""" )
+                mensaje = (f"ALARMA DE EMERGENCIA MEDICA ACTIVADA POR: {usuario_actual}")
+                telefonos = (f"AMBULANCIA: 107")
                 ruta="amb"
 
             #envia el nombre de la imagen para completar la ruta
             self.mostrar_alarma(ruta)
-            usuarios["alerta"] = {"valor": True, "correo": "x", "baneado": False, "rol": "desconocido", "mensaje": mensaje, "activador": usuario_actual}
+            usuarios["alerta"] = {"valor": True, "correo": "x", "baneado": False, "rol": "desconocido", "mensaje": mensaje, "telefonos":telefonos, "activador": usuario_actual}
             Sesion.guardar_datos_usuarios()
             Sesion.cargar_datos_usuarios()
 
@@ -466,8 +460,8 @@ class VentanaNoticias:
         for usuario in usuarios:
             if usuario == "alerta":
                 if usuarios[usuario]["valor"]: # si es true lanza mensaje
-                    mensaje = usuarios["alerta"]["mensaje"]
-                    self.mostrar_mensaje(usuario, mensaje)                    
+                    mensaje = usuarios["alerta"]["mensaje"]["telefonos"]
+                    self.mostrar_mensaje(usuario, mensaje, telefonos)                    
 
 
     def mostrar_alarma(self,ruta):
@@ -500,10 +494,13 @@ class VentanaNoticias:
             mixer.music.stop()
             ventana_mensaje.destroy()
 
-    def mostrar_mensaje(self, usuario, mensaje):
+    def mostrar_mensaje(self, usuario, mensaje, telefonos):
         # crear una nueva ventana para mostrar el mensaje
         ventana_mensaje = ctk.CTkToplevel()
         ventana_mensaje.title(f"Mensaje para {usuario}")
+        centrar_ventana(ventana_mensaje, "500", "250")
+        notialarm_icono(ventana_mensaje)
+        ventana_mensaje.resizable(False, False)
         ventana_mensaje.attributes("-topmost", "true")
 
         mixer.init()
@@ -514,6 +511,9 @@ class VentanaNoticias:
         # etiqueta con el mensaje
         etiqueta_mensaje = ctk.CTkLabel(master=ventana_mensaje, text=mensaje, padx=20, pady=20)
         etiqueta_mensaje.pack()
+        
+        etiqueta_mensaje2 = ctk.CTkLabel(master=ventana_mensaje, text=telefonos, padx=20, pady=20)
+        etiqueta_mensaje2.pack()
 
         ventana_mensaje.protocol("WM_DELETE_WINDOW", lambda: self.desactivar_alarma(ventana_mensaje))
 
