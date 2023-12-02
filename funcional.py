@@ -12,10 +12,11 @@ from pygame import mixer #Sonidos
 ctk.set_appearance_mode("dark") # tema oscuro
 
 # diccionarios utilizados en el programa
-usuarios = {}
-noticias = OrderedDict()
-eventos = OrderedDict()
+usuarios = {} # almacenará los usuarios
+noticias = OrderedDict() # almacenará las noticias de forma ordenada
+eventos = OrderedDict() # almacena los eventos
 
+# constantes
 TAMANO_VENTANA = "1100x680"
 BTN_ALTURA = 36
 BTN_ANCHO = 290
@@ -63,7 +64,6 @@ class VentanaOpciones:
 
 
 class VentanaRegistro: # crea la ventana registro
-    global usuarios
     def __init__(self):
         self.root = ctk.CTk()
         opciones_universales(self)
@@ -104,11 +104,12 @@ class VentanaRegistro: # crea la ventana registro
         self.root.destroy()
         ventana_opciones = VentanaOpciones()
 
+    # comprueba si el correo que ingresa la persona no está asociado a otra cuenta
     def comprobar_correo(correo):
-        for usuario in usuarios:
-            if str(correo.lower()) == str(usuarios[usuario]["correo"].lower()):
+        for usuario in usuarios: # itera sobre cada usuario en el diccionario usuarios
+            if str(correo.lower()) == str(usuarios[usuario]["correo"].lower()): # si el usuario actualmente iterado tiene el mismo correo, devuelve False, por lo tanto, si está asociado a otra cuenta
                 return False
-        return True
+        return True # el correo no está asociado a ninguna cuenta
     
     def registro_evento(self, frame): # al darle click a registrar se iniciara este método, se crea la variable alerta para luego eliminar labels
         if self.nombre.get() not in usuarios: # comprueba que el nombre no exista previamente, si no existe ejecuta
@@ -118,10 +119,10 @@ class VentanaRegistro: # crea la ventana registro
                         if len(self.contrasena.get()) >= 8 and len(self.contrasena.get()) <20: # comprueba que la contraseña tenga entre 8 y 19 dígitos
                             if any(char.isdigit() for char in self.contrasena.get()): # comprueba que la contraseña tenga al menos un numero
                                 if any(char in "!@#$%∧&*(._-)" for char in self.contrasena.get()): # comprueba si la contraseña tiene dígitos especiales
-                                    if self.terminosCheckbox.get() == "on":
+                                    if self.terminosCheckbox.get() == "on": # si el usuario acepta los términos
                                         usuarios[self.nombre.get()] = {"contrasena": self.contrasena.get(), "rol": "usuario", "correo": self.correo.get(), "baneado": False} # de forma predeterminada cualquier usuario nuevo tendrá el rol "usuario", donde no tiene grandes permisos
-                                        Sesion.guardar_datos_usuarios()
-                                        if hasattr(self, "mensaje"):
+                                        Sesion.guardar_datos_usuarios() #guarda los datos del usuario en el json
+                                        if hasattr(self, "mensaje"): # si existe el atributo mensaje en la pantalla actualmente lo borra para poner otro en su posicion
                                             self.mensaje.destroy()
 
                                         self.mensaje = ctk.CTkLabel(master = frame, text = "Usuario creado con éxito, espere unos instantes...")
@@ -129,56 +130,49 @@ class VentanaRegistro: # crea la ventana registro
                                         
                                         self.root.after(1200, self.abrir_ventana_login)
                                         
-                                    else:
+                                    else: # si no acepta los términos
                                         if hasattr(self, "mensaje"):
                                             self.mensaje.destroy()
                             
                                         self.mensaje = ctk.CTkLabel(master = frame, text = "Debes aceptar los términos y condiciones para usar nuestra aplicación.")
                                         self.mensaje.place(relx = 0.11, rely = 0.72) 
-                                else:
-                                    
+                                else: # si la contraseña no tiene un carácter especial
                                     if hasattr(self, "mensaje"):
                                         self.mensaje.destroy()
                             
                                     self.mensaje = ctk.CTkLabel(master = frame, text = "La contraseña debe tener al menos un carácter especial '!@#$%∧&*(._-)'. ")
                                     self.mensaje.place(relx = 0.11, rely = 0.72) 
-                            else:
-                                
+                            else: # si la contraseña no tiene números
                                 if hasattr(self, "mensaje"):
                                     self.mensaje.destroy()
 
                                 self.mensaje = ctk.CTkLabel(master = frame, text = "La contraseña debe tener al menos un número.")
                                 self.mensaje.place(relx = 0.23, rely = 0.72) 
-                        else:
-                            
+                        else: # si la contraseña tiene menos de 8 caracteres o más de 20
                             if hasattr(self, "mensaje"):
                                 self.mensaje.destroy()
 
                             self.mensaje = ctk.CTkLabel(master = frame, text = "La contraseña debe tener entre 8 y 20 caracteres.")
                             self.mensaje.place(relx = 0.22, rely = 0.72) 
-                    else:
-                        
+                    else: # si el correo ya existe en una cuenta
                         if hasattr(self, "mensaje"):
                             self.mensaje.destroy()
 
                         self.mensaje = ctk.CTkLabel(master = frame, text = "El correo electrónico ya está asociado a una cuenta.")
                         self.mensaje.place(relx = 0.22, rely = 0.72) 
-                else:
-                    
+                else: # si el correo no tiene un @
                     if hasattr(self, "mensaje"):
                         self.mensaje.destroy()
 
                     self.mensaje = ctk.CTkLabel(master = frame, text = "Ingrese un correo electrónico válido.")
                     self.mensaje.place(relx = 0.30, rely = 0.72) 
-            else:
-                
+            else: # si algun campo está vacío
                 if hasattr(self, "mensaje"):
                     self.mensaje.destroy()
 
                 self.mensaje = ctk.CTkLabel(master = frame, text = "Ningún campo debe estar vacío.")
                 self.mensaje.place(relx = 0.30, rely = 0.72)
-        else:
-            
+        else: # si el nombre de usuario ya existe
             if hasattr(self, "mensaje"):
                 self.mensaje.destroy()
 
@@ -252,12 +246,12 @@ class VentanaLogin: # crea la ventana login
             if self.correo.get().lower().strip() == usuarios[usuario]['correo'].lower().strip():
                     if str(self.contrasena.get()) == str(usuarios[usuario]['contrasena']): # si encuentra un correo que coincide con el ingresado, comprueba que también coincida la contraseña
                         verificar = True # el correo y la contraseña coinciden
-                        usuario_actual = usuario
+                        usuario_actual = usuario # guarda el usuario en esta variable para saber el nombre del usuario conectado
                         break
 
 
-        if verificar:
-            if not usuarios[usuario]["baneado"]:
+        if verificar: # si el correo y la contraseña coinciden entra.
+            if not usuarios[usuario]["baneado"]: # si el usuario no esta baneado
                 if hasattr(self, "mensaje"):
                     self.mensaje.destroy()
                 self.mensaje = ctk.CTkLabel(master = frame, text = "Iniciando Sesión...")
@@ -349,22 +343,22 @@ class VentanaNoticias:
         
         # mostrar todos los eventos en el menú
         try:
-            mostradas = 0
-            if len(eventos) != 0:
+            mostradas = 0 # sirve como bandera para saber si algo ha sido mostrado
+            if len(eventos) != 0: #si existe un evento sigue
                 for titulo, det in reversed(eventos.items()):
-                    if eventos[titulo]["mostrar"]: 
-                        ubicacion = det["ubicacion"]
+                    if eventos[titulo]["mostrar"]: # si el evento se muestra sigue
+                        ubicacion = det["ubicacion"] # obtiene todos los atributos necesarios
                         fecha = det["fecha"]
                         hora = det["hora"]
                         autor = det["autor"]
-                        self.mostrar_evento(sideFrame2Eventos, titulo, ubicacion, fecha, hora, autor)
+                        self.mostrar_evento(sideFrame2Eventos, titulo, ubicacion, fecha, hora, autor) # llama a la funcion mostrar_evento
                         mostradas += 1
-            else:
+            else: # si no existe ningun evento muestra este label
                 ctk.CTkLabel(master = sideFrame2Eventos, text = "No hay eventos para mostrar.",height=400, font=ctk.CTkFont(size=14)).pack()
                 mostradas += 1 
-            if mostradas == 0:
+            if mostradas == 0: # si no se mostro nada muestra este label
                 ctk.CTkLabel(master = sideFrame2Eventos, text = "No hay eventos para mostrar.",height=400, font=ctk.CTkFont(size=14)).pack() 
-        except:
+        except: # si da un error muestra este label
             ctk.CTkLabel(master = sideFrame2Eventos, text = "No hay eventos para mostrar.",height=400, font=ctk.CTkFont(size=14)).pack() 
         
         # -------------------- publicar -------------------
@@ -391,7 +385,7 @@ class VentanaNoticias:
             seleccionAlarma.configure(state="disabled")
        
         # comprueba el estado de la alerta
-        self.estado_alarma() # comprueba el estado de la alarma, si es True muestra un mensaje.
+        self.estado_alarma() # si es True muestra un mensaje.
 
         # mostrar todas las noticias en el menú 
         try:
@@ -420,33 +414,25 @@ class VentanaNoticias:
 
 
     def abrir_link(self):
-        webbrowser.open_new("https://www.seguridad.gba.gob.ar/#/home")
+        webbrowser.open_new("https://seguridad.gba.gob.ar/#/home")
 
-    def comprobar_alarma(self, opcion, sideFrame1):
-        fecha_actual = datetime.now().strftime('%d/%m/%Y %H:%M')
-        
+    def comprobar_alarma(self, opcion, sideFrame1):        
         if opcion != "Elija una opción":
-            if opcion=="Incendio":
-                mensaje = ("ALARMA DE INCENDIO")
-                publicador = (f"ACTIVADA POR: {usuario_actual}")
-                telefonos = (f"BOMBEROS: 100\nAMBULANCIA: 107")
+            if opcion=="Incendio": # si en el menú desplegable el usuario selecciona alarma de tipo incendio
                 ruta="bom"
+                activa = "bom2"
 
-            elif opcion=="Robo":
-                mensaje = (f"ALARMA DE ROBO")
-                publicador = (f"ACTIVADA POR: {usuario_actual}")
-                telefonos = (f"POLICIA: 911\nAMBULANCIA: 107")
+            elif opcion=="Robo": # si en el menú desplegable el usuario selecciona alarma de tipo robo
                 ruta="pol"
+                activa = "pol2"
 
-            elif opcion=="Emergencia Medica":
-                mensaje = (f"ALARMA DE EMERGENCIA MEDICA")
-                publicador = (f"ACTIVADA POR: {usuario_actual}")
-                telefonos = (f"AMBULANCIA: 107")
-                ruta="amb"
+            elif opcion=="Emergencia Medica": # si en el menú desplegable el usuario selecciona alarma de tipo Emergencia Medica
+                ruta="amb" # el nombre de la imagen a mostrar
+                activa = "amb2" # la imagen que deberá mostrar cuando se inicie sesión con la alarma activada
 
             #envia el nombre de la imagen para completar la ruta
             self.mostrar_alarma(ruta)
-            usuarios["alerta"] = {"valor": True, "correo": "x", "baneado": False, "rol": "desconocido", "mensaje": mensaje, "telefonos": telefonos, "publicador": publicador, "activador": usuario_actual}
+            usuarios["alerta"] = {"valor": True, "correo": "x", "baneado": False, "rol": "desconocido", "ruta": activa} # crea el usuario "alerta" que almacene los valores necesarios
             Sesion.guardar_datos_usuarios()
             Sesion.cargar_datos_usuarios()
 
@@ -463,14 +449,40 @@ class VentanaNoticias:
         for usuario in usuarios:
             if usuario == "alerta":
                 if usuarios[usuario]["valor"]: # si es true lanza mensaje
-                    mensaje = usuarios["alerta"]["mensaje"]
-                    telefonos = usuarios["alerta"]["telefonos"]
-                    publicador = usuarios["alerta"]["publicador"]
-                    self.mostrar_mensaje(usuario, mensaje, telefonos, publicador)                    
-
+                    ruta = usuarios["alerta"]["ruta"]
+                    self.mostrar_mensaje(ruta)                    
 
     def mostrar_alarma(self,ruta):
         #Ancho y Largo de la imagen, se debe cambiar tanto en el tamaño de la ventana como en el 
+        anc=600
+        lar=500
+
+       # inicia el mixer
+        mixer.init()
+
+        # reproduce el sonido
+        mixer.music.load(os.path.join(os.path.dirname(os.path.realpath(__file__)), "sonidos", "POLICE.mp3"))
+        mixer.music.play()
+
+
+        ventana_mensaje = ctk.CTkToplevel() # es una ventana secundaria
+        ventana_mensaje.title(f"ALERTA ENVIADA") # titulo de la ventana
+        ventana_mensaje.attributes("-topmost", "true")
+        centrar_ventana(ventana_mensaje, str(anc), str(lar)) # centra la ventana
+        ventana_mensaje.resizable(width=False, height=False) # no se puede cambiar los valores, agrandar o achicar
+        currentPath = os.path.dirname(os.path.realpath(__file__)) # directorio de trabajo
+        imagenFondo = ctk.CTkImage(Image.open(currentPath + f"/img/{ruta}.jpg"), size=(anc, lar)) # muestra la imagen
+        imagenLabel = ctk.CTkLabel(ventana_mensaje, image=imagenFondo, text="")
+        imagenLabel.place(relx=0, rely=0)
+
+        # al cerrar la ventana, apaga el sonido
+        ventana_mensaje.protocol("WM_DELETE_WINDOW", lambda: self.parar_sonido(ventana_mensaje))
+
+    def parar_sonido(self, ventana_mensaje):
+            mixer.music.stop()
+            ventana_mensaje.destroy()
+
+    def mostrar_mensaje(self, ruta):
         anc=600
         lar=500
 
@@ -492,51 +504,10 @@ class VentanaNoticias:
         imagenLabel = ctk.CTkLabel(ventana_mensaje, image=imagenFondo, text="")
         imagenLabel.place(relx=0, rely=0)
 
-        # al cerrar la ventana, apaga el sonido
-        ventana_mensaje.protocol("WM_DELETE_WINDOW", lambda: self.parar_sonido(ventana_mensaje))
-
-    def parar_sonido(self, ventana_mensaje):
-            mixer.music.stop()
-            ventana_mensaje.destroy()
-
-    def mostrar_mensaje(self, usuario, mensaje, telefonos, publicador):
-        # crear una nueva ventana para mostrar el mensaje
-        ventana_mensaje = ctk.CTkToplevel()
-        ventana_mensaje.title(f"Mensaje para {usuario}")
-        centrar_ventana(ventana_mensaje, "550", "400")
-        notialarm_icono(ventana_mensaje)
-        ventana_mensaje.resizable(False, False)
-        ventana_mensaje.attributes("-topmost", "true")
-
-        mixer.init()
-
-        mixer.music.load(os.path.join(os.path.dirname(os.path.realpath(__file__)), "sonidos", "POLICE.mp3"))
-        mixer.music.play()
-        currentPath = os.path.dirname(os.path.realpath(__file__))
-        imagenFondo = ctk.CTkImage(Image.open(currentPath + "/img/bg_gradient.jpg"), size=(1100, 680))
-        imagenLabel = ctk.CTkLabel(ventana_mensaje, image=imagenFondo, text="")
-        imagenLabel.place(relx=0, rely=0)
-        
-        ventanaFrame = ctk.CTkFrame(master=ventana_mensaje)
-        ventanaFrame.pack(pady=0, padx=50, fill="both", expand=True)
-        
-        currentPath = os.path.dirname(os.path.realpath(__file__))
-        imagenAlerta = ctk.CTkImage(Image.open(currentPath + "/img/alerta.png"), size=(200, 150))
-        imagenAlertaLabel = ctk.CTkLabel(ventanaFrame, image=imagenAlerta, text="")
-        imagenAlertaLabel.pack(pady=40, fill="x")
-        
-        # etiqueta con el mensaje
-        etiqueta_mensaje = ctk.CTkLabel(master=ventanaFrame, text=mensaje, font=("", 24))
-        etiqueta_mensaje.pack(pady=(0,20), fill="x")
-        
-        etiqueta_publicador = ctk.CTkLabel(master=ventanaFrame, text=publicador)
-        etiqueta_publicador.pack(pady=(0,10), fill="x")
-        
-        etiqueta_telefonos = ctk.CTkLabel(master=ventanaFrame, text=telefonos)
-        etiqueta_telefonos.pack(pady=(0,10), fill="x")
-
+        # al cerrar la ventana, apaga el sonido y desactiva la alarma
         ventana_mensaje.protocol("WM_DELETE_WINDOW", lambda: self.desactivar_alarma(ventana_mensaje))
 
+    # si cierra la ventana desactiva la alarma y elimina todo
     def desactivar_alarma(self, ventana):
         usuarios["alerta"]["valor"] = False
         ventana.destroy()
@@ -582,21 +553,21 @@ class VentanaNoticias:
 
     # al tocar el botón de publicar deberá guardar la noticia en el json.
     def publicar_evento(self, publicarFrame):
-        global noticias
+        # aclara que cambiara los valores de las variables globales
+        global noticias 
         global usuarios_actual
-        if self.publicarTitulo.get() not in noticias:
-            if len(self.publicarTitulo.get().strip()) != 0 and len(self.publicarUbicacion.get().strip()) != 0 and len(self.publicarTextbox.get("1.0", "end").strip()) != 0:
-                if len(self.publicarTitulo.get()) < 68:
+        if self.publicarTitulo.get() not in noticias: # si el titulo de la noticia no existe previamente sigue
+            if len(self.publicarTitulo.get().strip()) != 0 and len(self.publicarUbicacion.get().strip()) != 0 and len(self.publicarTextbox.get("1.0", "end").strip()) != 0: #si ningun campo esta vacio
+                if len(self.publicarTitulo.get()) < 68: # si el titulo tiene menos de 68 caracteres
                     if len(self.publicarUbicacion.get()) <= 30:
                         if len(self.publicarTextbox.get("1.0", "end"))  <= 600:
                             if self.categoria.get().lower() != "categoria":
-
                                 if hasattr(self, "info_evento"):
                                     self.info_evento.destroy()
-                                    
                                 self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Noticia creada correctamente. Espere a que sea aprobada.")
                                 self.info_evento.pack()
-                                fecha_actual = datetime.now().strftime('%d/%m/%Y %H:%M')
+
+                                fecha_actual = datetime.now().strftime('%d/%m/%Y %H:%M') # obtiene la fecha actual
                                 noticias[self.publicarTitulo.get()] = {"contenido": self.publicarTextbox.get("1.0", "end"),
                                                             "autor": usuario_actual,
                                                             "ubicacion": self.publicarUbicacion.get(),
@@ -642,6 +613,7 @@ class VentanaNoticias:
             self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Ya existe una noticia con el mismo título.")
             self.info_evento.pack()       
     
+    # ventana para la creacion de eventos
     def Evento(self):
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm | Crear evento")
@@ -679,6 +651,7 @@ class VentanaNoticias:
         publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar", command= lambda: self.evento_pulsar(publicarFrame))
         publicarBoton.pack(pady=5, padx=20, fill="x")
     
+    # realiza comprobaciones del evento a crear y lo guarda en el JSON
     def evento_pulsar(self, publicarFrame):
         global eventos
         global usuario_actual
@@ -761,6 +734,7 @@ class VentanaNoticias:
         except:
             return None
 
+    # crea un frame para cada noticia
     def mostrar_publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creación de publicación
         noticiaFrame = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#262626"))
         noticiaFrame.pack(pady=10, padx=20, fill="x")
@@ -784,6 +758,7 @@ class VentanaNoticias:
             noticiaEditar = ctk.CTkButton(master=noticiaInfoFrame, width=50, height=40, text="Editar", command= lambda: self.editar_noticia(titulo, noticiaFrame))
             noticiaEditar.pack(pady=0, padx=1, side="right")
 
+    # ventana para editar una noticia
     def editar_noticia(self, titulo, noticiaFrame): 
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm | Editar noticia")
@@ -818,14 +793,15 @@ class VentanaNoticias:
         publicarBoton = ctk.CTkButton(master=editarFrame, height=BTN_ALTURA, text="Publicar", command=lambda: self.editar_noticia_evento(titulo, editarFrame, noticiaFrame, publicarVentana))
         publicarBoton.pack(pady=5, padx=20, fill="x")
         
+    # realiza diferentes comprobaciones para editar una noticia y guarda los cambios en un JSON
     def editar_noticia_evento(self, titulo, editarFrame, noticiaFrame, ventana):
         global noticias
         fecha_actual = datetime.now().strftime('%d/%m/%Y %H:%M')
         bandera_modificacion = False #Sirve para saber si el usuario realizo alguna modificacion.
 
-        if len(self.publicarTitulo.get().strip()) != 0 and len(self.publicarTitulo.get().strip()) < 68:
+        if len(self.publicarTitulo.get().strip()) != 0 and len(self.publicarTitulo.get().strip()) < 68: # si el usuario ingresa un titulo y es menor a 68 caracteres
             tituloNuevo = self.publicarTitulo.get()
-            bandera_modificacion = True
+            bandera_modificacion = True # se modifico algo, guarda el nuevo valor
         elif len(self.publicarTitulo.get().strip()) == 0:
             tituloNuevo = titulo
         else:
@@ -838,7 +814,7 @@ class VentanaNoticias:
         if len(self.publicarUbicacion.get().strip()) != 0 and len(self.publicarUbicacion.get().strip()) <= 30:
             ubicacion = self.publicarUbicacion.get()
             bandera_modificacion = True
-        elif len(self.publicarUbicacion.get().strip()) == 0:
+        elif len(self.publicarUbicacion.get().strip()) == 0: # si no se pone nada mantiene el valor actual
             ubicacion = noticias[titulo]["ubicacion"]
         else:
             if hasattr(self, "info_evento"):
@@ -861,11 +837,11 @@ class VentanaNoticias:
 
         if self.categoria.get() != "Categoria":
             categoria = self.categoria.get()
-            bandera_modificacion = True
+            bandera_modificacion = True 
         else:
             categoria = noticias[titulo]["categoria"]
 
-        if bandera_modificacion:
+        if bandera_modificacion: # si se modifica algo guarda los datos
             if hasattr(self, "info_evento"):
                 self.info_evento.destroy()
 
@@ -883,14 +859,14 @@ class VentanaNoticias:
                                 "categoria": categoria,
                                 "fecha": fecha_actual} #Atributos de las noticias
             Sesion.guardar_datos_noticias()
-        else:
+        else: # si no se modifica nada muestra un label
             if hasattr(self, "info_evento"):
                 self.info_evento.destroy()
                         
             self.info_evento = ctk.CTkLabel(master = editarFrame, text = "Debes de realizar almenos una modificacion.")
             self.info_evento.pack() 
 
-
+    # funcion para eliminar una noticia existente
     def eliminar_noticia(self, titulo, noticiaFrame, confirmarToplevel):
         global noticias
         try:
@@ -901,8 +877,9 @@ class VentanaNoticias:
             confirmarToplevel.destroy()
 
         except:
-            print("La noticia fue eliminada.")
+            print("La noticia fue eliminada.") # solo se muestra en consola
 
+    # ventana para confirmar la eliminacion
     def confirmar_eliminacion(self, titulo , noticiaFrame):
         confirmarToplevel = ctk.CTkToplevel(master=self.root)
         confirmarToplevel.title("NotiAlarm | Eliminar Publicación")
@@ -920,16 +897,18 @@ class VentanaNoticias:
         btnAceptar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Aceptar", command=lambda: self.eliminar_noticia(titulo,noticiaFrame, confirmarToplevel))
         btnAceptar.pack(pady=(0,40), padx=(0,70), side="right")
 
-    
+    # ventana para mostrar los eventos con un frame cada uno
     def mostrar_evento(self, frame, titulo, ubicacion, fecha, hora, autor):
         eventoTitulo = ctk.CTkLabel(master=frame, text=f"{titulo} \n{ubicacion}\n{fecha} | {hora}\n{autor}", justify="left", anchor="w", wraplength=180, font=("",13,"bold"))
         eventoTitulo.pack(pady=10, padx=20, fill="x")
     
+    # vuelve a la ventana de opciones
     def volver(self):
         self.root.destroy()
         ventana_opciones = VentanaOpciones()
 
 
+# ventana de administrador
 class VentanaAdmin(VentanaNoticias):
     def __init__(self):
         self.root = ctk.CTk()
@@ -960,7 +939,7 @@ class VentanaAdmin(VentanaNoticias):
         banearTxt = ctk.CTkLabel(master=sideFrame1, text="ó")
         banearTxt.pack(pady=5, padx=20, fill="x")
         
-        # añadir todos los usuarios al desplegable banearDesplegable
+        # añadir todos los usuarios al desplegable banear_desplegable
         elementos_desplegable = []
         for usuario in usuarios:
             if usuarios[usuario]["rol"] == "admin" or usuario == "alerta" or usuarios[usuario]["baneado"] == True: # ignora la alerta, los usuarios con el rol administrador y los baneados.
@@ -1063,12 +1042,13 @@ class VentanaAdmin(VentanaNoticias):
         
         self.root.mainloop()
 
+    # funcion para añadir un nuevo administrador
     def nuevoAdmin(self, ventana):
         global usuarios
         if len(self.nuevoAdminEntry.get().strip()) != 0:
             try:
-                if self.nuevoAdminEntry.get() in usuarios:
-                        usuarios[self.nuevoAdminEntry.get()]["rol"] = "admin"
+                if self.nuevoAdminEntry.get() in usuarios: # si el usuario ingresado existe
+                        usuarios[self.nuevoAdminEntry.get()]["rol"] = "admin" # el usuario ingresado recibe el rol admin
                         if hasattr(self, "mensaje"):
                             self.mensaje.destroy()
                         self.mensaje = ctk.CTkLabel(master = ventana, text = f"El usuario {self.nuevoAdminEntry.get()} ahora es administrador.")
@@ -1083,10 +1063,10 @@ class VentanaAdmin(VentanaNoticias):
             except:
                 print("Error al otorgar rol admin con el entry")
 
-        elif self.nuevoAdminDesplegable.get() != "Mostrar Usuarios":
+        elif self.nuevoAdminDesplegable.get() != "Mostrar Usuarios": # si selecciona un usuario en el desplegable
             try:
                 if self.nuevoAdminDesplegable.get() in usuarios:
-                    usuarios[self.nuevoAdminDesplegable.get()]["rol"] = "admin"
+                    usuarios[self.nuevoAdminDesplegable.get()]["rol"] = "admin" # se le asigna rol admin
                     if hasattr(self, "mensaje"):
                         self.mensaje.destroy()
                     self.mensaje = ctk.CTkLabel(master = ventana, text = f"El usuario {self.nuevoAdminEntry.get()} ahora es administrador.")
@@ -1100,9 +1080,10 @@ class VentanaAdmin(VentanaNoticias):
             self.mensaje = ctk.CTkLabel(master = ventana, text = "Debes seleccionar un usuario.")
             self.mensaje.pack()
 
-        Sesion.guardar_datos_usuarios()
+        Sesion.guardar_datos_usuarios() # siempre se guardan y cargan todos los datos
         Sesion.cargar_datos_usuarios()
 
+    # muestra las publicaciones para el administrador con los botones de publicar, rechazar o banear usuario
     def mostrar_publicacion(self, frame, titulo, ubicacion, categoria, texto, usuario, fecha): # creación de publicación
         noticiaFrame = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#262626"))
         noticiaFrame.pack(pady=10, padx=20, fill="x")
@@ -1127,7 +1108,8 @@ class VentanaAdmin(VentanaNoticias):
         
         noticiaBanearUsuario = ctk.CTkButton(master=noticiaInfoFrame, width=100, height=40, text="Banear usuario", command=lambda: self.confirmar_banear(usuario))
         noticiaBanearUsuario.pack(pady=0, padx=0, side="right")
-        
+    
+    # ventana confirmar baneo
     def confirmar_banear(self, usuario):
         confirmarToplevel = ctk.CTkToplevel(master=self.root)
         confirmarToplevel.title("NotiAlarm | Banear usuario")
@@ -1145,6 +1127,7 @@ class VentanaAdmin(VentanaNoticias):
         btnAceptar = ctk.CTkButton(master=confirmarToplevel, height=35, width=162, text="Aceptar", command=lambda: self.BanearUsuario_de_noticias(usuario, confirmarToplevel))
         btnAceptar.pack(pady=(0,40), padx=(0,70), side="right")
         
+    # muestra los eventos con los botones de publicar o rechazar
     def mostrar_evento(self, frame, titulo, ubicacion, fecha, hora, autor):
         eventoFrame = ctk.CTkFrame(master=frame, fg_color=("#cccccc","#333333"))
         eventoFrame.pack(pady=5, padx=0, fill="x")
@@ -1412,4 +1395,3 @@ Sesion.guardar_datos_eventos()
 
 
 
-print("Comprobar usuarios del json", usuarios) #FALTA borrar esto al final del programa.
