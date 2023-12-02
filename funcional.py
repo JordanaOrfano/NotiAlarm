@@ -370,10 +370,10 @@ class VentanaNoticias:
         crearLabel = ctk.CTkLabel(master=crearFrame, wraplength=520, height=40, font=("",14,"bold"), fg_color=ACCENT_COLOR, corner_radius=6, text="Crear publicación")
         crearLabel.pack(pady=0, padx=0, fill="x")
 
-        crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicar_noticia)
+        crearAlarmaBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar noticia", command=self.publicar_noticia_ventana)
         crearAlarmaBtn.pack(pady=0, padx=0, fill="x", side="left")
         
-        noticiaEventoBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar evento", command=self.Evento)
+        noticiaEventoBtn = ctk.CTkButton(master=crearFrame, height=BTN_ALTURA, width=258, text="Publicar evento", command=self.publicar_evento_ventana)
         noticiaEventoBtn.pack(pady=0, padx=0, fill="x", side="right")
         
         # configuracion de inicio para invitado, se desactivan las funciones de publicación y alarma
@@ -464,7 +464,6 @@ class VentanaNoticias:
         mixer.music.load(os.path.join(os.path.dirname(os.path.realpath(__file__)), "sonidos", "POLICE.mp3"))
         mixer.music.play()
 
-
         ventana_mensaje = ctk.CTkToplevel() # es una ventana secundaria
         ventana_mensaje.title(f"ALERTA ENVIADA") # titulo de la ventana
         ventana_mensaje.attributes("-topmost", "true")
@@ -493,7 +492,6 @@ class VentanaNoticias:
         mixer.music.load(os.path.join(os.path.dirname(os.path.realpath(__file__)), "sonidos", "POLICE.mp3"))
         mixer.music.play()
 
-
         ventana_mensaje = ctk.CTkToplevel()
         ventana_mensaje.title(f"ALERTA ENVIADA")
         ventana_mensaje.attributes("-topmost", "true")
@@ -517,7 +515,7 @@ class VentanaNoticias:
     def cambiar_apariencia(self, new_appearance_mode: str):
         ctk.set_appearance_mode(new_appearance_mode)
 
-    def publicar_noticia(self): 
+    def publicar_noticia_ventana(self): 
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm | Crear noticia")
         centrar_ventana(publicarVentana, "650", "435")
@@ -548,11 +546,11 @@ class VentanaNoticias:
         self.categoria = ctk.CTkOptionMenu(master=publicarFrame, values=["Categoria", "Robo", "Accidentes", "Asesinatos", "Eventos Locales", "Trafico", "Incendios y Rescates", "Eventos de emergencia", "Obras Publicas", "Otras"])
         self.categoria.pack(pady=5, padx=20, fill="x")
         
-        publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar", command=lambda: self.publicar_evento(publicarFrame))
+        publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar", command=lambda: self.publicar_noticia_guardar(publicarFrame, publicarVentana))
         publicarBoton.pack(pady=5, padx=20, fill="x")
 
     # al tocar el botón de publicar deberá guardar la noticia en el json.
-    def publicar_evento(self, publicarFrame):
+    def publicar_noticia_guardar(self, publicarFrame, ventana):
         # aclara que cambiara los valores de las variables globales
         global noticias 
         global usuarios_actual
@@ -566,6 +564,7 @@ class VentanaNoticias:
                                     self.info_evento.destroy()
                                 self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Noticia creada correctamente. Espere a que sea aprobada.")
                                 self.info_evento.pack()
+                                ventana.after(1300, lambda:ventana.destroy())
 
                                 fecha_actual = datetime.now().strftime('%d/%m/%Y %H:%M') # obtiene la fecha actual
                                 noticias[self.publicarTitulo.get()] = {"contenido": self.publicarTextbox.get("1.0", "end"),
@@ -614,7 +613,7 @@ class VentanaNoticias:
             self.info_evento.pack()       
     
     # ventana para la creacion de eventos
-    def Evento(self):
+    def publicar_evento_ventana(self):
         publicarVentana = ctk.CTkToplevel(master=self.root)
         publicarVentana.title("NotiAlarm | Crear evento")
         centrar_ventana(publicarVentana, "650", "290")
@@ -648,11 +647,11 @@ class VentanaNoticias:
         self.publicarHora = ctk.CTkEntry(master=fechaFrame, width=211, height=BTN_ALTURA, placeholder_text="Hora (hh:mm)")
         self.publicarHora.pack(pady=5, padx=0, fill="x", side="right")
         
-        publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar", command= lambda: self.evento_pulsar(publicarFrame))
+        publicarBoton = ctk.CTkButton(master=publicarFrame, height=BTN_ALTURA, text="Publicar", command= lambda: self.publicar_evento_guardar(publicarFrame, publicarVentana))
         publicarBoton.pack(pady=5, padx=20, fill="x")
     
     # realiza comprobaciones del evento a crear y lo guarda en el JSON
-    def evento_pulsar(self, publicarFrame):
+    def publicar_evento_guardar(self, publicarFrame, ventana):
         global eventos
         global usuario_actual
         if self.publicarTitulo.get() not in eventos:
@@ -675,7 +674,9 @@ class VentanaNoticias:
                                     self.info_evento.destroy()
 
                                 self.info_evento = ctk.CTkLabel(master = publicarFrame, text = "Evento creado correctamente. Espere a que sea aprobado.")
-                                self.info_evento.pack() 
+                                self.info_evento.pack()
+                                ventana.after(1300, lambda:ventana.destroy())
+                                 
                             else:
                                 if hasattr(self, "info_evento"):
                                     self.info_evento.destroy()
