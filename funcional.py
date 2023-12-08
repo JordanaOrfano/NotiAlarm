@@ -432,7 +432,7 @@ class VentanaNoticias:
 
             #envia el nombre de la imagen para completar la ruta
             self.mostrar_alarma(ruta)
-            usuarios["alerta"] = {"valor": True, "correo": "x", "baneado": False, "rol": "desconocido", "ruta": activa} # crea el usuario "alerta" que almacene los valores necesarios
+            usuarios["alerta"] = {"valor": True, "correo": "x", "baneado": False, "rol": "desconocido", "ruta": activa, "enviada": usuario_actual} # crea el usuario "alerta" que almacene los valores necesarios
             Sesion.guardar_datos_usuarios()
             Sesion.cargar_datos_usuarios()
 
@@ -450,7 +450,8 @@ class VentanaNoticias:
             if usuario == "alerta":
                 if usuarios[usuario]["valor"]: # si es true lanza mensaje
                     ruta = usuarios["alerta"]["ruta"]
-                    self.mostrar_mensaje(ruta)                    
+                    enviada = usuarios["alerta"]["enviada"]
+                    self.mostrar_mensaje(ruta, enviada)                    
 
     def mostrar_alarma(self,ruta):
         #Ancho y Largo de la imagen, se debe cambiar tanto en el tamaño de la ventana como en el 
@@ -481,7 +482,7 @@ class VentanaNoticias:
             mixer.music.stop()
             ventana_mensaje.destroy()
 
-    def mostrar_mensaje(self, ruta):
+    def mostrar_mensaje(self, ruta, enviada):
         anc=600
         lar=500
 
@@ -493,7 +494,7 @@ class VentanaNoticias:
         mixer.music.play()
 
         ventana_mensaje = ctk.CTkToplevel()
-        ventana_mensaje.title(f"ALERTA ENVIADA")
+        ventana_mensaje.title(f"Alerta enviada por: {enviada}")
         ventana_mensaje.attributes("-topmost", "true")
         centrar_ventana(ventana_mensaje, str(anc), str(lar))
         ventana_mensaje.resizable(width=False, height=False)

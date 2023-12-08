@@ -1,1 +1,1 @@
-{"admin": {"contrasena": "12345", "rol": "admin", "correo": "admin", "baneado": false}, "usuario": {"contrasena": "12345", "rol": "usuario", "correo": "usuario", "baneado": false}, "alerta": {"valor": false, "correo": "x", "baneado": false, "rol": "desconocido", "ruta": "pol2"}}
+{"admin": {"contrasena": "12345", "rol": "admin", "correo": "admin", "baneado": false}, "usuario": {"contrasena": "12345", "rol": "usuario", "correo": "usuario", "baneado": false}, "alerta": {"valor": false, "correo": "x", "baneado": false, "rol": "desconocido", "ruta": "pol2", "enviada": "usuario"}}
